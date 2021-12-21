@@ -1,0 +1,45 @@
+{
+  "name": "efx-forms",
+  "version": "0.3.6",
+  "description": "Effector JS Forms",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "rm -rf lib/* && tsc && ./npmize",
+    "publish-lib": "npm run build && npm publish lib",
+    "publish-beta": "npm run build && npm publish --tag beta",
+    "publish-dryrun": "npm run build && npm publish --dry-run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/darianstlex/efx-forms.git"
+  },
+  "keywords": [
+    "typescript",
+    "effector",
+    "forms",
+    "library"
+  ],
+  "author": "Ivan Uzun <iv.uzun@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/darianstlex/efx-forms/issues"
+  },
+  "homepage": "https://github.com/darianstlex/efx-forms#readme",
+  "devDependencies": {
+    "@types/lodash-es": "^4.17.5",
+    "@types/react": "^17.0.37",
+    "effector": "^22.1.2",
+    "effector-react": "^22.0.6",
+    "lodash-es": "^4.17.21",
+    "react": "^17.0.2",
+    "typescript": "^4.5.4"
+  },
+  "peerDependencies": {
+    "effector": "^22.1.2",
+    "effector-react": "^22.0.6",
+    "lodash-es": "^4.17.21",
+    "react": "^17.0.2"
+  }
+}
