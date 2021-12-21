@@ -20,6 +20,7 @@ var __rest = (this && this.__rest) || function (s, e) {
         }
     return t;
 };
+import { jsx as _jsx } from "react/jsx-runtime";
 import React, { useMemo } from 'react';
 import { useStore } from 'effector-react';
 import { createForm, formConfigDefault } from './form';
@@ -39,18 +40,18 @@ export var REfxForm = function (_a) {
         form.submit({ cb: onSubmit });
     };
     var elements = React.Children.toArray(children);
-    return (React.createElement("form", { onSubmit: submit }, elements.map(function (field) {
-        var _a, _b;
-        var isExField = ((_b = (_a = field) === null || _a === void 0 ? void 0 : _a.type) === null || _b === void 0 ? void 0 : _b.displayName) === 'REfxField';
-        return isExField ? React.cloneElement(field, {
-            form: form,
-            formConfig: {
-                initialValues: initialValues,
-                validateOnBlur: validateOnBlur,
-                validateOnChange: validateOnChange,
-            },
-        }) : field;
-    })));
+    return (_jsx("form", __assign({ onSubmit: submit }, { children: elements.map(function (field) {
+            var _a, _b;
+            var isExField = ((_b = (_a = field) === null || _a === void 0 ? void 0 : _a.type) === null || _b === void 0 ? void 0 : _b.displayName) === 'REfxField';
+            return isExField ? React.cloneElement(field, {
+                form: form,
+                formConfig: {
+                    initialValues: initialValues,
+                    validateOnBlur: validateOnBlur,
+                    validateOnChange: validateOnChange,
+                },
+            }) : field;
+        }) }), void 0));
 };
 REfxForm.displayName = 'REfxForm';
 export var REfxField = function (_a) {
@@ -63,6 +64,6 @@ export var REfxField = function (_a) {
     }, [form, name, initialValue, parse, validators, validateOnBlur, validateOnChange, formConfig]), $value = _k.$value, $errors = _k.$errors, onChange = _k.onChange, onBlur = _k.onBlur;
     var value = useStore($value) || '';
     var error = useStore($errors)[0];
-    return (React.createElement(Field, __assign({}, __assign({ error: error, name: name, value: format(value), onChange: onChange, onBlur: function () { return onBlur(); } }, props))));
+    return (_jsx(Field, __assign({}, __assign({ error: error, name: name, value: format(value), onChange: onChange, onBlur: function () { return onBlur(); } }, props)), void 0));
 };
 REfxField.displayName = 'REfxField';
