@@ -1,1 +1,3 @@
-# efx-forms
+# EFX-Forms
+
+> Effector JS forms
