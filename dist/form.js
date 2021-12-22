@@ -76,16 +76,16 @@ var createFormHandler = function (formConfig) {
     var config = __assign({}, formConfig);
     var name = formConfig.name;
     var fields = {};
-    var updateValidation = event("".concat(name, "-form-update-validation"));
+    var updateError = event("".concat(name, "-form-update-validation"));
     var updateTouch = event("".concat(name, "-form-update-touch"));
     var updateValue = event("".concat(name, "-form-update-value"));
     var reset = event("".concat(name, "-form-reset"));
     var onChange = event("".concat(name, "-form-change"));
     /**
-     * Validations store - keeps all fields validations
+     * Validation errors store - keeps all fields validation errors
      */
-    var $validations = store({}, { name: "$".concat(name, "-form-validations") })
-        .on(updateValidation, function (state, _a) {
+    var $errors = store({}, { name: "$".concat(name, "-form-validations") })
+        .on(updateError, function (state, _a) {
         var _b;
         var name = _a.name, valid = _a.valid;
         return (__assign(__assign({}, state), (_b = {}, _b[name] = valid, _b)));
@@ -93,7 +93,7 @@ var createFormHandler = function (formConfig) {
     /**
      * Calculates form validation
      */
-    var $valid = $validations.map(function (state) { return !isEmpty(state) ? !Object.values(state).some(function (it) { return !it; }) : true; });
+    var $valid = $errors.map(function (state) { return !isEmpty(state) ? !Object.values(state).some(function (it) { return !it; }) : true; });
     /**
      * Touches store - keeps all fields touches
      */
@@ -178,7 +178,7 @@ var createFormHandler = function (formConfig) {
                                     return validate();
                                 });
                                 if (!$valid.getState()) {
-                                    return [2 /*return*/, Promise.reject({ errors: $validations.getState() })];
+                                    return [2 /*return*/, Promise.reject({ errors: $errors.getState() })];
                                 }
                             }
                             values = {
@@ -206,6 +206,7 @@ var createFormHandler = function (formConfig) {
     });
     return {
         $changes: $changes,
+        $errors: $errors,
         $shapedValues: $shapedValues,
         $shapedTruthyValues: $shapedTruthyValues,
         $submitting: submitRemote.pending,
@@ -213,7 +214,6 @@ var createFormHandler = function (formConfig) {
         $touches: $touches,
         $truthyValues: $truthyValues,
         $valid: $valid,
-        $validations: $validations,
         $values: $values,
         name: name,
         reset: reset,
@@ -237,7 +237,7 @@ var createFormHandler = function (formConfig) {
             fields[name] = createField(__assign({ name: name }, fieldConfig), {
                 formChange: onChange,
                 resetField: reset,
-                updateValidation: updateValidation,
+                updateError: updateError,
                 updateTouch: updateTouch,
                 updateValue: updateValue,
                 setRemoteErrors: guard({

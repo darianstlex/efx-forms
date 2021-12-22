@@ -4,9 +4,9 @@ import isEmpty from 'lodash-es/isEmpty';
 import pickBy from 'lodash-es/pickBy';
 import { createField } from './field';
 import {
-  IFormValidationUpdate,
+  IFormErrorUpdate,
   IFormConfig,
-  IFormValidations,
+  IFormErrors,
   IFormTouches,
   IFormToucheUpdate,
   IFormValues,
@@ -39,22 +39,22 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
 
   const fields: IFormFields = {};
 
-  const updateValidation = event<IFormValidationUpdate>(`${name}-form-update-validation`);
+  const updateError = event<IFormErrorUpdate>(`${name}-form-update-validation`);
   const updateTouch = event<IFormToucheUpdate>(`${name}-form-update-touch`);
   const updateValue = event<IFormValueUpdate>(`${name}-form-update-value`);
   const reset = event<void>(`${name}-form-reset`);
   const onChange = event<IFormOnFieldChange>(`${name}-form-change`);
 
   /**
-   * Validations store - keeps all fields validations
+   * Validation errors store - keeps all fields validation errors
    */
-  const $validations = store<IFormValidations>({}, { name: `$${name}-form-validations`})
-    .on(updateValidation, (state, { name, valid }) => ({ ...state, [name]: valid }));
+  const $errors = store<IFormErrors>({}, { name: `$${name}-form-validations`})
+    .on(updateError, (state, { name, valid }) => ({ ...state, [name]: valid }));
 
   /**
    * Calculates form validation
    */
-  const $valid = $validations.map((state) => !isEmpty(state) ? !Object.values(state).some((it) => !it) : true);
+  const $valid = $errors.map((state) => !isEmpty(state) ? !Object.values(state).some((it) => !it) : true);
 
   /**
    * Touches store - keeps all fields touches
@@ -123,7 +123,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
       if (!skipClientValidation) {
         Object.values(fields).forEach(({ validate }) => validate());
         if (!$valid.getState()) {
-          return Promise.reject({ errors: $validations.getState() });
+          return Promise.reject({ errors: $errors.getState() });
         }
       }
       const values = {
@@ -143,6 +143,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
 
   return {
     $changes,
+    $errors,
     $shapedValues,
     $shapedTruthyValues,
     $submitting: submitRemote.pending,
@@ -150,7 +151,6 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     $touches,
     $truthyValues,
     $valid,
-    $validations,
     $values,
     name,
     reset,
@@ -175,7 +175,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
         {
         formChange: onChange,
         resetField: reset,
-        updateValidation,
+        updateError,
         updateTouch,
         updateValue,
         setRemoteErrors: guard({

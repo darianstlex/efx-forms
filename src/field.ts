@@ -16,7 +16,7 @@ export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
 export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format'>, {
   formChange,
   resetField,
-  updateValidation,
+  updateError,
   updateTouch,
   updateValue,
   setRemoteErrors,
@@ -100,12 +100,12 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   ).on(setError, (_, error) => ([error])).reset([resetError, reset]);
 
   /**
-   * Updates form validation on field validation change
+   * Updates form errors on field validation change
    */
   sample({
     source: $errors,
     fn: ([error]) => ({ name, valid: !error }),
-    target: updateValidation,
+    target: updateError,
   });
 
   /**
@@ -145,7 +145,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   const syncData = () => {
     updateValue({ name, value: $value.getState() });
     const [error] = $errors.getState();
-    updateValidation({ name, valid: !error });
+    updateError({ name, valid: !error });
   };
 
   return {

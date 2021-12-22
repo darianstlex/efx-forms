@@ -38,7 +38,7 @@ export interface IField {
 export interface IFormHooks {
   formChange: Event<IFormValueUpdate>;
   resetField: Event<void>;
-  updateValidation: Event<IFormValidationUpdate>;
+  updateError: Event<IFormErrorUpdate>;
   updateTouch: Event<IFormToucheUpdate>;
   updateValue: Event<IFormValueUpdate>;
   setRemoteErrors: Event<IFormSubmitResponseError>;
@@ -74,11 +74,11 @@ export interface IFormSubmitArgs {
   skipClientValidation?: boolean;
 }
 
-export interface IFormValidations {
+export interface IFormErrors {
   [name: string]: boolean;
 }
 
-export interface IFormValidationUpdate {
+export interface IFormErrorUpdate {
   name: string;
   valid: boolean;
 }
@@ -112,6 +112,7 @@ export interface IFormFields {
 
 export interface IForm {
   $changes: Store<IFormValues>;
+  $errors: Store<IFormErrors>
   $shapedValues: Store<object>;
   $shapedTruthyValues: Store<object>;
   $submitting: Store<boolean>;
@@ -120,7 +121,6 @@ export interface IForm {
   $truthyValues: Store<IFormValues>;
   $valid: Store<boolean>;
   $values: Store<IFormValues>;
-  $validations: Store<IFormValidations>
   name: string;
   reset: Event<void>;
   submit: (args: IFormSubmitArgs) => void;

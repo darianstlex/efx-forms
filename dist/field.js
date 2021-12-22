@@ -32,7 +32,7 @@ export var fieldConfigDefault = {
     validateOnChange: false,
 };
 export var createField = function (_a, _b) {
-    var formChange = _b.formChange, resetField = _b.resetField, updateValidation = _b.updateValidation, updateTouch = _b.updateTouch, updateValue = _b.updateValue, setRemoteErrors = _b.setRemoteErrors;
+    var formChange = _b.formChange, resetField = _b.resetField, updateError = _b.updateError, updateTouch = _b.updateTouch, updateValue = _b.updateValue, setRemoteErrors = _b.setRemoteErrors;
     var name = _a.name, fieldConfig = __rest(_a, ["name"]);
     var config = __assign({ name: name }, fieldConfig);
     var update = event("".concat(name, "-field-update"));
@@ -101,7 +101,7 @@ export var createField = function (_a, _b) {
         return (remoteErrors[name] ? [remoteErrors[name]] : []);
     }).on(setError, function (_, error) { return ([error]); }).reset([resetError, reset]);
     /**
-     * Updates form validation on field validation change
+     * Updates form errors on field validation change
      */
     sample({
         source: $errors,
@@ -109,7 +109,7 @@ export var createField = function (_a, _b) {
             var error = _a[0];
             return ({ name: name, valid: !error });
         },
-        target: updateValidation,
+        target: updateError,
     });
     /**
      * Validate field onBlur if field is touched and has changes
@@ -151,7 +151,7 @@ export var createField = function (_a, _b) {
     var syncData = function () {
         updateValue({ name: name, value: $value.getState() });
         var error = $errors.getState()[0];
-        updateValidation({ name: name, valid: !error });
+        updateError({ name: name, valid: !error });
     };
     return {
         $value: $value,
