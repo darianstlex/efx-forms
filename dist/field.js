@@ -106,8 +106,8 @@ export var createField = function (_a, _b) {
     sample({
         source: $errors,
         fn: function (_a) {
-            var error = _a[0];
-            return ({ name: name, valid: !error });
+            var _b = _a[0], error = _b === void 0 ? null : _b;
+            return ({ name: name, error: error });
         },
         target: updateError,
     });
@@ -150,8 +150,8 @@ export var createField = function (_a, _b) {
      */
     var syncData = function () {
         updateValue({ name: name, value: $value.getState() });
-        var error = $errors.getState()[0];
-        updateError({ name: name, valid: !error });
+        var _a = $errors.getState()[0], error = _a === void 0 ? null : _a;
+        updateError({ name: name, error: error });
     };
     return {
         $value: $value,

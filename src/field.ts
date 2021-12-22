@@ -104,7 +104,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
    */
   sample({
     source: $errors,
-    fn: ([error]) => ({ name, valid: !error }),
+    fn: ([error = null]) => ({ name, error }),
     target: updateError,
   });
 
@@ -144,8 +144,8 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
    */
   const syncData = () => {
     updateValue({ name, value: $value.getState() });
-    const [error] = $errors.getState();
-    updateError({ name, valid: !error });
+    const [error = null] = $errors.getState();
+    updateError({ name, error });
   };
 
   return {

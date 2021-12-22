@@ -84,11 +84,11 @@ var createFormHandler = function (formConfig) {
     /**
      * Validation errors store - keeps all fields validation errors
      */
-    var $errors = store({}, { name: "$".concat(name, "-form-validations") })
+    var $errors = store({}, { name: "$".concat(name, "-form-errors") })
         .on(updateError, function (state, _a) {
         var _b;
-        var name = _a.name, valid = _a.valid;
-        return (__assign(__assign({}, state), (_b = {}, _b[name] = valid, _b)));
+        var name = _a.name, error = _a.error;
+        return (__assign(__assign({}, state), (_b = {}, _b[name] = error, _b)));
     });
     /**
      * Calculates form validation

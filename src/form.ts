@@ -48,8 +48,8 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Validation errors store - keeps all fields validation errors
    */
-  const $errors = store<IFormErrors>({}, { name: `$${name}-form-validations`})
-    .on(updateError, (state, { name, valid }) => ({ ...state, [name]: valid }));
+  const $errors = store<IFormErrors>({}, { name: `$${name}-form-errors`})
+    .on(updateError, (state, { name, error }) => ({ ...state, [name]: error }));
 
   /**
    * Calculates form validation

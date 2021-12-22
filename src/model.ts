@@ -75,12 +75,12 @@ export interface IFormSubmitArgs {
 }
 
 export interface IFormErrors {
-  [name: string]: boolean;
+  [name: string]: string | null;
 }
 
 export interface IFormErrorUpdate {
   name: string;
-  valid: boolean;
+  error: string | null;
 }
 
 export interface IFormTouches {
