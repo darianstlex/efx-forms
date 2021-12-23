@@ -24,8 +24,12 @@ const { store, effect, event } = domain;
 export const formConfigDefault: IFormConfigDefault = {
   name: 'default',
   initialValues: {},
+  onSubmit: () => {},
+  remoteValidation: false,
+  skipClientValidation: false,
   validateOnBlur: true,
   validateOnChange: false,
+  validations: {},
 };
 
 export const forms: IForms = {

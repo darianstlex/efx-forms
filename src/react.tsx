@@ -5,17 +5,16 @@ import { fieldConfigDefault } from './field';
 import { IField, IFieldConfig, IForm, IFormConfig, REfxFieldProps, REfxFormProps } from './model';
 import omit from 'lodash-es/omit';
 
-const emptyOnSubmit = () => {};
-
 export const REfxForm = ({
   children = null,
-  onSubmit = emptyOnSubmit,
-  remoteValidation = false,
-  skipClientValidation = false,
+  onSubmit = formConfigDefault.onSubmit,
+  remoteValidation = formConfigDefault.remoteValidation,
+  skipClientValidation = formConfigDefault.skipClientValidation,
   name = formConfigDefault.name,
   initialValues = formConfigDefault.initialValues,
   validateOnBlur = formConfigDefault.validateOnBlur,
   validateOnChange = formConfigDefault.validateOnChange,
+  validations,
 }: REfxFormProps) => {
   const form: IForm = useMemo(() => {
     return createForm({ name });
@@ -40,6 +39,7 @@ export const REfxForm = ({
             initialValues,
             validateOnBlur,
             validateOnChange,
+            formValidations: validations,
           } as Partial<IFormConfig>,
         }) : field;
       })}
@@ -53,11 +53,15 @@ export const REfxField = ({
   Field,
   form = createForm({ name: formConfigDefault.name }),
   name,
-  formConfig: { initialValues = {}, ...formConfig} = omit(formConfigDefault, ['name']),
+  formConfig: {
+    initialValues = formConfigDefault.initialValues,
+    formValidations = formConfigDefault.validations,
+    ...formConfig
+  } = omit(formConfigDefault, ['name']),
   initialValue = initialValues[name],
   parse = fieldConfigDefault.parse,
   format = fieldConfigDefault.format,
-  validators = fieldConfigDefault.validators,
+  validators = formValidations[name] || fieldConfigDefault.validators,
   validateOnBlur,
   validateOnChange,
   ...props

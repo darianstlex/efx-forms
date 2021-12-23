@@ -65,8 +65,12 @@ export interface IFormInitialValues {
 export interface IFormConfigDefault {
   name: string;
   initialValues: IFormInitialValues,
+  onSubmit: IFormSubmitArgs['cb'];
+  remoteValidation: boolean;
+  skipClientValidation: boolean;
   validateOnBlur: boolean;
   validateOnChange: boolean;
+  validations: IFormValidations;
 }
 
 export interface IFormConfig {
@@ -78,6 +82,8 @@ export interface IFormConfig {
   validateOnBlur?: boolean;
   /** PROPERTY - validateOnChange - will trigger validation on change */
   validateOnChange?: boolean;
+  /** PROPERTY - formValidations array of validators per field */
+  formValidations?: IFormValidations;
 }
 
 export interface IFormSubmitArgs {
@@ -115,6 +121,10 @@ export interface IFormValueUpdate {
 export interface IFormOnFieldChange {
   name: string;
   value: TFieldValue;
+}
+
+export interface IFormValidations {
+  [name: string]: TFieldValidator[];
 }
 
 export interface IFormFields {
@@ -160,7 +170,7 @@ export interface IForms {
   [name: string]: IForm;
 }
 
-export interface REfxFormProps extends IFormConfig {
+export interface REfxFormProps extends Omit<IFormConfig, 'formValidations'> {
   children?: ReactNode;
   /** METHOD - submit - will trigger submit based on remoteValidation property */
   onSubmit?: IFormSubmitArgs['cb'];
@@ -168,6 +178,8 @@ export interface REfxFormProps extends IFormConfig {
   remoteValidation?: boolean;
   /** PROPERTY - skipClientValidation - if true will skip validation on submit */
   skipClientValidation?: boolean;
+  /** PROPERTY - validations array of validators per field */
+  validations?: IFormValidations;
 }
 
 export interface REfxFieldProps {

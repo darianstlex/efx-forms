@@ -65,8 +65,12 @@ var store = domain.store, effect = domain.effect, event = domain.event;
 export var formConfigDefault = {
     name: 'default',
     initialValues: {},
+    onSubmit: function () { },
+    remoteValidation: false,
+    skipClientValidation: false,
     validateOnBlur: true,
     validateOnChange: false,
+    validations: {},
 };
 export var forms = (_a = {},
     _a[formConfigDefault.name] = {},
