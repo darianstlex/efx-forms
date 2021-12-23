@@ -2,12 +2,12 @@ import { Effect, Event, Store } from 'effector';
 import { ComponentType, ReactNode } from 'react';
 
 export type TFieldValue = string | number | null | boolean;
-export type TValidator = (value: any) => string | false
-export type TErrors = { [name: string]: string };
+export type TFieldValidator = (value: any) => string | false
+export type TFormErrors = { [name: string]: string };
 
 export interface IFormSubmitResponseError {
-  errors?: TErrors;
-  remoteErrors?: TErrors;
+  errors?: TFormErrors;
+  remoteErrors?: TFormErrors;
 }
 
 export interface IFieldConfig {
@@ -15,7 +15,7 @@ export interface IFieldConfig {
   initialValue: TFieldValue;
   parse: (value: TFieldValue) => TFieldValue,
   format: (value: TFieldValue) => TFieldValue,
-  validators: TValidator[],
+  validators: TFieldValidator[],
   validateOnBlur: boolean;
   validateOnChange: boolean;
 }
