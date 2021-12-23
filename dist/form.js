@@ -58,9 +58,8 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 var _a;
 import { guard, sample } from 'effector';
-import { domain, shapeValues } from './utils';
+import { domain } from './utils';
 import isEmpty from 'lodash-es/isEmpty';
-import pickBy from 'lodash-es/pickBy';
 import { createField } from './field';
 var store = domain.store, effect = domain.effect, event = domain.event;
 export var formConfigDefault = {
@@ -117,19 +116,7 @@ var createFormHandler = function (formConfig) {
         return (__assign(__assign({}, state), (_b = {}, _b[name] = value, _b)));
     });
     /**
-     * Transform values from flat to structured object
-     */
-    var $shapedValues = $values.map(function (values) { return shapeValues(values); });
-    /**
-     * Calculate truthy values
-     */
-    var $truthyValues = $values.map(function (values) { return pickBy(values, Boolean); });
-    /**
-     * Transform truthyValues from flat to structured object
-     */
-    var $shapedTruthyValues = $truthyValues.map(function (values) { return shapeValues(values); });
-    /**
-     * Changes store, triggers on field change event
+     * Changes store, triggers change on field change event
      */
     var $changes = store({}, { name: "$".concat(name, "-form-changes") })
         .on(sample({
@@ -151,12 +138,7 @@ var createFormHandler = function (formConfig) {
             return validate();
         });
         if ($valid.getState() || skipClientValidation) {
-            cb({
-                shapedTruthyValues: $shapedTruthyValues.getState(),
-                shapedValues: $shapedValues.getState(),
-                truthyValues: $truthyValues.getState(),
-                values: $values.getState(),
-            });
+            cb($values.getState());
         }
     };
     /**
@@ -168,7 +150,7 @@ var createFormHandler = function (formConfig) {
         handler: function (_a) {
             var cb = _a.cb, _b = _a.skipClientValidation, skipClientValidation = _b === void 0 ? false : _b;
             return __awaiter(void 0, void 0, void 0, function () {
-                var values, remoteErrors_1;
+                var remoteErrors_1;
                 return __generator(this, function (_c) {
                     switch (_c.label) {
                         case 0:
@@ -181,16 +163,10 @@ var createFormHandler = function (formConfig) {
                                     return [2 /*return*/, Promise.reject({ errors: $errors.getState() })];
                                 }
                             }
-                            values = {
-                                shapedTruthyValues: $shapedTruthyValues.getState(),
-                                shapedValues: $shapedValues.getState(),
-                                truthyValues: $truthyValues.getState(),
-                                values: $values.getState(),
-                            };
                             _c.label = 1;
                         case 1:
                             _c.trys.push([1, 3, , 4]);
-                            return [4 /*yield*/, cb(values)];
+                            return [4 /*yield*/, cb($values.getState())];
                         case 2:
                             _c.sent();
                             return [3 /*break*/, 4];
@@ -205,20 +181,14 @@ var createFormHandler = function (formConfig) {
         name: "".concat(name, "-form-submit"),
     });
     return {
+        name: name,
         $changes: $changes,
         $errors: $errors,
-        $shapedValues: $shapedValues,
-        $shapedTruthyValues: $shapedTruthyValues,
-        $submitting: submitRemote.pending,
-        $touched: $touched,
-        $touches: $touches,
-        $truthyValues: $truthyValues,
         $valid: $valid,
         $values: $values,
-        name: name,
-        reset: reset,
-        submit: submit,
-        submitRemote: submitRemote,
+        $touched: $touched,
+        $touches: $touches,
+        $submitting: submitRemote.pending,
         get config() {
             return config;
         },
@@ -228,6 +198,9 @@ var createFormHandler = function (formConfig) {
         get fields() {
             return fields;
         },
+        reset: reset,
+        submit: submit,
+        submitRemote: submitRemote,
         getField: function (name) { return fields[name]; },
         registerField: function (_a) {
             var name = _a.name, fieldConfig = __rest(_a, ["name"]);

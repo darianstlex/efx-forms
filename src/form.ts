@@ -1,7 +1,6 @@
 import { Effect, guard, sample } from 'effector';
-import { domain, shapeValues } from './utils';
+import { domain } from './utils';
 import isEmpty from 'lodash-es/isEmpty';
-import pickBy from 'lodash-es/pickBy';
 import { createField } from './field';
 import {
   IFormErrorUpdate,
@@ -74,22 +73,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     .on(updateValue, (state, { name, value }) => ({ ...state, [name]: value }));
 
   /**
-   * Transform values from flat to structured object
-   */
-  const $shapedValues = $values.map((values) => shapeValues(values));
-
-  /**
-   * Calculate truthy values
-   */
-  const $truthyValues = $values.map((values) => pickBy(values, Boolean));
-
-  /**
-   * Transform truthyValues from flat to structured object
-   */
-  const $shapedTruthyValues = $truthyValues.map((values) => shapeValues(values));
-
-  /**
-   * Changes store, triggers on field change event
+   * Changes store, triggers change on field change event
    */
   const $changes = store<IFormValues>({}, { name: `$${name}-form-changes`})
     .on(sample({
@@ -104,12 +88,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   const submit = ({ cb, skipClientValidation }: IFormSubmitArgs) => {
     Object.values(fields).forEach(({ validate }) => validate());
     if ($valid.getState() || skipClientValidation) {
-      cb({
-        shapedTruthyValues: $shapedTruthyValues.getState(),
-        shapedValues: $shapedValues.getState(),
-        truthyValues: $truthyValues.getState(),
-        values: $values.getState(),
-      });
+      cb($values.getState());
     }
   };
 
@@ -126,14 +105,8 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
           return Promise.reject({ errors: $errors.getState() });
         }
       }
-      const values = {
-        shapedTruthyValues: $shapedTruthyValues.getState(),
-        shapedValues: $shapedValues.getState(),
-        truthyValues: $truthyValues.getState(),
-        values: $values.getState(),
-      };
       try {
-        await cb(values);
+        await cb($values.getState());
       } catch (remoteErrors) {
         return Promise.reject({ remoteErrors });
       }
@@ -142,20 +115,14 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   });
 
   return {
+    name,
     $changes,
     $errors,
-    $shapedValues,
-    $shapedTruthyValues,
-    $submitting: submitRemote.pending,
-    $touched,
-    $touches,
-    $truthyValues,
     $valid,
     $values,
-    name,
-    reset,
-    submit,
-    submitRemote,
+    $touched,
+    $touches,
+    $submitting: submitRemote.pending,
     get config() {
       return config;
     },
@@ -165,6 +132,9 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     get fields() {
       return fields;
     },
+    reset,
+    submit,
+    submitRemote,
     getField: (name) => fields[name],
     registerField: ({ name, ...fieldConfig }) => {
       if (fields[name]) {

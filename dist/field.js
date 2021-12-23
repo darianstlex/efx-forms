@@ -154,6 +154,7 @@ export var createField = function (_a, _b) {
         updateError({ name: name, error: error });
     };
     return {
+        name: name,
         $value: $value,
         $touched: $touched,
         $errors: $errors,

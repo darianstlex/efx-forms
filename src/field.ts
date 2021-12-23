@@ -149,6 +149,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   };
 
   return {
+    name,
     $value,
     $touched,
     $errors,
