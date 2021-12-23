@@ -14,8 +14,8 @@ export var shapeFy = function (values) { return reduce(values, function (acc, va
 /**
  * Return store with truthy values only
  */
-export var $truthyFy = function ($store) { return $store.map(truthyFy); };
+export var truthyFyStore = function ($store) { return $store.map(truthyFy); };
 /**
  * Transform flat to structured store
  */
-export var $shapeFy = function ($store) { return $store.map(shapeFy); };
+export var shapeFyStore = function ($store) { return $store.map(shapeFy); };

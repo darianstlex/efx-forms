@@ -18,9 +18,9 @@ export const shapeFy = (values: {}) => reduce(values, (acc, val, key) => set(acc
 /**
  * Return store with truthy values only
  */
-export const $truthyFy = ($store) => $store.map(truthyFy);
+export const truthyFyStore = ($store) => $store.map(truthyFy);
 
 /**
  * Transform flat to structured store
  */
-export const $shapeFy = ($store) => $store.map(shapeFy);
+export const shapeFyStore = ($store) => $store.map(shapeFy);

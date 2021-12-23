@@ -11,8 +11,8 @@ export declare const shapeFy: (values: {}) => {};
 /**
  * Return store with truthy values only
  */
-export declare const $truthyFy: ($store: any) => any;
+export declare const truthyFyStore: ($store: any) => any;
 /**
  * Transform flat to structured store
  */
-export declare const $shapeFy: ($store: any) => any;
+export declare const shapeFyStore: ($store: any) => any;
