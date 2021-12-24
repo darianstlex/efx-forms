@@ -29,3 +29,6 @@ export const positive = ({ msg = 'Must be a positive number' } = {}): TFieldVali
 
 export const negative = ({ msg = 'Must be a negative number' } = {}): TFieldValidator =>
   (val: string | number) => Number(val) >= 0 ? msg : false;
+
+export const number = ({ msg = 'Must be a number' } = {}): TFieldValidator =>
+  (val: string) => isNaN(Number(val)) ? msg : false;

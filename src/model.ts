@@ -219,9 +219,7 @@ export interface REfxFieldProps {
   validateOnChange?: IFieldConfig['validateOnChange'];
   /** PROPERTY - component - to be rendered */
   Field: ComponentType<any>;
-  /** PROPERTY - internal use */
-  form?: IForm;
-  /** PROPERTY - internal use */
-  formConfig?: Omit<IFormConfig, 'name'>;
+  /** PROPERTY - to assign field to the specific form if outside of form context */
+  formName?: string;
   [any: string]: any;
 }

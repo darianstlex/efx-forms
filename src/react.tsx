@@ -1,25 +1,30 @@
-import React, { FormEvent, ReactElement, ReactNode, useEffect, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, FormEvent } from 'react';
 import { useStore } from 'effector-react';
-import omit from 'lodash-es/omit';
 
-import { createForm, formConfigDefault } from './form';
+import { createForm, formConfigDefault, getForm } from './form';
 import { fieldConfigDefault } from './field';
-import { IField, IFieldConfig, IForm, IFormConfig, REfxFieldProps, REfxFormProps } from './model';
+import { IField, IFieldConfig, IForm, REfxFieldProps, REfxFormProps } from './model';
+
+export const FormNameContext = createContext(formConfigDefault.name);
 
 export const REfxForm = ({
   children = null,
   onSubmit = formConfigDefault.onSubmit,
+  name = formConfigDefault.name,
   remoteValidation = formConfigDefault.remoteValidation,
   skipClientValidation = formConfigDefault.skipClientValidation,
-  name = formConfigDefault.name,
   initialValues = formConfigDefault.initialValues,
   validateOnBlur = formConfigDefault.validateOnBlur,
   validateOnChange = formConfigDefault.validateOnChange,
-  validations,
+  validations = formConfigDefault.validations,
 }: REfxFormProps) => {
-  const form: IForm = useMemo(() => {
-    return createForm({ name });
-  }, [name]);
+  const form: IForm = useMemo(() => createForm({
+    name,
+    initialValues,
+    validateOnBlur,
+    validateOnChange,
+    formValidations: validations,
+  }), [name, initialValues, validateOnBlur, validateOnChange, validations]);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
@@ -29,59 +34,52 @@ export const REfxForm = ({
     form.submit({ cb: onSubmit });
   };
 
-  const elements: ReactNode[] = React.Children.toArray(children);
   return (
-    <form onSubmit={submit}>
-      {elements.map((field) => {
-        const isExField = (field as any)?.type?.displayName === 'REfxField';
-        return isExField ? React.cloneElement(field as ReactElement, {
-          form,
-          formConfig: {
-            initialValues,
-            validateOnBlur,
-            validateOnChange,
-            formValidations: validations,
-          } as Partial<IFormConfig>,
-        }) : field;
-      })}
-    </form>
+    <FormNameContext.Provider value={name}>
+      <form onSubmit={submit}>{children}</form>
+    </FormNameContext.Provider>
   );
 };
 
 REfxForm.displayName = 'REfxForm';
 
-export const REfxField = ({
-  Field,
-  form = createForm({ name: formConfigDefault.name }),
-  name,
-  formConfig: {
-    initialValues = formConfigDefault.initialValues,
-    formValidations = formConfigDefault.validations,
-    ...formConfig
-  } = omit(formConfigDefault, ['name']),
-  initialValue = initialValues[name],
-  parse = fieldConfigDefault.parse,
-  format = fieldConfigDefault.format,
-  validators = formValidations[name] || fieldConfigDefault.validators,
-  validateOnBlur,
-  validateOnChange,
-  ...props
-}: REfxFieldProps) => {
+/**
+ * Return parent or requested form instance
+ */
+export const useForm = (name?: string): IForm => {
+  const formName = useContext(FormNameContext);
+  return useMemo(() => getForm(name || formName), [name, formName]);
+}
+
+export const REfxField = ({ Field, name, formName, ...rest }: REfxFieldProps) => {
+  const { config, fields, registerField } = useForm(formName);
+  const { name: N, initialValues = {}, formValidations = {}, ...formConfig } = config;
+
+  const {
+    initialValue = initialValues[name],
+    parse = fieldConfigDefault.parse,
+    format = fieldConfigDefault.format,
+    validators = formValidations[name] || fieldConfigDefault.validators,
+    validateOnBlur = formConfig.validateOnBlur,
+    validateOnChange = formConfig.validateOnChange,
+    ...props
+  } = rest;
+
   const { $value, $errors, onChange, onBlur, setActive }: Partial<IField> = useMemo(() => {
-    const field = form.fields[name];
+    const field = fields[name];
+
     const fieldConfig = {
       name,
-      form,
       initialValue,
       parse,
       validators,
       validateOnBlur,
       validateOnChange,
-      ...formConfig,
     } as Omit<IFieldConfig, 'format'>;
     field && (field.config = fieldConfig);
-    return field || form.registerField(fieldConfig);
-  }, [form, name, initialValue, parse, validators, validateOnBlur, validateOnChange, formConfig]);
+
+    return field || registerField(fieldConfig);
+  }, [name, initialValue, parse, validators, validateOnBlur, validateOnChange, formConfig]);
 
   useEffect(() => {
     setActive(true);
@@ -91,11 +89,12 @@ export const REfxField = ({
   }, []);
 
   const value = useStore($value) || '';
-  const [error] = useStore($errors);
+  const [error, ...errors] = useStore($errors);
 
   return (
     <Field {...{
       error,
+      errors,
       name,
       value: format(value),
       onChange,

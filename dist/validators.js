@@ -38,3 +38,7 @@ export var negative = function (_a) {
     var _b = _a === void 0 ? {} : _a, _c = _b.msg, msg = _c === void 0 ? 'Must be a negative number' : _c;
     return function (val) { return Number(val) >= 0 ? msg : false; };
 };
+export var number = function (_a) {
+    var _b = _a === void 0 ? {} : _a, _c = _b.msg, msg = _c === void 0 ? 'Must be a number' : _c;
+    return function (val) { return isNaN(Number(val)) ? msg : false; };
+};

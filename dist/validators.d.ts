@@ -36,3 +36,6 @@ export declare const positive: ({ msg }?: {
 export declare const negative: ({ msg }?: {
     msg?: string | undefined;
 }) => TFieldValidator;
+export declare const number: ({ msg }?: {
+    msg?: string | undefined;
+}) => TFieldValidator;
