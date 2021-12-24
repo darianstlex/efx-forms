@@ -1,5 +1,5 @@
 import { Effect, Event, Store } from 'effector';
-import { ComponentType, ReactNode } from 'react';
+import { ComponentType, ReactElement, ReactNode } from 'react';
 
 export type TFieldValue = string | number | null | boolean | [];
 export type TFieldValidator = (value: any) => string | false
@@ -225,7 +225,7 @@ export interface REfxFieldProps {
 }
 
 export interface REfxWhenProps {
-  children: ReactNode;
+  children: ReactElement;
   /** PROPERTY - form name to check against */
   form?: string;
   /** METHOD - check - accepts form values and return boolean, if true render children */
