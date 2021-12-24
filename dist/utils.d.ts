@@ -12,8 +12,8 @@ export declare const shapeFy: (values?: {}) => {};
 /**
  * Return store with truthy values only
  */
-export declare const truthyFyStore: ($store: Store<any>) => Store<import("lodash").Dictionary<unknown>>;
+export declare const truthyFyStore: ($store: Store<{}>) => Store<import("lodash").Dictionary<unknown>>;
 /**
  * Transform flat to structured store
  */
-export declare const shapeFyStore: ($store: Store<any>) => Store<{}>;
+export declare const shapeFyStore: ($store: Store<{}>) => Store<{}>;
