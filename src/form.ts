@@ -40,6 +40,8 @@ export const forms: IForms = {
   [formConfigDefault.name]: {} as IForm,
 };
 
+const hasTruthy = (object) => Object.values(object).some((it) => it);
+
 const createFormHandler = (formConfig: IFormConfig): IForm => {
   let config: IFormConfig = { ...formConfig };
   const { name } = formConfig;
@@ -62,7 +64,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Calculates form validation
    */
-  const $valid = $errors.map((state) => !isEmpty(state) ? !Object.values(state).some((it) => !it) : true);
+  const $valid = $errors.map((state) => !isEmpty(state) ? !hasTruthy(state) : true);
 
   /**
    * Fields status store - keeps fields activity / visibility status
@@ -79,7 +81,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Calculates form touched
    */
-  const $touched = $touches.map((state) => !isEmpty(state) ? !Object.values(state).some((it) => !it): true);
+  const $touched = $touches.map((state) => !isEmpty(state) ? !hasTruthy(state) : true);
 
   /**
    * Values store - keeps all fields values

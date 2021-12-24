@@ -38,9 +38,11 @@ export var REfxForm = function (_a) {
     var submit = function (event) {
         event.preventDefault();
         if (remoteValidation) {
-            return form.submitRemote({ cb: onSubmit, skipClientValidation: skipClientValidation });
+            form.submitRemote({ cb: onSubmit, skipClientValidation: skipClientValidation });
         }
-        form.submit({ cb: onSubmit });
+        else {
+            form.submit({ cb: onSubmit, skipClientValidation: skipClientValidation });
+        }
     };
     return (_jsx(FormNameContext.Provider, __assign({ value: name }, { children: _jsx("form", __assign({ onSubmit: submit }, { children: children }), void 0) }), void 0));
 };

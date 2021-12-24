@@ -76,6 +76,7 @@ export var formConfigDefault = {
 export var forms = (_a = {},
     _a[formConfigDefault.name] = {},
     _a);
+var hasTruthy = function (object) { return Object.values(object).some(function (it) { return it; }); };
 var createFormHandler = function (formConfig) {
     var config = __assign({}, formConfig);
     var name = formConfig.name;
@@ -98,7 +99,7 @@ var createFormHandler = function (formConfig) {
     /**
      * Calculates form validation
      */
-    var $valid = $errors.map(function (state) { return !isEmpty(state) ? !Object.values(state).some(function (it) { return !it; }) : true; });
+    var $valid = $errors.map(function (state) { return !isEmpty(state) ? !hasTruthy(state) : true; });
     /**
      * Fields status store - keeps fields activity / visibility status
      */
@@ -120,7 +121,7 @@ var createFormHandler = function (formConfig) {
     /**
      * Calculates form touched
      */
-    var $touched = $touches.map(function (state) { return !isEmpty(state) ? !Object.values(state).some(function (it) { return !it; }) : true; });
+    var $touched = $touches.map(function (state) { return !isEmpty(state) ? !hasTruthy(state) : true; });
     /**
      * Values store - keeps all fields values
      */

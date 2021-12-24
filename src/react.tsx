@@ -29,9 +29,10 @@ export const REfxForm = ({
   const submit = (event: FormEvent) => {
     event.preventDefault();
     if (remoteValidation) {
-      return form.submitRemote({ cb: onSubmit, skipClientValidation });
+      form.submitRemote({ cb: onSubmit, skipClientValidation });
+    } else {
+      form.submit({ cb: onSubmit, skipClientValidation });
     }
-    form.submit({ cb: onSubmit });
   };
 
   return (
