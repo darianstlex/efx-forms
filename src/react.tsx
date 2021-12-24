@@ -1,9 +1,10 @@
 import React, { FormEvent, ReactElement, ReactNode, useMemo } from 'react';
 import { useStore } from 'effector-react';
+import omit from 'lodash-es/omit';
+
 import { createForm, formConfigDefault } from './form';
 import { fieldConfigDefault } from './field';
 import { IField, IFieldConfig, IForm, IFormConfig, REfxFieldProps, REfxFormProps } from './model';
-import omit from 'lodash-es/omit';
 
 export const REfxForm = ({
   children = null,

@@ -1,6 +1,7 @@
 import { Effect, guard, sample } from 'effector';
-import { domain } from './utils';
 import isEmpty from 'lodash-es/isEmpty';
+
+import { domain } from './utils';
 import { createField } from './field';
 import {
   IFormErrorUpdate,

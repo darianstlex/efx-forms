@@ -23,9 +23,9 @@ var __rest = (this && this.__rest) || function (s, e) {
 import { jsx as _jsx } from "react/jsx-runtime";
 import React, { useMemo } from 'react';
 import { useStore } from 'effector-react';
+import omit from 'lodash-es/omit';
 import { createForm, formConfigDefault } from './form';
 import { fieldConfigDefault } from './field';
-import omit from 'lodash-es/omit';
 export var REfxForm = function (_a) {
     var _b = _a.children, children = _b === void 0 ? null : _b, _c = _a.onSubmit, onSubmit = _c === void 0 ? formConfigDefault.onSubmit : _c, _d = _a.remoteValidation, remoteValidation = _d === void 0 ? formConfigDefault.remoteValidation : _d, _e = _a.skipClientValidation, skipClientValidation = _e === void 0 ? formConfigDefault.skipClientValidation : _e, _f = _a.name, name = _f === void 0 ? formConfigDefault.name : _f, _g = _a.initialValues, initialValues = _g === void 0 ? formConfigDefault.initialValues : _g, _h = _a.validateOnBlur, validateOnBlur = _h === void 0 ? formConfigDefault.validateOnBlur : _h, _j = _a.validateOnChange, validateOnChange = _j === void 0 ? formConfigDefault.validateOnChange : _j, validations = _a.validations;
     var form = useMemo(function () {

@@ -58,8 +58,8 @@ var __rest = (this && this.__rest) || function (s, e) {
 };
 var _a;
 import { guard, sample } from 'effector';
-import { domain } from './utils';
 import isEmpty from 'lodash-es/isEmpty';
+import { domain } from './utils';
 import { createField } from './field';
 var store = domain.store, effect = domain.effect, event = domain.event;
 export var formConfigDefault = {
