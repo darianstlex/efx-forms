@@ -1,10 +1,9 @@
-/// <reference types="lodash" />
 import { Domain, Store } from 'effector';
 export declare const domain: Domain;
 /**
  * Return truthy values only
  */
-export declare const truthyFy: (values?: {}) => import("lodash").Dictionary<unknown>;
+export declare const truthyFy: (values?: {}) => {};
 /**
  * Transform flat to structured object
  */
@@ -12,7 +11,7 @@ export declare const shapeFy: (values?: {}) => {};
 /**
  * Return store with truthy values only
  */
-export declare const truthyFyStore: ($store: Store<{}>) => Store<import("lodash").Dictionary<unknown>>;
+export declare const truthyFyStore: ($store: Store<{}>) => Store<{}>;
 /**
  * Transform flat to structured store
  */

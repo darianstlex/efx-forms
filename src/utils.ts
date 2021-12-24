@@ -8,12 +8,12 @@ export const domain: Domain = createDomain('forms');
 /**
  * Return truthy values only
  */
-export const truthyFy = (values = {}) => pickBy(values, Boolean);
+export const truthyFy = (values = {}): {} => pickBy(values, Boolean);
 
 /**
  * Transform flat to structured object
  */
-export const shapeFy = (values = {}) => reduce(values, (acc, val, key) => set(acc, key, val), {});
+export const shapeFy = (values = {}): {} => reduce(values, (acc, val, key) => set(acc, key, val), {});
 
 /**
  * Return store with truthy values only
