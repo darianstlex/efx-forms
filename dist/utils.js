@@ -6,11 +6,17 @@ export var domain = createDomain('forms');
 /**
  * Return truthy values only
  */
-export var truthyFy = function (values) { return pickBy(values, Boolean); };
+export var truthyFy = function (values) {
+    if (values === void 0) { values = {}; }
+    return pickBy(values, Boolean);
+};
 /**
  * Transform flat to structured object
  */
-export var shapeFy = function (values) { return reduce(values, function (acc, val, key) { return set(acc, key, val); }, {}); };
+export var shapeFy = function (values) {
+    if (values === void 0) { values = {}; }
+    return reduce(values, function (acc, val, key) { return set(acc, key, val); }, {});
+};
 /**
  * Return store with truthy values only
  */
