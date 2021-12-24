@@ -7,6 +7,17 @@
   "files": [
     "/dist"
   ],
+  "exports": {
+    "./react": "./dist/react.js",
+    "./validators": "./dist/validators.js",
+    "./package.json": "./package.json"
+  },
+  "typesVersions": {
+    "*": {
+      "react": ["dist/react.d.ts"],
+      "validators": ["dist/validators.d.ts"]
+    }
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc",
