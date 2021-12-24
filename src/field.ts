@@ -17,6 +17,7 @@ export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
 export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format'>, {
   formChange,
   resetField,
+  updateActive,
   updateError,
   updateTouch,
   updateValue,
@@ -25,12 +26,13 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   let config = { name, ...fieldConfig };
 
   const update = event<TFieldValue>(`${name}-field-update`);
-  const reset = event<void>(`${name}-field-reset`);
   const validate = event<void>(`${name}-field-validate`);
+  const setActive = event<boolean>(`${name}-field-active`);
   const setError = event<string>(`${name}-field-push-error`);
   const resetError = event<void>(`${name}-field-reset-error`);
   const onChange = event<TFieldValue>(`${name}-field-onChange`);
   const onBlur = event<void>(`${name}-field-onBlur`);
+  const reset = event<void>(`${name}-field-reset`);
 
   /**
    * Field value store
@@ -56,6 +58,22 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
     source: $value,
     fn: (value) => ({ name, value }),
     target: updateValue,
+  });
+
+  /**
+   * Field touched store - true onChange
+   */
+  const $active = store<boolean>(false, { name: `$${name}-field-active` })
+    .on(setActive, (_, active) => active)
+    .reset(reset);
+
+  /**
+   * Update form active fields on activity change
+   */
+  sample({
+    source: $active,
+    fn: (active) => ({ name, active }),
+    target: updateActive,
   });
 
   /**
@@ -151,6 +169,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
 
   return {
     name,
+    $active,
     $value,
     $touched,
     $errors,
@@ -159,9 +178,13 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
     update,
     reset,
     validate,
+    setActive,
     setError,
     resetError,
     syncData,
+    get active() {
+      return $active.getState();
+    },
     get config() {
       return config;
     },

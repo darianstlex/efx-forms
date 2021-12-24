@@ -21,7 +21,7 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import { jsx as _jsx } from "react/jsx-runtime";
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { useStore } from 'effector-react';
 import omit from 'lodash-es/omit';
 import { createForm, formConfigDefault } from './form';
@@ -61,7 +61,13 @@ export var REfxField = function (_a) {
         var fieldConfig = __assign({ name: name, form: form, initialValue: initialValue, parse: parse, validators: validators, validateOnBlur: validateOnBlur, validateOnChange: validateOnChange }, formConfig);
         field && (field.config = fieldConfig);
         return field || form.registerField(fieldConfig);
-    }, [form, name, initialValue, parse, validators, validateOnBlur, validateOnChange, formConfig]), $value = _l.$value, $errors = _l.$errors, onChange = _l.onChange, onBlur = _l.onBlur;
+    }, [form, name, initialValue, parse, validators, validateOnBlur, validateOnChange, formConfig]), $value = _l.$value, $errors = _l.$errors, onChange = _l.onChange, onBlur = _l.onBlur, setActive = _l.setActive;
+    useEffect(function () {
+        setActive(true);
+        return function () {
+            setActive(false);
+        };
+    }, []);
     var value = useStore($value) || '';
     var error = useStore($errors)[0];
     return (_jsx(Field, __assign({}, __assign({ error: error, name: name, value: format(value), onChange: onChange, onBlur: function () { return onBlur(); } }, props)), void 0));

@@ -21,6 +21,10 @@ export interface IFieldConfig {
 export interface IField {
     /** PROPERTY - Field name */
     name: string;
+    /** PROPERTY - Field active / visible */
+    active: boolean;
+    /** $$STORE - Field active / mounted */
+    $active: Store<boolean>;
     /** $$STORE - Field value */
     $value: Store<TFieldValue>;
     /** $$STORE - Field touched */
@@ -37,6 +41,8 @@ export interface IField {
     reset: Event<void>;
     /** EVENT - Field validate - runs field validation */
     validate: Event<void>;
+    /** EVENT - Field setActive - set field activity / visibility */
+    setActive: Event<boolean>;
     /** EVENT - Field setError - set provided field error */
     setError: Event<string>;
     /** EVENT - Field reset errors */
@@ -49,6 +55,7 @@ export interface IField {
 export interface IFormHooks {
     formChange: Event<IFormValueUpdate>;
     resetField: Event<void>;
+    updateActive: Event<IFormActiveUpdate>;
     updateError: Event<IFormErrorUpdate>;
     updateTouch: Event<IFormToucheUpdate>;
     updateValue: Event<IFormValueUpdate>;
@@ -97,6 +104,13 @@ export interface IFormToucheUpdate {
     name: string;
     touched: boolean;
 }
+export interface IFormActive {
+    [name: string]: boolean;
+}
+export interface IFormActiveUpdate {
+    name: string;
+    active: boolean;
+}
 export interface IFormValues {
     [name: string]: TFieldValue;
 }
@@ -117,6 +131,10 @@ export interface IFormFields {
 export interface IForm {
     /** PROPERTY - Form name */
     name: string;
+    /** $$STORE - Form active fields - all fields statuses - flat */
+    $active: Store<IFormActive>;
+    /** $$STORE - Form active values - all active / visible fields values - flat */
+    $actives: Store<IFormValues>;
     /** $$STORE - Form values - all fields values on field onChange event - flat */
     $changes: Store<IFormValues>;
     /** $$STORE - Form values - all fields values - flat */

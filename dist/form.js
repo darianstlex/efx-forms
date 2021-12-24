@@ -57,8 +57,9 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 var _a;
-import { guard, sample } from 'effector';
+import { combine, guard, sample } from 'effector';
 import isEmpty from 'lodash-es/isEmpty';
+import pickBy from 'lodash-es/pickBy';
 import { domain } from './utils';
 import { createField } from './field';
 var store = domain.store, effect = domain.effect, event = domain.event;
@@ -79,6 +80,7 @@ var createFormHandler = function (formConfig) {
     var config = __assign({}, formConfig);
     var name = formConfig.name;
     var fields = {};
+    var updateActive = event("".concat(name, "-form-update-field-state"));
     var updateError = event("".concat(name, "-form-update-validation"));
     var updateTouch = event("".concat(name, "-form-update-touch"));
     var updateValue = event("".concat(name, "-form-update-value"));
@@ -97,6 +99,15 @@ var createFormHandler = function (formConfig) {
      * Calculates form validation
      */
     var $valid = $errors.map(function (state) { return !isEmpty(state) ? !Object.values(state).some(function (it) { return !it; }) : true; });
+    /**
+     * Fields status store - keeps fields activity / visibility status
+     */
+    var $active = store({}, { name: "$".concat(name, "-form-active") })
+        .on(updateActive, function (state, _a) {
+        var _b;
+        var name = _a.name, active = _a.active;
+        return (__assign(__assign({}, state), (_b = {}, _b[name] = active, _b)));
+    });
     /**
      * Touches store - keeps all fields touches
      */
@@ -186,6 +197,8 @@ var createFormHandler = function (formConfig) {
     });
     return {
         name: name,
+        $active: $active,
+        $actives: combine($active, $values, function (active, values) { return pickBy(values, function (_, name) { return active[name]; }); }),
         $changes: $changes,
         $errors: $errors,
         $valid: $valid,
@@ -214,6 +227,7 @@ var createFormHandler = function (formConfig) {
             fields[name] = createField(__assign({ name: name }, fieldConfig), {
                 formChange: onChange,
                 resetField: reset,
+                updateActive: updateActive,
                 updateError: updateError,
                 updateTouch: updateTouch,
                 updateValue: updateValue,

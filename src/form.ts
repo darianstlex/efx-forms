@@ -1,5 +1,6 @@
-import { Effect, guard, sample } from 'effector';
+import { combine, Effect, guard, sample } from 'effector';
 import isEmpty from 'lodash-es/isEmpty';
+import pickBy from 'lodash-es/pickBy';
 
 import { domain } from './utils';
 import { createField } from './field';
@@ -18,6 +19,8 @@ import {
   IForm,
   IFormFields,
   IFormConfigDefault,
+  IFormActive,
+  IFormActiveUpdate,
 } from './model';
 
 const { store, effect, event } = domain;
@@ -43,6 +46,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
 
   const fields: IFormFields = {};
 
+  const updateActive = event<IFormActiveUpdate>(`${name}-form-update-field-state`);
   const updateError = event<IFormErrorUpdate>(`${name}-form-update-validation`);
   const updateTouch = event<IFormToucheUpdate>(`${name}-form-update-touch`);
   const updateValue = event<IFormValueUpdate>(`${name}-form-update-value`);
@@ -59,6 +63,12 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Calculates form validation
    */
   const $valid = $errors.map((state) => !isEmpty(state) ? !Object.values(state).some((it) => !it) : true);
+
+  /**
+   * Fields status store - keeps fields activity / visibility status
+   */
+  const $active = store<IFormActive>({}, { name: `$${name}-form-active`})
+    .on(updateActive, (state, { name, active }) => ({ ...state, [name]: active }));
 
   /**
    * Touches store - keeps all fields touches
@@ -121,6 +131,12 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
 
   return {
     name,
+    $active,
+    $actives: combine(
+      $active,
+      $values,
+      (active, values) => pickBy(values, (_, name) => active[name])
+    ),
     $changes,
     $errors,
     $valid,
@@ -150,6 +166,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
         {
         formChange: onChange,
         resetField: reset,
+        updateActive,
         updateError,
         updateTouch,
         updateValue,

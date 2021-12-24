@@ -1,4 +1,4 @@
-import React, { FormEvent, ReactElement, ReactNode, useMemo } from 'react';
+import React, { FormEvent, ReactElement, ReactNode, useEffect, useMemo } from 'react';
 import { useStore } from 'effector-react';
 import omit from 'lodash-es/omit';
 
@@ -67,7 +67,7 @@ export const REfxField = ({
   validateOnChange,
   ...props
 }: REfxFieldProps) => {
-  const { $value, $errors, onChange, onBlur }: Partial<IField> = useMemo(() => {
+  const { $value, $errors, onChange, onBlur, setActive }: Partial<IField> = useMemo(() => {
     const field = form.fields[name];
     const fieldConfig = {
       name,
@@ -82,6 +82,13 @@ export const REfxField = ({
     field && (field.config = fieldConfig);
     return field || form.registerField(fieldConfig);
   }, [form, name, initialValue, parse, validators, validateOnBlur, validateOnChange, formConfig]);
+
+  useEffect(() => {
+    setActive(true);
+    return () => {
+      setActive(false);
+    };
+  }, []);
 
   const value = useStore($value) || '';
   const [error] = useStore($errors);

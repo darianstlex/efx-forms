@@ -32,16 +32,17 @@ export var fieldConfigDefault = {
     validateOnChange: false,
 };
 export var createField = function (_a, _b) {
-    var formChange = _b.formChange, resetField = _b.resetField, updateError = _b.updateError, updateTouch = _b.updateTouch, updateValue = _b.updateValue, setRemoteErrors = _b.setRemoteErrors;
+    var formChange = _b.formChange, resetField = _b.resetField, updateActive = _b.updateActive, updateError = _b.updateError, updateTouch = _b.updateTouch, updateValue = _b.updateValue, setRemoteErrors = _b.setRemoteErrors;
     var name = _a.name, fieldConfig = __rest(_a, ["name"]);
     var config = __assign({ name: name }, fieldConfig);
     var update = event("".concat(name, "-field-update"));
-    var reset = event("".concat(name, "-field-reset"));
     var validate = event("".concat(name, "-field-validate"));
+    var setActive = event("".concat(name, "-field-active"));
     var setError = event("".concat(name, "-field-push-error"));
     var resetError = event("".concat(name, "-field-reset-error"));
     var onChange = event("".concat(name, "-field-onChange"));
     var onBlur = event("".concat(name, "-field-onBlur"));
+    var reset = event("".concat(name, "-field-reset"));
     /**
      * Field value store
      */
@@ -64,6 +65,20 @@ export var createField = function (_a, _b) {
         source: $value,
         fn: function (value) { return ({ name: name, value: value }); },
         target: updateValue,
+    });
+    /**
+     * Field touched store - true onChange
+     */
+    var $active = store(false, { name: "$".concat(name, "-field-active") })
+        .on(setActive, function (_, active) { return active; })
+        .reset(reset);
+    /**
+     * Update form active fields on activity change
+     */
+    sample({
+        source: $active,
+        fn: function (active) { return ({ name: name, active: active }); },
+        target: updateActive,
     });
     /**
      * Field touched store - true onChange
@@ -155,6 +170,7 @@ export var createField = function (_a, _b) {
     };
     return {
         name: name,
+        $active: $active,
         $value: $value,
         $touched: $touched,
         $errors: $errors,
@@ -163,9 +179,13 @@ export var createField = function (_a, _b) {
         update: update,
         reset: reset,
         validate: validate,
+        setActive: setActive,
         setError: setError,
         resetError: resetError,
         syncData: syncData,
+        get active() {
+            return $active.getState();
+        },
         get config() {
             return config;
         },
