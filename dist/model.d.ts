@@ -204,7 +204,7 @@ export interface REfxFieldProps {
 export interface REfxWhenProps {
     children: ReactNode;
     /** PROPERTY - form name to check against */
-    form: string;
+    form?: string;
     /** METHOD - check - accepts form values and return boolean, if true render children */
     check: (values: IFormValues) => boolean;
 }
