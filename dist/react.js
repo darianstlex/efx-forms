@@ -34,11 +34,25 @@ export var useForm = function (name) {
     return useMemo(function () { return getForm(name || formName); }, [name, formName]);
 };
 /**
- * Return field instance belongs to the current or given form
+ * Return form values - flat
+ */
+export var useFormValues = function (name) {
+    var $values = useForm(name).$values;
+    return useStore($values);
+};
+/**
+ * Return field instance belongs to the current or provided form
  */
 export var useField = function (name, formName) {
     var form = useForm(formName);
     return useMemo(function () { return form.fields[name]; }, [name, formName]);
+};
+/**
+ * Return field value of the current or provided form
+ */
+export var useFieldValue = function (name, formName) {
+    var $value = useField(name, formName).$value;
+    return useStore($value);
 };
 export var REfxForm = function (_a) {
     var _b = _a.children, children = _b === void 0 ? null : _b, _c = _a.onSubmit, onSubmit = _c === void 0 ? formConfigDefault.onSubmit : _c, _d = _a.name, name = _d === void 0 ? formConfigDefault.name : _d, _e = _a.remoteValidation, remoteValidation = _e === void 0 ? formConfigDefault.remoteValidation : _e, _f = _a.skipClientValidation, skipClientValidation = _f === void 0 ? formConfigDefault.skipClientValidation : _f, _g = _a.initialValues, initialValues = _g === void 0 ? formConfigDefault.initialValues : _g, _h = _a.validateOnBlur, validateOnBlur = _h === void 0 ? formConfigDefault.validateOnBlur : _h, _j = _a.validateOnChange, validateOnChange = _j === void 0 ? formConfigDefault.validateOnChange : _j, _k = _a.validations, validations = _k === void 0 ? formConfigDefault.validations : _k;
@@ -90,3 +104,12 @@ export var REfxField = function (_a) {
     return (_jsx(Field, __assign({}, __assign({ error: error, errors: errors, name: name, value: format(value), onChange: onChange, onBlur: function () { return onBlur(); } }, props)), void 0));
 };
 REfxField.displayName = 'REfxField';
+/**
+ * Conditional rendering component based on form values
+ */
+export var REfxWhen = function (_a) {
+    var children = _a.children, check = _a.check, form = _a.form;
+    var values = useFormValues(form);
+    return check(values) ? children : null;
+};
+REfxWhen.displayName = 'REfxWhen';

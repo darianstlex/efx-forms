@@ -1,7 +1,7 @@
 import { Effect, Event, Store } from 'effector';
 import { ComponentType, ReactNode } from 'react';
 
-export type TFieldValue = string | number | null | boolean;
+export type TFieldValue = string | number | null | boolean | [];
 export type TFieldValidator = (value: any) => string | false
 export type TFormErrors = { [name: string]: string };
 
@@ -222,4 +222,12 @@ export interface REfxFieldProps {
   /** PROPERTY - to assign field to the specific form if outside of form context */
   formName?: string;
   [any: string]: any;
+}
+
+export interface REfxWhenProps {
+  children: ReactNode;
+  /** PROPERTY - form name to check against */
+  form: string;
+  /** METHOD - check - accepts form values and return boolean, if true render children */
+  check: (values: IFormValues) => boolean;
 }

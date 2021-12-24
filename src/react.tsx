@@ -3,7 +3,15 @@ import { useStore } from 'effector-react';
 
 import { createForm, formConfigDefault, getForm } from './form';
 import { fieldConfigDefault } from './field';
-import { IField, IFieldConfig, IForm, REfxFieldProps, REfxFormProps } from './model';
+import {
+  IField,
+  IFieldConfig,
+  IForm,
+  IFormValues,
+  REfxFieldProps,
+  REfxFormProps, REfxWhenProps,
+  TFieldValue,
+} from './model';
 
 export const FormNameContext = createContext(formConfigDefault.name);
 
@@ -16,11 +24,27 @@ export const useForm = (name?: string): IForm => {
 }
 
 /**
- * Return field instance belongs to the current or given form
+ * Return form values - flat
+ */
+export const useFormValues = (name?: string): IFormValues => {
+  const { $values } = useForm(name);
+  return useStore($values);
+}
+
+/**
+ * Return field instance belongs to the current or provided form
  */
 export const useField = (name: string, formName?: string): IField => {
   const form = useForm(formName);
   return useMemo(() => form.fields[name], [name, formName]);
+}
+
+/**
+ * Return field value of the current or provided form
+ */
+export const useFieldValue = (name: string, formName?: string): TFieldValue => {
+  const { $value } = useField(name, formName);
+  return useStore($value);
 }
 
 export const REfxForm = ({
@@ -114,3 +138,13 @@ export const REfxField = ({ Field, name, formName, ...rest }: REfxFieldProps) =>
 };
 
 REfxField.displayName = 'REfxField';
+
+/**
+ * Conditional rendering component based on form values
+ */
+export const REfxWhen = ({ children, check, form }: REfxWhenProps) => {
+  const values = useFormValues(form);
+  return check(values) ? children : null;
+}
+
+REfxWhen.displayName = 'REfxWhen';
