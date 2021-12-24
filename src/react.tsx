@@ -7,6 +7,22 @@ import { IField, IFieldConfig, IForm, REfxFieldProps, REfxFormProps } from './mo
 
 export const FormNameContext = createContext(formConfigDefault.name);
 
+/**
+ * Return parent or requested form instance
+ */
+export const useForm = (name?: string): IForm => {
+  const formName = useContext(FormNameContext);
+  return useMemo(() => getForm(name || formName), [name, formName]);
+}
+
+/**
+ * Return field instance belongs to the current or given form
+ */
+export const useField = (name: string, formName?: string): IField => {
+  const form = useForm(formName);
+  return useMemo(() => form.fields[name], [name, formName]);
+}
+
 export const REfxForm = ({
   children = null,
   onSubmit = formConfigDefault.onSubmit,
@@ -43,14 +59,6 @@ export const REfxForm = ({
 };
 
 REfxForm.displayName = 'REfxForm';
-
-/**
- * Return parent or requested form instance
- */
-export const useForm = (name?: string): IForm => {
-  const formName = useContext(FormNameContext);
-  return useMemo(() => getForm(name || formName), [name, formName]);
-}
 
 export const REfxField = ({ Field, name, formName, ...rest }: REfxFieldProps) => {
   const { config, fields, registerField } = useForm(formName);

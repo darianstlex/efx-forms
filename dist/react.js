@@ -26,6 +26,20 @@ import { useStore } from 'effector-react';
 import { createForm, formConfigDefault, getForm } from './form';
 import { fieldConfigDefault } from './field';
 export var FormNameContext = createContext(formConfigDefault.name);
+/**
+ * Return parent or requested form instance
+ */
+export var useForm = function (name) {
+    var formName = useContext(FormNameContext);
+    return useMemo(function () { return getForm(name || formName); }, [name, formName]);
+};
+/**
+ * Return field instance belongs to the current or given form
+ */
+export var useField = function (name, formName) {
+    var form = useForm(formName);
+    return useMemo(function () { return form.fields[name]; }, [name, formName]);
+};
 export var REfxForm = function (_a) {
     var _b = _a.children, children = _b === void 0 ? null : _b, _c = _a.onSubmit, onSubmit = _c === void 0 ? formConfigDefault.onSubmit : _c, _d = _a.name, name = _d === void 0 ? formConfigDefault.name : _d, _e = _a.remoteValidation, remoteValidation = _e === void 0 ? formConfigDefault.remoteValidation : _e, _f = _a.skipClientValidation, skipClientValidation = _f === void 0 ? formConfigDefault.skipClientValidation : _f, _g = _a.initialValues, initialValues = _g === void 0 ? formConfigDefault.initialValues : _g, _h = _a.validateOnBlur, validateOnBlur = _h === void 0 ? formConfigDefault.validateOnBlur : _h, _j = _a.validateOnChange, validateOnChange = _j === void 0 ? formConfigDefault.validateOnChange : _j, _k = _a.validations, validations = _k === void 0 ? formConfigDefault.validations : _k;
     var form = useMemo(function () { return createForm({
@@ -47,13 +61,6 @@ export var REfxForm = function (_a) {
     return (_jsx(FormNameContext.Provider, __assign({ value: name }, { children: _jsx("form", __assign({ onSubmit: submit }, { children: children }), void 0) }), void 0));
 };
 REfxForm.displayName = 'REfxForm';
-/**
- * Return parent or requested form instance
- */
-export var useForm = function (name) {
-    var formName = useContext(FormNameContext);
-    return useMemo(function () { return getForm(name || formName); }, [name, formName]);
-};
 export var REfxField = function (_a) {
     var Field = _a.Field, name = _a.name, formName = _a.formName, rest = __rest(_a, ["Field", "name", "formName"]);
     var _b = useForm(formName), config = _b.config, fields = _b.fields, registerField = _b.registerField;
