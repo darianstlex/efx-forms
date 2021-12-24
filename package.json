@@ -8,12 +8,14 @@
     "/dist"
   ],
   "exports": {
+    ".": "./dist/index.js",
     "./react": "./dist/react.js",
     "./validators": "./dist/validators.js",
     "./package.json": "./package.json"
   },
   "typesVersions": {
     "*": {
+      ".": ["dist/index.d.ts"],
       "react": ["dist/react.d.ts"],
       "validators": ["dist/validators.d.ts"]
     }
