@@ -1,14 +1,16 @@
 {
   "name": "efx-forms",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Effector JS Forms",
   "main": "dist/index.js",
+  "type": "module",
   "types": "dist/index.d.ts",
   "files": [
     "/dist"
   ],
   "exports": {
     ".": "./dist/index.js",
+    "./": "./dist",
     "./react": "./dist/react.js",
     "./utils": "./dist/utils.js",
     "./validators": "./dist/validators.js",
