@@ -21,8 +21,10 @@ var __rest = (this && this.__rest) || function (s, e) {
     return t;
 };
 import { jsx as _jsx } from "react/jsx-runtime";
-import { createContext, useContext, useEffect, useMemo } from 'react';
+import { createContext, useCallback, useContext, useEffect, useMemo, } from 'react';
 import { useStore } from 'effector-react';
+import debounce from 'lodash-es/debounce';
+import isEmpty from 'lodash-es/isEmpty';
 import { createForm, formConfigDefault, getForm } from './form';
 import { fieldConfigDefault } from './field';
 export var FormNameContext = createContext(formConfigDefault.name);
@@ -105,11 +107,19 @@ export var REfxField = function (_a) {
 };
 REfxField.displayName = 'REfxField';
 /**
- * Conditional rendering component based on form values
+ * Conditional rendering based on form values
  */
 export var REfxWhen = function (_a) {
-    var children = _a.children, check = _a.check, form = _a.form;
-    var values = useFormValues(form);
-    return check(values) ? children : null;
+    var children = _a.children, check = _a.check, form = _a.form, setTo = _a.setTo, resetTo = _a.resetTo, _b = _a.updateDebounce, updateDebounce = _b === void 0 ? 0 : _b;
+    var formInst = useForm(form);
+    var values = useStore(formInst.$values);
+    var show = useMemo(function () { return check(values); }, [values]);
+    var updateDeb = useCallback(debounce(formInst.update, updateDebounce), [formInst, updateDebounce]);
+    useEffect(function () {
+        show && !isEmpty(setTo) && updateDeb(setTo);
+        !show && !isEmpty(resetTo) && updateDeb(resetTo);
+        return updateDeb.cancel;
+    }, [show]);
+    return show ? children : null;
 };
 REfxWhen.displayName = 'REfxWhen';

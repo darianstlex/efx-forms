@@ -26,9 +26,9 @@ export declare const REfxField: {
     displayName: string;
 };
 /**
- * Conditional rendering component based on form values
+ * Conditional rendering based on form values
  */
 export declare const REfxWhen: {
-    ({ children, check, form }: REfxWhenProps): React.ReactElement<any, string | React.JSXElementConstructor<any>> | null;
+    ({ children, check, form, setTo, resetTo, updateDebounce }: REfxWhenProps): React.ReactElement<any, string | React.JSXElementConstructor<any>> | null;
     displayName: string;
 };

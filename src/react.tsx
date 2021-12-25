@@ -1,5 +1,14 @@
-import React, { createContext, useContext, useEffect, useMemo, FormEvent } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  FormEvent,
+} from 'react';
 import { useStore } from 'effector-react';
+import debounce from 'lodash-es/debounce';
+import isEmpty from 'lodash-es/isEmpty';
 
 import { createForm, formConfigDefault, getForm } from './form';
 import { fieldConfigDefault } from './field';
@@ -140,11 +149,28 @@ export const REfxField = ({ Field, name, formName, ...rest }: REfxFieldProps) =>
 REfxField.displayName = 'REfxField';
 
 /**
- * Conditional rendering component based on form values
+ * Conditional rendering based on form values
  */
-export const REfxWhen = ({ children, check, form }: REfxWhenProps) => {
-  const values = useFormValues(form);
-  return check(values) ? children : null;
+export const REfxWhen = ({
+  children,
+  check,
+  form,
+  setTo,
+  resetTo,
+  updateDebounce = 0
+}: REfxWhenProps) => {
+  const formInst = useForm(form);
+  const values = useStore(formInst.$values);
+  const show = useMemo(() => check(values), [values]);
+  const updateDeb = useCallback(debounce(formInst.update, updateDebounce), [formInst, updateDebounce]);
+
+  useEffect(() => {
+    show && !isEmpty(setTo) && updateDeb(setTo as IFormValues);
+    !show && !isEmpty(resetTo) && updateDeb(resetTo as IFormValues);
+    return updateDeb.cancel;
+  }, [show]);
+
+  return show ? children : null;
 }
 
 REfxWhen.displayName = 'REfxWhen';

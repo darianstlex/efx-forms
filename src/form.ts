@@ -177,11 +177,16 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
           filter: ({ remoteErrors }) => !!remoteErrors,
         }),
       });
-      fields[name].syncData();
+      setTimeout(() => fields[name].syncData(), 0);
       return fields[name];
     },
     removeField: (name) => {
       delete(fields[name]);
+    },
+    update: (values) => {
+      Object.entries(values).forEach(([field, value]) => {
+        fields[field]?.update(value);
+      })
     },
   };
 };

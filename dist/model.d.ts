@@ -165,6 +165,8 @@ export interface IForm {
     registerField: (config: Omit<IFieldConfig, 'format'>) => IField;
     /** METHOD - Form remove field - delete field by name */
     removeField: (name: string) => void;
+    /** METHOD - Form update fields values */
+    update: (values: IFormValues) => void;
 }
 export interface IForms {
     [name: string]: IForm;
@@ -207,4 +209,10 @@ export interface REfxWhenProps {
     form?: string;
     /** METHOD - check - accepts form values and return boolean, if true render children */
     check: (values: IFormValues) => boolean;
+    /** PROPERTY - setTo set fields on show */
+    setTo?: IFormValues;
+    /** PROPERTY - setTo set fields on hide */
+    resetTo?: IFormValues;
+    /** PROPERTY - form update debounce - 0 */
+    updateDebounce?: number;
 }

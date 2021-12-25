@@ -240,11 +240,18 @@ var createFormHandler = function (formConfig) {
                     },
                 }),
             });
-            fields[name].syncData();
+            setTimeout(function () { return fields[name].syncData(); }, 0);
             return fields[name];
         },
         removeField: function (name) {
             delete (fields[name]);
+        },
+        update: function (values) {
+            Object.entries(values).forEach(function (_a) {
+                var _b;
+                var field = _a[0], value = _a[1];
+                (_b = fields[field]) === null || _b === void 0 ? void 0 : _b.update(value);
+            });
         },
     };
 };
