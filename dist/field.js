@@ -27,7 +27,7 @@ export var fieldConfigDefault = {
     parse: function (value) { return value; },
     format: function (value) { return value; },
     validators: [],
-    initialValue: null,
+    initialValue: '',
     validateOnBlur: true,
     validateOnChange: false,
 };
@@ -46,7 +46,7 @@ export var createField = function (_a, _b) {
     /**
      * Field value store
      */
-    var $value = store(config.initialValue || null, { name: "$".concat(name, "-field-value") })
+    var $value = store(config.initialValue, { name: "$".concat(name, "-field-value") })
         .on(update, function (_, value) { return value; })
         .on(onChange, function (_, value) { return config.parse(value); })
         .on(reset, function () { return config.initialValue || null; });
@@ -59,7 +59,7 @@ export var createField = function (_a, _b) {
         target: formChange,
     });
     /**
-     * Updates form values on form values changes
+     * Updates form values on field value changes
      */
     sample({
         source: $value,
@@ -69,7 +69,9 @@ export var createField = function (_a, _b) {
     /**
      * Field dirty store - true if diff to initial value
      */
-    var $dirty = $value.map(function (value) { return value !== config.initialValue; });
+    var $dirty = store(false, { name: "$".concat(name, "-field-dirty") })
+        .on(onChange, function (_, value) { return value !== config.initialValue; })
+        .reset(reset);
     /**
      * Updates form dirties on field dirty change
      */

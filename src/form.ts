@@ -95,7 +95,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Calculates form dirty
    */
-  const $dirty = $dirties.map((state) => !isEmpty(state) ? !hasTruthy(state) : true);
+  const $dirty = $dirties.map((state) => !isEmpty(state) ? hasTruthy(state) : false);
 
   /**
    * Values store - keeps all fields values

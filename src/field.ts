@@ -9,7 +9,7 @@ export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
   parse: value => value,
   format: value => value,
   validators: [],
-  initialValue: null,
+  initialValue: '',
   validateOnBlur: true,
   validateOnChange: false,
 };
@@ -38,7 +38,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   /**
    * Field value store
    */
-  const $value = store<TFieldValue>(config.initialValue || null, { name: `$${name}-field-value` })
+  const $value = store<TFieldValue>(config.initialValue, { name: `$${name}-field-value` })
     .on(update, (_, value) => value)
     .on(onChange, (_, value) => config.parse(value))
     .on(reset, () => config.initialValue || null);
@@ -53,7 +53,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   });
 
   /**
-   * Updates form values on form values changes
+   * Updates form values on field value changes
    */
   sample({
     source: $value,
@@ -64,7 +64,9 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   /**
    * Field dirty store - true if diff to initial value
    */
-  const $dirty = $value.map((value) => value !== config.initialValue);
+  const $dirty = store<boolean>(false, { name: `$${name}-field-dirty` })
+    .on(onChange, (_, value) => value !== config.initialValue)
+    .reset(reset);
 
   /**
    * Updates form dirties on field dirty change

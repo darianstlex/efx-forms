@@ -135,7 +135,7 @@ var createFormHandler = function (formConfig) {
     /**
      * Calculates form dirty
      */
-    var $dirty = $dirties.map(function (state) { return !isEmpty(state) ? !hasTruthy(state) : true; });
+    var $dirty = $dirties.map(function (state) { return !isEmpty(state) ? hasTruthy(state) : false; });
     /**
      * Values store - keeps all fields values
      */

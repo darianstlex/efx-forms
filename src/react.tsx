@@ -98,7 +98,7 @@ export const REfxField = ({ Field, name, formName, ...rest }: REfxFieldProps) =>
   const { name: N, initialValues = {}, formValidations = {}, ...formConfig } = config;
 
   const {
-    initialValue = initialValues[name],
+    initialValue = initialValues[name] || fieldConfigDefault.initialValue,
     parse = fieldConfigDefault.parse,
     format = fieldConfigDefault.format,
     validators = formValidations[name] || fieldConfigDefault.validators,
