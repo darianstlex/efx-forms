@@ -29,8 +29,10 @@ export interface IField {
   $active: Store<boolean>;
   /** $$STORE - Field value */
   $value: Store<TFieldValue>;
-  /** $$STORE - Field touched */
+  /** $$STORE - Field touched state */
   $touched: Store<boolean>;
+  /** $$STORE - Field dirty state */
+  $dirty: Store<boolean>;
   /** $$STORE - Field error messages on validation */
   $errors: Store<string[]>;
   /** EVENT - Field onChange */
@@ -60,6 +62,7 @@ export interface IFormHooks {
   resetField: Event<void>;
   updateActive: Event<IFormActiveUpdate>;
   updateError: Event<IFormErrorUpdate>;
+  updateDirty: Event<IFormDirtyUpdate>;
   updateTouch: Event<IFormToucheUpdate>;
   updateValue: Event<IFormValueUpdate>;
   setRemoteErrors: Event<IFormSubmitResponseError>;
@@ -116,6 +119,15 @@ export interface IFormToucheUpdate {
   touched: boolean;
 }
 
+export interface IFormDirties {
+  [name: string]: boolean;
+}
+
+export interface IFormDirtyUpdate {
+  name: string;
+  dirty: boolean;
+}
+
 export interface IFormActive {
   [name: string]: boolean;
 }
@@ -168,6 +180,10 @@ export interface IForm {
   $touched: Store<boolean>;
   /** $$STORE - Form touches - all fields touches - flat */
   $touches: Store<IFormTouches>;
+  /** $$STORE - Form dirty - true if diff from initial value */
+  $dirty: Store<boolean>;
+  /** $$STORE - Form dirties - all fields dirty state - flat */
+  $dirties: Store<IFormDirties>;
   /** EVENT - Form reset - resets form and all fields */
   reset: Event<void>;
   /** METHOD - Form submit - callback will be called with form values if form is valid - sync */

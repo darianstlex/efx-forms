@@ -84,6 +84,7 @@ var createFormHandler = function (formConfig) {
     var updateActive = event("".concat(name, "-form-update-field-state"));
     var updateError = event("".concat(name, "-form-update-validation"));
     var updateTouch = event("".concat(name, "-form-update-touch"));
+    var updateDirty = event("".concat(name, "-form-update-touch"));
     var updateValue = event("".concat(name, "-form-update-value"));
     var reset = event("".concat(name, "-form-reset"));
     var onChange = event("".concat(name, "-form-change"));
@@ -122,6 +123,19 @@ var createFormHandler = function (formConfig) {
      * Calculates form touched
      */
     var $touched = $touches.map(function (state) { return !isEmpty(state) ? !hasTruthy(state) : true; });
+    /**
+     * Dirties store - keeps all fields dirty
+     */
+    var $dirties = store({}, { name: "$".concat(name, "-form-dirties") })
+        .on(updateDirty, function (state, _a) {
+        var _b;
+        var name = _a.name, dirty = _a.dirty;
+        return (__assign(__assign({}, state), (_b = {}, _b[name] = dirty, _b)));
+    });
+    /**
+     * Calculates form dirty
+     */
+    var $dirty = $dirties.map(function (state) { return !isEmpty(state) ? !hasTruthy(state) : true; });
     /**
      * Values store - keeps all fields values
      */
@@ -206,6 +220,8 @@ var createFormHandler = function (formConfig) {
         $values: $values,
         $touched: $touched,
         $touches: $touches,
+        $dirty: $dirty,
+        $dirties: $dirties,
         $submitting: submitRemote.pending,
         get config() {
             return config;
@@ -230,6 +246,7 @@ var createFormHandler = function (formConfig) {
                 resetField: reset,
                 updateActive: updateActive,
                 updateError: updateError,
+                updateDirty: updateDirty,
                 updateTouch: updateTouch,
                 updateValue: updateValue,
                 setRemoteErrors: guard({

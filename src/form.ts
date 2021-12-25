@@ -21,6 +21,8 @@ import {
   IFormConfigDefault,
   IFormActive,
   IFormActiveUpdate,
+  IFormDirties,
+  IFormDirtyUpdate,
 } from './model';
 
 const { store, effect, event } = domain;
@@ -51,6 +53,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   const updateActive = event<IFormActiveUpdate>(`${name}-form-update-field-state`);
   const updateError = event<IFormErrorUpdate>(`${name}-form-update-validation`);
   const updateTouch = event<IFormToucheUpdate>(`${name}-form-update-touch`);
+  const updateDirty = event<IFormDirtyUpdate>(`${name}-form-update-touch`);
   const updateValue = event<IFormValueUpdate>(`${name}-form-update-value`);
   const reset = event<void>(`${name}-form-reset`);
   const onChange = event<IFormOnFieldChange>(`${name}-form-change`);
@@ -82,6 +85,17 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Calculates form touched
    */
   const $touched = $touches.map((state) => !isEmpty(state) ? !hasTruthy(state) : true);
+
+  /**
+   * Dirties store - keeps all fields dirty
+   */
+  const $dirties = store<IFormDirties>({}, { name: `$${name}-form-dirties`})
+    .on(updateDirty, (state, { name, dirty }) => ({ ...state, [name]: dirty }));
+
+  /**
+   * Calculates form dirty
+   */
+  const $dirty = $dirties.map((state) => !isEmpty(state) ? !hasTruthy(state) : true);
 
   /**
    * Values store - keeps all fields values
@@ -145,6 +159,8 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     $values,
     $touched,
     $touches,
+    $dirty,
+    $dirties,
     $submitting: submitRemote.pending,
     get config() {
       return config;
@@ -170,6 +186,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
         resetField: reset,
         updateActive,
         updateError,
+        updateDirty,
         updateTouch,
         updateValue,
         setRemoteErrors: guard({

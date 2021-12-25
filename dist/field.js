@@ -32,7 +32,7 @@ export var fieldConfigDefault = {
     validateOnChange: false,
 };
 export var createField = function (_a, _b) {
-    var formChange = _b.formChange, resetField = _b.resetField, updateActive = _b.updateActive, updateError = _b.updateError, updateTouch = _b.updateTouch, updateValue = _b.updateValue, setRemoteErrors = _b.setRemoteErrors;
+    var formChange = _b.formChange, resetField = _b.resetField, updateActive = _b.updateActive, updateError = _b.updateError, updateDirty = _b.updateDirty, updateTouch = _b.updateTouch, updateValue = _b.updateValue, setRemoteErrors = _b.setRemoteErrors;
     var name = _a.name, fieldConfig = __rest(_a, ["name"]);
     var config = __assign({ name: name }, fieldConfig);
     var update = event("".concat(name, "-field-update"));
@@ -65,6 +65,18 @@ export var createField = function (_a, _b) {
         source: $value,
         fn: function (value) { return ({ name: name, value: value }); },
         target: updateValue,
+    });
+    /**
+     * Field dirty store - true if diff to initial value
+     */
+    var $dirty = $value.map(function (value) { return value !== config.initialValue; });
+    /**
+     * Updates form dirties on field dirty change
+     */
+    sample({
+        source: $dirty,
+        fn: function (dirty) { return ({ name: name, dirty: dirty }); },
+        target: updateDirty,
     });
     /**
      * Field touched store - true onChange
@@ -173,6 +185,7 @@ export var createField = function (_a, _b) {
         $active: $active,
         $value: $value,
         $touched: $touched,
+        $dirty: $dirty,
         $errors: $errors,
         onChange: onChange,
         onBlur: onBlur,

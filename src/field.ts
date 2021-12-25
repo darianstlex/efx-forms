@@ -19,6 +19,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   resetField,
   updateActive,
   updateError,
+  updateDirty,
   updateTouch,
   updateValue,
   setRemoteErrors,
@@ -58,6 +59,20 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
     source: $value,
     fn: (value) => ({ name, value }),
     target: updateValue,
+  });
+
+  /**
+   * Field dirty store - true if diff to initial value
+   */
+  const $dirty = $value.map((value) => value !== config.initialValue);
+
+  /**
+   * Updates form dirties on field dirty change
+   */
+  sample({
+    source: $dirty,
+    fn: (dirty) => ({ name, dirty }),
+    target: updateDirty,
   });
 
   /**
@@ -172,6 +187,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
     $active,
     $value,
     $touched,
+    $dirty,
     $errors,
     onChange,
     onBlur,
