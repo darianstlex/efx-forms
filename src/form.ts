@@ -138,6 +138,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
       }
       try {
         await cb($values.getState());
+        return Promise.resolve();
       } catch (remoteErrors) {
         return Promise.reject({ remoteErrors });
       }
