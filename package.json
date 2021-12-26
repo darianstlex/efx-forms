@@ -1,12 +1,12 @@
 {
   "name": "efx-forms",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Effector JS Forms",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf lib/* && tsc && ./prepare",
+    "build": "rm -rf lib/* && tsc && ./npmize",
     "publish-lib": "npm run build && npm publish lib",
     "publish-beta": "npm run build && npm publish --tag beta",
     "publish-dryrun": "npm run build && npm publish --dry-run"
@@ -30,19 +30,16 @@
   "devDependencies": {
     "@types/lodash-es": "^4.17.5",
     "@types/react": "^17.0.37",
-    "@types/react-dom": "^17.0.11",
     "effector": "^22.1.2",
     "effector-react": "^22.0.6",
     "lodash-es": "^4.17.21",
     "react": "^17.0.2",
-    "react-dom": "^17.0.2",
     "typescript": "^4.5.4"
   },
   "peerDependencies": {
     "effector": "^22.1.2",
     "effector-react": "^22.0.6",
     "lodash-es": "^4.17.21",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react": "^17.0.2"
   }
 }
