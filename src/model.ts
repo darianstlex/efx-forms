@@ -76,6 +76,7 @@ export interface IFormConfigDefault {
   name: string;
   initialValues: IFormInitialValues,
   onSubmit: IFormSubmitArgs['cb'];
+  keepFormOnUnmount: boolean;
   remoteValidation: boolean;
   skipClientValidation: boolean;
   validateOnBlur: boolean;
@@ -85,15 +86,17 @@ export interface IFormConfigDefault {
 
 export interface IFormConfig {
   /** PROPERTY - name */
-  name: string;
+  name: IFormConfigDefault['name'];
   /** PROPERTY - initial values - flat */
-  initialValues?: IFormInitialValues,
+  initialValues?: IFormConfigDefault['initialValues'],
   /** PROPERTY - validateOnBlur - will trigger validation on blur */
-  validateOnBlur?: boolean;
+  validateOnBlur?: IFormConfigDefault['validateOnBlur'];
   /** PROPERTY - validateOnChange - will trigger validation on change */
-  validateOnChange?: boolean;
+  validateOnChange?: IFormConfigDefault['validateOnChange'];
   /** PROPERTY - formValidations array of validators per field */
-  formValidations?: IFormValidations;
+  formValidations?: IFormConfigDefault['validations'];
+  /** PROPERTY - keepFormOnUnmount - keep form data on form unmount */
+  keepFormOnUnmount?: IFormConfigDefault['keepFormOnUnmount'];
 }
 
 export interface IFormSubmitArgs {
@@ -213,11 +216,13 @@ export interface REfxFormProps extends Omit<IFormConfig, 'formValidations'> {
   /** METHOD - submit - will trigger submit based on remoteValidation property */
   onSubmit?: IFormSubmitArgs['cb'];
   /** PROPERTY - remoteValidation - if true will call remote submit */
-  remoteValidation?: boolean;
+  remoteValidation?: IFormConfigDefault['remoteValidation'];
   /** PROPERTY - skipClientValidation - if true will skip validation on submit */
-  skipClientValidation?: boolean;
+  skipClientValidation?: IFormConfigDefault['skipClientValidation'];
   /** PROPERTY - validations array of validators per field */
   validations?: IFormValidations;
+  /** PROPERTY - keepFormOnUnmount - keep form data on form unmount */
+  keepFormOnUnmount?: IFormConfigDefault['keepFormOnUnmount'];
 }
 
 export interface REfxFieldProps {

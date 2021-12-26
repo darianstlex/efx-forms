@@ -67,6 +67,8 @@ interface REfxForm {
   skipClientValidation?: boolean;
   // Form initial values - field initialValue is in priority
   initialValues?: { 'fieldName': 'value' }
+  // Keep form data on unmount
+  keepFormOnUnmount: boolean;
   // Set fields validation behavior onBlur - field validateOnBlur is in priority
   validateOnBlur?: boolean;
   // Set fields validation behavior onChange - field validateOnChange is in priority

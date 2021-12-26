@@ -31,6 +31,7 @@ export const formConfigDefault: IFormConfigDefault = {
   name: 'default',
   initialValues: {},
   onSubmit: () => {},
+  keepFormOnUnmount: false,
   remoteValidation: false,
   skipClientValidation: false,
   validateOnBlur: true,

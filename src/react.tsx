@@ -60,6 +60,7 @@ export const REfxForm = ({
   children = null,
   onSubmit = formConfigDefault.onSubmit,
   name = formConfigDefault.name,
+  keepFormOnUnmount = formConfigDefault.keepFormOnUnmount,
   remoteValidation = formConfigDefault.remoteValidation,
   skipClientValidation = formConfigDefault.skipClientValidation,
   initialValues = formConfigDefault.initialValues,
@@ -83,6 +84,12 @@ export const REfxForm = ({
       form.submit({ cb: onSubmit, skipClientValidation });
     }
   };
+
+  useEffect(() => {
+    return () => {
+      !keepFormOnUnmount && form.reset();
+    }
+  }, []);
 
   return (
     <FormNameContext.Provider value={name}>
