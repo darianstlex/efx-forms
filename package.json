@@ -1,33 +1,13 @@
 {
   "name": "efx-forms",
-  "version": "0.2.0",
+  "version": "0.3.5",
   "description": "Effector JS Forms",
-  "main": "dist/index.js",
-  "type": "module",
-  "types": "dist/index.d.ts",
-  "files": [
-    "/dist"
-  ],
-  "exports": {
-    ".": "./dist/index.js",
-    "./": "./dist",
-    "./react": "./dist/react.js",
-    "./utils": "./dist/utils.js",
-    "./validators": "./dist/validators.js",
-    "./package.json": "./package.json"
-  },
-  "typesVersions": {
-    "*": {
-      ".": ["dist/index.d.ts"],
-      "react": ["dist/react.d.ts"],
-      "utils": ["dist/utils.d.ts"],
-      "validators": ["dist/validators.d.ts"]
-    }
-  },
+  "main": "index.js",
+  "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "tsc",
-    "publish-lib": "npm run build && npm publish",
+    "build": "rm -rf lib/* && tsc && ./prepare",
+    "publish-lib": "npm run build && npm publish lib",
     "publish-beta": "npm run build && npm publish --tag beta",
     "publish-dryrun": "npm run build && npm publish --dry-run"
   },
