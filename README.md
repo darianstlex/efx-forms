@@ -328,13 +328,13 @@ const shapedValues = shapeFy(values);
  * Return effector store with truthy values
  * @type ($values: Store): Store => $truthyValues
  */
-const truthyStore = truthyFyStore($values);
+const $truthyStore = truthyFyStore($values);
 
 /**
  * Return effector store with shaped values
  * @type ($values: Store): Store => $shapedValues
  */
-const shapedStore = shapeFyStore($values);
+const $shapedStore = shapeFyStore($values);
 ```
 
 # Validators
