@@ -221,6 +221,7 @@ export interface REfxFormProps extends Omit<IFormConfig, 'formValidations'> {
   validations?: IFormValidations;
   /** PROPERTY - keepFormOnUnmount - keep form data on form unmount */
   keepFormOnUnmount?: IFormConfigDefault['keepFormOnUnmount'];
+  [any: string]: any;
 }
 
 export interface REfxFieldProps {

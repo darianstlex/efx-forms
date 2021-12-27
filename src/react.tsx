@@ -83,6 +83,7 @@ export const REfxForm = ({
   validateOnBlur = formConfigDefault.validateOnBlur,
   validateOnChange = formConfigDefault.validateOnChange,
   validations = formConfigDefault.validations,
+  ...props
 }: REfxFormProps) => {
   const form: IForm = useMemo(() => createUpdateForm({
     name,
@@ -109,7 +110,7 @@ export const REfxForm = ({
 
   return (
     <FormNameContext.Provider value={name}>
-      <form onSubmit={submit}>{children}</form>
+      <form onSubmit={submit} {...props}>{children}</form>
     </FormNameContext.Provider>
   );
 };
