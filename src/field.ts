@@ -206,8 +206,8 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
     get config() {
       return config;
     },
-    set config(data) {
-      config = { ...config, ...data };
+    set config({ name, ...fieldConfig}) {
+      config = { ...config, ...fieldConfig };
     },
   };
 };

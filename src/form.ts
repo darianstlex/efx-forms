@@ -167,7 +167,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     get config() {
       return config;
     },
-    set config(formConfig) {
+    set config({ name, ...formConfig}) {
       config = { ...config, ...formConfig };
     },
     get fields() {
@@ -199,9 +199,6 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
       setTimeout(() => fields[name].syncData(), 0);
       return fields[name];
     },
-    removeField: (name) => {
-      delete(fields[name]);
-    },
     update: (values) => {
       Object.entries(values).forEach(([field, value]) => {
         fields[field]?.update(value);
@@ -211,20 +208,19 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
 };
 
 /**
- * Create/return form with the given name/config
+ * Create/Update form with the given config
  */
-export const createForm = (config: IFormConfig) => {
-  const { name } = config;
+export const createUpdateForm = (config: IFormConfig) => {
+  const { name = formConfigDefault.name } = config;
   if (forms[name]) {
     forms[name].config = config;
     return forms[name];
   }
-  forms[name] = createFormHandler(config);
-  return forms[name];
+  return forms[name] = createFormHandler(config);
 };
 
 /**
  * Return form with given name or create new one if it doesn't exist
  */
-export const getForm = (name = formConfigDefault.name) => forms[name] || createForm({ name });
+export const getForm = (name = formConfigDefault.name) => createUpdateForm({ name });
 

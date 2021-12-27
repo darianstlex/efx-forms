@@ -62,16 +62,21 @@ interface REfxForm {
    */
   onSubmit?: (values) => void;
   // If set, submit function will be called to get API validation errors
+  // Default: false
   remoteValidation?: boolean;
   // If set, submit will skip client form validation
+  // Default: false
   skipClientValidation?: boolean;
   // Form initial values - field initialValue is in priority
   initialValues?: { 'fieldName': 'value' }
   // Keep form data on unmount
+  // Default: false
   keepFormOnUnmount: boolean;
   // Set fields validation behavior onBlur - field validateOnBlur is in priority
+  // Default: true
   validateOnBlur?: boolean;
   // Set fields validation behavior onChange - field validateOnChange is in priority
+  // Default: false
   validateOnChange?: boolean;
   // Validation config per field - field validators is in priority
   validations?: { 'fieldName': [(value) => string | false] };
@@ -94,8 +99,10 @@ interface REfxField {
   // Validators array - applied on validation
   validators?: [() => string | false]
   // Set validation behaviour onBlur, overrides form value
+  // Default: true
   validateOnBlur?: boolean;
   // Set validation behaviour onChange, overrides form value
+  // Default: false
   validateOnChange?: boolean;
   // Field component - component to be used as form field
   Field: ReactComponent;
@@ -118,6 +125,7 @@ interface REfxWhen {
   // Set fields values on hide - { 'fieldName': 'value' }
   resetTo?: FormValues;
   // Debounce for fields update
+  // Default: 0
   updateDebounce?: number;
 }
 ```
@@ -171,8 +179,6 @@ interface FormInstance {
   getField: (name: string) => Field;
   // Register new field -  internal usage
   registerField: (config) => Field;
-  // Removes field by name
-  removeField: (name: string) => void;
   // Form bulk update field values
   update: (values: FormValues) => void;
 }
@@ -232,8 +238,10 @@ import { getForm } from 'efx-forms';
 import {
   useForm,
   useFormValues,
+  useFormStore,
   useField,
   useFieldValue,
+  useFieldStore,
 } from 'efx-forms/react';
 
 /**
@@ -243,28 +251,52 @@ import {
 const formOne = getForm('form-one');
 
 /**
- * Hook - return form instance by name, if not provided takes it from context
- * @type (name?: string) => FormInstance
+ * Hook - return form (from context) instance or provided form by name
+ * form name is needed when hook is used outside of the form context
+ * or refers to another form
+ * @type (formName?: string) => FormInstance
  */
-const formTwo = useForm('form-two');
+const formTwo = useForm();
 
 /**
- * Hook - return form values by name, if not provided takes it from context
- * @type (name?: string) => FormValues
+ * Hook - return form (from context) store values or from provided form
+ * form name is needed when hook is used outside of the form context
+ * or refers to another form
+ * @type (store: string, formName?: string) => any
  */
-const formValues = useFormValues('form-two');
+const formErrors = useFormStore('$errors');
+
+/**
+ * Hook - return form (from context) values or from provided form
+ * form name is needed when hook is used outside of the form context
+ * or refers to another form
+ * @type (formName?: string) => FormValues
+ */
+const formValues = useFormValues();
 
 /**
  * Hook - return field by name, if form name is not provided takes it from context
- * @type (name: string, form?: string) => Field
+ * form name is needed when hook is used outside of the form context
+ * or refers to another form
+ * @type (name: string, formName?: string) => Field
  */
-const field = useField('field-one', 'form-one');
+const field = useField('field-one');
 
 /**
  * Hook - return field value by name, if form name is not provided takes it from context
- * @type (name: string, form?: string) => Field
+ * form name is needed when hook is used outside of form context
+ * or refers to another form
+ * @type (name: string, formName?: string) => Field
  */
 const fieldValue = useFieldValue('field-one', 'form-one');
+
+/**
+ * Hook - return field store values from form in context or from provided form
+ * form name is needed when hook is used outside of form context
+ * or refers to another form
+ * @type (name: string, store: string, formName?: string) => any
+ */
+const fieldErrors = useFieldStore('field-one', '$errors');
 ```
 
 # Utils

@@ -201,8 +201,6 @@ export interface IForm {
   getField: (name: string) => IField;
   /** METHOD - Form register field */
   registerField: (config: Omit<IFieldConfig, 'format'>) => IField;
-  /** METHOD - Form remove field - delete field by name */
-  removeField: (name: string) => void;
   /** METHOD - Form update fields values */
   update: (values: IFormValues) => void;
 }

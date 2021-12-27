@@ -10,7 +10,7 @@ import { useStore } from 'effector-react';
 import debounce from 'lodash-es/debounce';
 import isEmpty from 'lodash-es/isEmpty';
 
-import { createForm, formConfigDefault, getForm } from './form';
+import { formConfigDefault, createUpdateForm, getForm } from './form';
 import { fieldConfigDefault } from './field';
 import {
   IField,
@@ -35,9 +35,17 @@ export const useForm = (name?: string): IForm => {
 /**
  * Return form values - flat
  */
-export const useFormValues = (name?: string): IFormValues => {
-  const { $values } = useForm(name);
+export const useFormValues = (formName?: string): IFormValues => {
+  const { $values } = useForm(formName);
   return useStore($values);
+}
+
+/**
+ * Return form store values
+ */
+export const useFormStore = (store: string, formName?: string): any => {
+  const form = useForm(formName);
+  return useStore(form[store]);
 }
 
 /**
@@ -56,6 +64,14 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
   return useStore($value);
 }
 
+/**
+ * Return field store value of the current or provided form
+ */
+export const useFieldStore = (name: string, store: string, formName?: string): any => {
+  const field = useField(name, formName);
+  return useStore(field[store]);
+}
+
 export const REfxForm = ({
   children = null,
   onSubmit = formConfigDefault.onSubmit,
@@ -68,7 +84,7 @@ export const REfxForm = ({
   validateOnChange = formConfigDefault.validateOnChange,
   validations = formConfigDefault.validations,
 }: REfxFormProps) => {
-  const form: IForm = useMemo(() => createForm({
+  const form: IForm = useMemo(() => createUpdateForm({
     name,
     initialValues,
     validateOnBlur,
@@ -169,7 +185,10 @@ export const REfxWhen = ({
   const formInst = useForm(form);
   const values = useStore(formInst.$values);
   const show = useMemo(() => check(values), [values]);
-  const updateDeb = useCallback(debounce(formInst.update, updateDebounce), [formInst, updateDebounce]);
+  const updateDeb = useCallback(
+    debounce(formInst.update, updateDebounce),
+    [formInst, updateDebounce],
+  );
 
   useEffect(() => {
     show && !isEmpty(setTo) && updateDeb(setTo as IFormValues);

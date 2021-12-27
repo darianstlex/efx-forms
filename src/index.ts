@@ -1,4 +1,4 @@
-export { getForm } from './form';
+export { getForm, createUpdateForm } from './form';
 
 export type {
   IFormValues,
