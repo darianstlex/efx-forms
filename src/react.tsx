@@ -17,8 +17,9 @@ import {
   IFieldConfig,
   IForm,
   IFormValues,
-  REfxFieldProps,
-  REfxFormProps, REfxWhenProps,
+  IRFieldProps,
+  IRFormProps,
+  IRDisplayWhenProps,
   TFieldValue,
 } from './model';
 
@@ -72,7 +73,7 @@ export const useFieldStore = (name: string, store: string, formName?: string): a
   return useStore(field[store]);
 }
 
-export const REfxForm = ({
+export const Form = ({
   children = null,
   onSubmit = formConfigDefault.onSubmit,
   name = formConfigDefault.name,
@@ -84,7 +85,7 @@ export const REfxForm = ({
   validateOnChange = formConfigDefault.validateOnChange,
   validations = formConfigDefault.validations,
   ...props
-}: REfxFormProps) => {
+}: IRFormProps) => {
   const form: IForm = useMemo(() => createUpdateForm({
     name,
     initialValues,
@@ -115,9 +116,9 @@ export const REfxForm = ({
   );
 };
 
-REfxForm.displayName = 'REfxForm';
+Form.displayName = 'Form';
 
-export const REfxField = ({ Field, name, formName, ...rest }: REfxFieldProps) => {
+export const Field = ({ Field, name, formName, ...rest }: IRFieldProps) => {
   const { config, fields, registerField } = useForm(formName);
   const { name: N, initialValues = {}, formValidations = {}, ...formConfig } = config;
 
@@ -170,19 +171,19 @@ export const REfxField = ({ Field, name, formName, ...rest }: REfxFieldProps) =>
   );
 };
 
-REfxField.displayName = 'REfxField';
+Field.displayName = 'Field';
 
 /**
  * Conditional rendering based on form values
  */
-export const REfxWhen = ({
+export const DisplayWhen = ({
   children,
   check,
   form,
   setTo,
   resetTo,
   updateDebounce = 0
-}: REfxWhenProps) => {
+}: IRDisplayWhenProps) => {
   const formInst = useForm(form);
   const values = useStore(formInst.$values);
   const show = useMemo(() => check(values), [values]);
@@ -200,4 +201,4 @@ export const REfxWhen = ({
   return show ? children : null;
 }
 
-REfxWhen.displayName = 'REfxWhen';
+DisplayWhen.displayName = 'DisplayWhen';

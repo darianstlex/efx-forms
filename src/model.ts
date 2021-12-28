@@ -209,7 +209,7 @@ export interface IForms {
   [name: string]: IForm;
 }
 
-export interface REfxFormProps extends Omit<IFormConfig, 'formValidations'> {
+export interface IRFormProps extends Omit<IFormConfig, 'formValidations'> {
   children?: ReactNode;
   /** METHOD - submit - will trigger submit based on remoteValidation property */
   onSubmit?: IFormSubmitArgs['cb'];
@@ -224,7 +224,7 @@ export interface REfxFormProps extends Omit<IFormConfig, 'formValidations'> {
   [any: string]: any;
 }
 
-export interface REfxFieldProps {
+export interface IRFieldProps {
   /** PROPERTY - name */
   name: IFieldConfig['name'];
   /** PROPERTY - initial value */
@@ -246,7 +246,7 @@ export interface REfxFieldProps {
   [any: string]: any;
 }
 
-export interface REfxWhenProps {
+export interface IRDisplayWhenProps {
   children: ReactElement;
   /** PROPERTY - form name to check against */
   form?: string;

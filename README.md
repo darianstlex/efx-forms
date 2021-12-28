@@ -10,9 +10,9 @@ Peer dependencies - library depends on:
 > react effector effector-react lodash-es
 ## Main Components
 
-### REfxForm / REfxField
+### Form / Field
 ```jsx
-import { REfxForm, REfxField } from 'efx-forms/react';
+import { Form, Field } from 'efx-forms/react';
 import { required } from 'efx-forms/validators';
 
 const Input = ({ label, error, errors, ...props }) => (
@@ -28,8 +28,8 @@ const Page = () => {
     console.log(values);
   }
   return (
-    <REfxForm name="user" onSubmit={submit}>
-      <REfxField
+    <Form name="user" onSubmit={submit}>
+      <Field
         name="name"
         Field={Input}
         label="Name"
@@ -37,16 +37,16 @@ const Page = () => {
         validators={[required()]}
       />
       <button type="submit">Submit</button>
-    </REfxForm>
+    </Form>
   )
 }
 ```
 
 # Props
-### REfxForm
+### Form
 Form component
 ```ts
-interface REfxForm {
+interface Form {
   // Form name
   name: string,
   /**
@@ -83,10 +83,10 @@ interface REfxForm {
 }
 ```
 
-### REfxField
+### Field
 Field component
 ```ts
-interface REfxField {
+interface Field {
   // Field name
   name: string,
   // Field initial value - used on initial load and reset
@@ -111,10 +111,10 @@ interface REfxField {
 }
 ```
 
-### REfxWhen
+### DisplayWhen
 Conditional rendering helper component
 ```ts
-interface REfxWhen {
+interface DisplayWhen {
   // Form name - used to get form values
   form?: string;
   // Conition check - accepts form values and return boolean,
