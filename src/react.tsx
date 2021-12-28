@@ -186,7 +186,7 @@ export const DisplayWhen = ({
 }: IRDisplayWhenProps) => {
   const formInst = useForm(form);
   const values = useStore(formInst.$values);
-  const show = useMemo(() => check(values), [values]);
+  const show = check(values);
   const updateDeb = useCallback(
     debounce(formInst.update, updateDebounce),
     [formInst, updateDebounce],
