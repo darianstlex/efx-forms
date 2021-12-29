@@ -93,7 +93,7 @@ interface Field {
   // default = ''
   initialValue?: string | number | null | boolean | [] | {};
   // Transform value before set to store
-  parse?: (value: any) => string | number | null | boolean | [];
+  parse?: (value: any) => string | number | null | boolean | [] | {};
   // Format value before displaying
   format?: (value) => any;
   // Validators array - applied on validation

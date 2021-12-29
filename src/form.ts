@@ -39,9 +39,7 @@ export const formConfigDefault: IFormConfigDefault = {
   validations: {},
 };
 
-export const forms: IForms = {
-  [formConfigDefault.name]: {} as IForm,
-};
+export const forms: IForms = {};
 
 const hasTruthy = (object) => Object.values(object).some((it) => it);
 
