@@ -1,4 +1,4 @@
-import { Effect, Event, Store } from 'effector';
+import { Domain, Effect, Event, Store } from 'effector';
 import { ComponentType, ReactElement, ReactNode } from 'react';
 
 export type TFieldValue = string | number | null | boolean | [] | {};
@@ -58,6 +58,7 @@ export interface IField {
 }
 
 export interface IFormHooks {
+  formDomain: Domain;
   formChange: Event<IFormValueUpdate>;
   resetField: Event<void>;
   updateActive: Event<IFormActiveUpdate>;

@@ -25,8 +25,6 @@ import {
   IFormDirtyUpdate,
 } from './model';
 
-const { store, effect, event } = domain;
-
 export const formConfigDefault: IFormConfigDefault = {
   name: 'default',
   initialValues: {},
@@ -47,20 +45,22 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   let config: IFormConfig = { ...formConfig };
   const { name } = formConfig;
 
+  const formDomain = domain.domain(`@${name}`)
+
   const fields: IFormFields = {};
 
-  const updateActive = event<IFormActiveUpdate>(`${name}-form-update-field-state`);
-  const updateError = event<IFormErrorUpdate>(`${name}-form-update-validation`);
-  const updateTouch = event<IFormToucheUpdate>(`${name}-form-update-touch`);
-  const updateDirty = event<IFormDirtyUpdate>(`${name}-form-update-touch`);
-  const updateValue = event<IFormValueUpdate>(`${name}-form-update-value`);
-  const reset = event<void>(`${name}-form-reset`);
-  const onChange = event<IFormOnFieldChange>(`${name}-form-change`);
+  const updateActive = formDomain.event<IFormActiveUpdate>('update-active');
+  const updateError = formDomain.event<IFormErrorUpdate>('update-validation');
+  const updateTouch = formDomain.event<IFormToucheUpdate>('update-touch');
+  const updateDirty = formDomain.event<IFormDirtyUpdate>('update-dirty');
+  const updateValue = formDomain.event<IFormValueUpdate>('update-value');
+  const reset = formDomain.event<void>('reset');
+  const onChange = formDomain.event<IFormOnFieldChange>('change');
 
   /**
    * Validation errors store - keeps all fields validation errors
    */
-  const $errors = store<IFormErrors>({}, { name: `$${name}-form-errors`})
+  const $errors = formDomain.store<IFormErrors>({}, { name: '$errors'})
     .on(updateError, (state, { name, error }) => ({ ...state, [name]: error }));
 
   /**
@@ -71,13 +71,13 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Fields status store - keeps fields activity / visibility status
    */
-  const $active = store<IFormActive>({}, { name: `$${name}-form-active`})
+  const $active = formDomain.store<IFormActive>({}, { name: '$active'})
     .on(updateActive, (state, { name, active }) => ({ ...state, [name]: active }));
 
   /**
    * Touches store - keeps all fields touches
    */
-  const $touches = store<IFormTouches>({}, { name: `$${name}-form-touches`})
+  const $touches = formDomain.store<IFormTouches>({}, { name: '$touches'})
     .on(updateTouch, (state, { name, touched }) => ({ ...state, [name]: touched }));
 
   /**
@@ -88,7 +88,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Dirties store - keeps all fields dirty
    */
-  const $dirties = store<IFormDirties>({}, { name: `$${name}-form-dirties`})
+  const $dirties = formDomain.store<IFormDirties>({}, { name: '$dirties'})
     .on(updateDirty, (state, { name, dirty }) => ({ ...state, [name]: dirty }));
 
   /**
@@ -99,13 +99,13 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Values store - keeps all fields values
    */
-  const $values = store<IFormValues>({}, { name: `$${name}-form-values`})
+  const $values = formDomain.store<IFormValues>({}, { name: '$values'})
     .on(updateValue, (state, { name, value }) => ({ ...state, [name]: value }));
 
   /**
    * Changes store, triggers change on field change event
    */
-  const $changes = store<IFormValues>({}, { name: `$${name}-form-changes`})
+  const $changes = formDomain.store<IFormValues>({}, { name: '$changes'})
     .on(sample({
       clock: onChange,
       fn: (values, { name, value }) => ({ ...values, [name]: value }),
@@ -127,7 +127,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * cb - is api call for the remote validation, response contains validation
    * results in format { field1: message, field2: message }, if empty - valid
    */
-  const submitRemote: Effect<IFormSubmitArgs, void, IFormSubmitResponseError> = effect({
+  const submitRemote: Effect<IFormSubmitArgs, void, IFormSubmitResponseError> = formDomain.effect({
     handler: async ({ cb, skipClientValidation = false }) => {
       if (!skipClientValidation) {
         Object.values(fields).forEach(({ validate }) => validate());
@@ -142,7 +142,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
         return Promise.reject({ remoteErrors });
       }
     },
-    name: `${name}-form-submit`,
+    name: 'submit',
   });
 
   return {
@@ -182,6 +182,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
       fields[name] = createField(
         { name, ...fieldConfig },
         {
+        formDomain,
         formChange: onChange,
         resetField: reset,
         updateActive,

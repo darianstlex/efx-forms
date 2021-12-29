@@ -1,9 +1,6 @@
 import { guard, sample } from 'effector';
 
-import { domain } from './utils';
 import { IField, IFieldConfig, IFormHooks, TFieldValue } from './model';
-
-const { store, event } = domain;
 
 export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
   parse: value => value,
@@ -15,6 +12,7 @@ export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
 };
 
 export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format'>, {
+  formDomain,
   formChange,
   resetField,
   updateActive,
@@ -26,19 +24,21 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
 }: IFormHooks): IField => {
   let config = { name, ...fieldConfig };
 
-  const update = event<TFieldValue>(`${name}-field-update`);
-  const validate = event<void>(`${name}-field-validate`);
-  const setActive = event<boolean>(`${name}-field-active`);
-  const setError = event<string>(`${name}-field-push-error`);
-  const resetError = event<void>(`${name}-field-reset-error`);
-  const onChange = event<TFieldValue>(`${name}-field-onChange`);
-  const onBlur = event<void>(`${name}-field-onBlur`);
-  const reset = event<void>(`${name}-field-reset`);
+  const fieldDomain = formDomain.domain(`@${name}`);
+
+  const update = fieldDomain.event<TFieldValue>('update');
+  const validate = fieldDomain.event<void>('validate');
+  const setActive = fieldDomain.event<boolean>('active');
+  const setError = fieldDomain.event<string>('push-error');
+  const resetError = fieldDomain.event<void>('reset-error');
+  const onChange = fieldDomain.event<TFieldValue>('onChange');
+  const onBlur = fieldDomain.event<void>('onBlur');
+  const reset = fieldDomain.event<void>('reset');
 
   /**
    * Field value store
    */
-  const $value = store<TFieldValue>(config.initialValue, { name: `$${name}-field-value` })
+  const $value = fieldDomain.store<TFieldValue>(config.initialValue, { name: '$value' })
     .on(update, (_, value) => value)
     .on(onChange, (_, value) => config.parse(value))
     .on(reset, () => config.initialValue || null);
@@ -64,7 +64,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   /**
    * Field dirty store - true if diff to initial value
    */
-  const $dirty = store<boolean>(false, { name: `$${name}-field-dirty` })
+  const $dirty = fieldDomain.store<boolean>(false, { name: '$dirty' })
     .on(onChange, (_, value) => value !== config.initialValue)
     .reset(reset);
 
@@ -80,7 +80,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   /**
    * Field touched store - true onChange
    */
-  const $active = store<boolean>(false, { name: `$${name}-field-active` })
+  const $active = fieldDomain.store<boolean>(false, { name: '$active' })
     .on(setActive, (_, active) => active)
     .reset(reset);
 
@@ -96,14 +96,14 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   /**
    * Field touched store - true onChange
    */
-  const $touched = store<boolean>(false, { name: `$${name}-field-touched` })
+  const $touched = fieldDomain.store<boolean>(false, { name: '$touched' })
     .on(onChange, () => true)
     .reset(reset);
 
   /**
    * Detect changes after blur to run validation
    */
-  const $changedAfterBlur = store<boolean>(false, { name: `$${name}-field-changed-after-blur` })
+  const $changedAfterBlur = fieldDomain.store<boolean>(false, { name: '$changed-after-blur' })
     .on(onChange, () => true)
     .on(validate, () => false)
     .reset(reset);
@@ -120,8 +120,8 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   /**
    * Errors store - calculated on validation
    */
-  const $errors = store<string[]>([], {
-    name: `$${name}-field-errors`,
+  const $errors = fieldDomain.store<string[]>([], {
+    name: '$errors',
     updateFilter: (curr, prev) => JSON.stringify(curr) !== JSON.stringify(prev),
   }).on(
     sample({

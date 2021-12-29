@@ -3,7 +3,7 @@ import reduce from 'lodash-es/reduce';
 import set from 'lodash-es/set';
 import pickBy from 'lodash-es/pickBy';
 
-export const domain: Domain = createDomain('forms');
+export const domain: Domain = createDomain('@forms');
 
 /**
  * Return truthy values only
