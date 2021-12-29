@@ -77,7 +77,7 @@ interface Form {
   // Default: false
   skipClientValidation?: boolean;
   // Form initial values - field initialValue is in priority
-  initialValues?: { 'fieldName': 'value' }
+  initialValues?: { fieldName: 'value' }
   // Keep form data on unmount
   // Default: false
   keepFormOnUnmount: boolean;
@@ -88,7 +88,7 @@ interface Form {
   // Default: false
   validateOnChange?: boolean;
   // Validation config per field - field validators is in priority
-  validations?: { 'fieldName': [(value: TFieldValue) => string | false] };
+  validations?: { fieldName: [(value: TFieldValue) => string | false] };
 }
 ```
 
