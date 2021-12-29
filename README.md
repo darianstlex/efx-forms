@@ -46,8 +46,7 @@ const Page = () => {
 ```
 
 # Props
-### Form
-Form component
+### Form component
 ```ts
 interface Form {
   // Form name
@@ -86,8 +85,7 @@ interface Form {
 }
 ```
 
-### Field
-Field component
+### Field component
 ```ts
 interface Field {
   // Field name
@@ -114,11 +112,12 @@ interface Field {
 }
 ```
 
-### DisplayWhen
+### DisplayWhen component
 Conditional rendering helper component
 ```ts
 interface DisplayWhen {
   // Form name - used to get form values
+  // if not provided will be taken from context
   form?: string;
   // Conition check - accepts form values and return boolean,
   // if true render children
