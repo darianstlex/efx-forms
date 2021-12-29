@@ -13,7 +13,7 @@ Peer dependencies - library depends on:
 ### Form / Field
 ```jsx
 import { Form, Field } from 'efx-forms/react';
-import { required } from 'efx-forms/validators';
+import { required, email } from 'efx-forms/validators';
 
 const Input = ({ id, label, error, errors, ...props }) => (
   <div>
@@ -25,6 +25,7 @@ const Input = ({ id, label, error, errors, ...props }) => (
 
 const validations = {
   name: [required()],
+  email: [required({ msg: 'Email is required' }), email()], // custom error message
 }
 
 const Page = () => {
@@ -38,6 +39,12 @@ const Page = () => {
         Field={Input}
         label="Name"
         type="text"
+      />
+      <Field
+        name="email"
+        Field={Input}
+        label="Email"
+        type="email"
       />
       <button type="submit">Submit</button>
     </Form>
@@ -62,7 +69,7 @@ interface Form {
    * @example
    * { 'user.name': 'John', 'user.age': '20' }
    */
-  onSubmit?: (values) => void;
+  onSubmit?: (values: IFormValues) => void;
   // If set, submit function will be called to get API validation errors
   // Default: false
   remoteValidation?: boolean;
@@ -81,7 +88,7 @@ interface Form {
   // Default: false
   validateOnChange?: boolean;
   // Validation config per field - field validators is in priority
-  validations?: { 'fieldName': [(value) => string | false] };
+  validations?: { 'fieldName': [(value: TFieldValue) => string | false] };
 }
 ```
 
@@ -92,13 +99,13 @@ interface Field {
   name: string,
   // Field initial value - used on initial load and reset
   // default = ''
-  initialValue?: string | number | null | boolean | [] | {};
+  initialValue?: TFieldValue;
   // Transform value before set to store
-  parse?: (value: any) => string | number | null | boolean | [] | {};
+  parse?: (value: any) => TFieldValue;
   // Format value before displaying
-  format?: (value) => any;
+  format?: (value: TFieldValue) => any;
   // Validators array - applied on validation
-  validators?: [() => string | false]
+  validators?: [(value: TFieldValue) => string | false]
   // Set validation behaviour onBlur, overrides form value
   // Default: true
   validateOnBlur?: boolean;
@@ -121,11 +128,11 @@ interface DisplayWhen {
   form?: string;
   // Conition check - accepts form values and return boolean,
   // if true render children
-  check: (values: FormValues) => boolean;
-  // Set fields values on show - { 'fieldName': 'value' }
-  setTo?: FormValues;
-  // Set fields values on hide - { 'fieldName': 'value' }
-  resetTo?: FormValues;
+  check: (values: IFormValues) => boolean;
+  // Set fields values on show - { fieldName: 'value' }
+  setTo?: IFormValues;
+  // Set fields values on hide - { fieldName: 'value' }
+  resetTo?: IFormValues;
   // Debounce for fields update
   // Default: 0
   updateDebounce?: number;
@@ -142,11 +149,11 @@ interface FormInstance {
   // Indicates if field is mounted / unmounted
   $active: Store<{ [name: string]: boolean }>;
   // Form active values - all active / visible fields values - flat
-  $actives: Store<{ [name: string]: FieldValue }>;
+  $actives: Store<{ [name: string]: TFieldValue }>;
   // Form values onChange - emits form values only on field change event - flat
-  $changes: Store<{ [name: string]: FieldValue }>;
+  $changes: Store<{ [name: string]: TFieldValue }>;
   // Form values - emits any form values changes - flat
-  $values: Store<{ [name: string]: FieldValue }>;
+  $values: Store<{ [name: string]: TFieldValue }>;
   // Form errors - all fields errors - flat
   $errors: Store<{ [name: string]: string }>
   // Form validity - true if form is valid
@@ -167,7 +174,7 @@ interface FormInstance {
   submit: (args: { cb, skipClientValidation }) => void;
   // Form submit - callback will be called with form values to get remote validation
   // Will return promise reject with errors or resolve
-  submitRemote: ({ cb, skipClientValidation }) => { [name]: string } | undefined;
+  submitRemote: ({cb, skipClientValidation}) => { [name]: string } | undefined;
   // Form config - getter / setter
   config: {
     initialValues?: {},
@@ -176,13 +183,13 @@ interface FormInstance {
     formValidations?: {};
   };
   // Form fields getter
-  fields: Fields[];
+  fields: { [name: string]: IField };
   // Return given field by name
-  getField: (name: string) => Field;
+  getField: (name: string) => IField;
   // Register new field -  internal usage
-  registerField: (config) => Field;
+  registerField: (config) => IField;
   // Form bulk update field values
-  update: (values: FormValues) => void;
+  update: (values: IFormValues) => void;
 }
 ```
 
@@ -208,7 +215,7 @@ interface FieldInstance {
   // Field onBlur event
   onBlur: Event<void>;
   // Field update - updates field value without triggering form change event
-  update: Event<FieldValue>;
+  update: Event<TFieldValue>;
   // Field reset - if field is touched or not valid
   reset: Event<void>;
   // Field validate - runs field validation
@@ -224,10 +231,10 @@ interface FieldInstance {
   // Field config - get/set field config
   config: {
     name: string;
-    initialValue: FieldValue;
-    parse: (value: FieldValue) => FieldValue,
-    format: (value: FieldValue) => FieldValue,
-    validators: FieldValidator[],
+    initialValue: TFieldValue;
+    parse: (value: any) => TFieldValue,
+    format: (value: TFieldValue) => any,
+    validators: TFieldValidator[],
     validateOnBlur: boolean;
     validateOnChange: boolean;
   };
@@ -248,7 +255,7 @@ import {
 
 /**
  * Return form by name
- * @type (name: string) => FormInstance
+ * @type (name: string) => IForm
  */
 const formOne = getForm('form-one');
 
@@ -256,7 +263,7 @@ const formOne = getForm('form-one');
  * Hook - return form (from context) instance or provided form by name
  * form name is needed when hook is used outside of the form context
  * or refers to another form
- * @type (formName?: string) => FormInstance
+ * @type (formName?: string) => IForm
  */
 const formTwo = useForm();
 
@@ -264,7 +271,7 @@ const formTwo = useForm();
  * Hook - return form (from context) store values or from provided form
  * form name is needed when hook is used outside of the form context
  * or refers to another form
- * @type (store: string, formName?: string) => any
+ * @type (store: string, formName?: string) => IFormErrors
  */
 const formErrors = useFormStoreValue('$errors');
 
@@ -272,7 +279,7 @@ const formErrors = useFormStoreValue('$errors');
  * Hook - return form (from context) values or from provided form
  * form name is needed when hook is used outside of the form context
  * or refers to another form
- * @type (formName?: string) => FormValues
+ * @type (formName?: string) => IFormValues
  */
 const formValues = useFormValues();
 
@@ -280,7 +287,7 @@ const formValues = useFormValues();
  * Hook - return field by name, if form name is not provided takes it from context
  * form name is needed when hook is used outside of the form context
  * or refers to another form
- * @type (name: string, formName?: string) => Field
+ * @type (name: string, formName?: string) => IField
  */
 const field = useField('field-one');
 
@@ -288,7 +295,7 @@ const field = useField('field-one');
  * Hook - return field value by name, if form name is not provided takes it from context
  * form name is needed when hook is used outside of form context
  * or refers to another form
- * @type (name: string, formName?: string) => Field
+ * @type (name: string, formName?: string) => IField
  */
 const fieldValue = useFieldValue('field-one', 'form-one');
 
@@ -296,7 +303,7 @@ const fieldValue = useFieldValue('field-one', 'form-one');
  * Hook - return field store values from form in context or from provided form
  * form name is needed when hook is used outside of form context
  * or refers to another form
- * @type (name: string, store: string, formName?: string) => any
+ * @type (name: string, store: string, formName?: string) => IFormErrors
  */
 const fieldErrors = useFieldStoreValue('field-one', '$errors');
 ```
@@ -314,13 +321,13 @@ import {
 
 /**
  * Return only truthy values from object
- * @type (values: FormValues) => FormValues
+ * @type (values: IFormValues) => IFormValues
  */
 const truthyValues = truthyFy(values);
 
 /**
  * Return flat to shaped values
- * @type (values: FormValues) => {}
+ * @type (values: IFormValues) => {}
  * @example
  * { 'user.name': 'John' } => { user: { name: 'John } }
  */
@@ -340,9 +347,14 @@ const $shapedStore = shapeFyStore($values);
 ```
 
 # Validators
-Check validators.ts file to see all built-in validators and their arguments
+Check validators.d.ts file to see all built-in validators and their arguments
 ```ts
 import { required } from 'efx-forms/validators';
+
+const formValidations = {
+  'user.name': [required()],
+  'user.email': [required({ msg: 'Email is required' })], // custom message
+}
 ```
 
 [Examples](https://github.com/darianstlex/efx-forms-cra)
