@@ -13,8 +13,8 @@ export interface IFormSubmitResponseError {
 export interface IFieldConfig {
   name: string;
   initialValue: TFieldValue;
-  parse: (value: TFieldValue) => TFieldValue,
-  format: (value: TFieldValue) => TFieldValue,
+  parse: (value: any) => TFieldValue,
+  format: (value: TFieldValue) => any,
   validators: TFieldValidator[],
   validateOnBlur: boolean;
   validateOnChange: boolean;
