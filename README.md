@@ -111,6 +111,7 @@ interface Field {
   // Default: true
   validateOnBlur?: boolean;
   // Set validation behaviour onChange, overrides form value
+  // if set, validateOnBlur doesn't work
   // Default: false
   validateOnChange?: boolean;
   // Field component - component to be used as form field
