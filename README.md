@@ -85,6 +85,7 @@ interface Form {
   // Default: true
   validateOnBlur?: boolean;
   // Set fields validation behavior onChange - field validateOnChange is in priority
+  // if set, validateOnBlur doesn't work
   // Default: false
   validateOnChange?: boolean;
   // Validation config per field - field validators is in priority
