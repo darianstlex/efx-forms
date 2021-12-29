@@ -44,7 +44,7 @@ export const useFormValues = (formName?: string): IFormValues => {
 /**
  * Return form store values
  */
-export const useFormStore = (store: string, formName?: string): any => {
+export const useFormStoreValue = (store: string, formName?: string): any => {
   const form = useForm(formName);
   return useStore(form[store]);
 }
@@ -68,7 +68,7 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
 /**
  * Return field store value of the current or provided form
  */
-export const useFieldStore = (name: string, store: string, formName?: string): any => {
+export const useFieldStoreValue = (name: string, store: string, formName?: string): any => {
   const field = useField(name, formName);
   return useStore(field[store]);
 }

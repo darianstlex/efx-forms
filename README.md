@@ -238,10 +238,10 @@ import { getForm } from 'efx-forms';
 import {
   useForm,
   useFormValues,
-  useFormStore,
+  useFormStoreValue,
   useField,
   useFieldValue,
-  useFieldStore,
+  useFieldStoreValue,
 } from 'efx-forms/react';
 
 /**
@@ -264,7 +264,7 @@ const formTwo = useForm();
  * or refers to another form
  * @type (store: string, formName?: string) => any
  */
-const formErrors = useFormStore('$errors');
+const formErrors = useFormStoreValue('$errors');
 
 /**
  * Hook - return form (from context) values or from provided form
@@ -296,7 +296,7 @@ const fieldValue = useFieldValue('field-one', 'form-one');
  * or refers to another form
  * @type (name: string, store: string, formName?: string) => any
  */
-const fieldErrors = useFieldStore('field-one', '$errors');
+const fieldErrors = useFieldStoreValue('field-one', '$errors');
 ```
 
 # Utils
