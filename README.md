@@ -15,26 +15,29 @@ Peer dependencies - library depends on:
 import { Form, Field } from 'efx-forms/react';
 import { required } from 'efx-forms/validators';
 
-const Input = ({ label, error, errors, ...props }) => (
+const Input = ({ id, label, error, errors, ...props }) => (
   <div>
-    <span>{label}</span>
-    <input {...props} />
+    <label for={id}>{label}</label>
+    <input id={id} {...props} />
     <span>{error}</span>
   </div>
 )
+
+const validations = {
+  name: [required()],
+}
 
 const Page = () => {
   const submit = (values) => {
     console.log(values);
   }
   return (
-    <Form name="user" onSubmit={submit}>
+    <Form name="user" onSubmit={submit} validations={validations}>
       <Field
         name="name"
         Field={Input}
         label="Name"
         type="text"
-        validators={[required()]}
       />
       <button type="submit">Submit</button>
     </Form>
