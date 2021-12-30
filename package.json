@@ -1,13 +1,12 @@
 {
   "name": "efx-forms",
-  "version": "0.4.7",
+  "version": "0.5.0",
   "description": "Effector JS Forms",
   "main": "index.js",
-  "type": "module",
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf lib/* && tsc && ./npmize",
+    "build": "rm -rf lib/* && tsc && tsc --project tsconfig.mjs.json && ./npmize",
     "publish-lib": "npm run build && npm publish lib",
     "publish-beta": "npm run build && npm publish --tag beta",
     "publish-dryrun": "npm run build && npm publish --dry-run"

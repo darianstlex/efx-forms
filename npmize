@@ -3,3 +3,9 @@
 cp package.json lib
 cp README.md lib
 cp LICENSE lib
+
+cat >lib/mjs/package.json <<!EOF
+{
+    "type": "module"
+}
+!EOF

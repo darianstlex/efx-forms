@@ -8,6 +8,13 @@ $ npm install efx-forms
 ```
 Peer dependencies - library depends on:
 > react effector effector-react lodash
+
+## NextJS
+```jsx
+import { Form, Field } from 'efx-forms/mjs/react';
+import { required, email } from 'efx-forms/mjs/validators';
+```
+
 ## Main Components
 
 ### Form / Field
