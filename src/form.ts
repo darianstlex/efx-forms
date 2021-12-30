@@ -1,6 +1,6 @@
 import { combine, Effect, guard, sample } from 'effector';
-import isEmpty from 'lodash-es/isEmpty';
-import pickBy from 'lodash-es/pickBy';
+import isEmpty from 'lodash/isEmpty';
+import pickBy from 'lodash/pickBy';
 
 import { domain } from './utils';
 import { createField } from './field';

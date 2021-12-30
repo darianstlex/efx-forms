@@ -1,7 +1,7 @@
 import { createDomain, Domain, Store } from 'effector';
-import reduce from 'lodash-es/reduce';
-import set from 'lodash-es/set';
-import pickBy from 'lodash-es/pickBy';
+import reduce from 'lodash/reduce';
+import set from 'lodash/set';
+import pickBy from 'lodash/pickBy';
 
 export const domain: Domain = createDomain('@forms');
 

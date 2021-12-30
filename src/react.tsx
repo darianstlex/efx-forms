@@ -7,8 +7,8 @@ import React, {
   FormEvent,
 } from 'react';
 import { useStore } from 'effector-react';
-import debounce from 'lodash-es/debounce';
-import isEmpty from 'lodash-es/isEmpty';
+import debounce from 'lodash/debounce';
+import isEmpty from 'lodash/isEmpty';
 
 import { formConfigDefault, createUpdateForm, getForm } from './form';
 import { fieldConfigDefault } from './field';

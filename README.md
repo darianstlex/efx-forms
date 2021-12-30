@@ -7,7 +7,7 @@
 $ npm install efx-forms
 ```
 Peer dependencies - library depends on:
-> react effector effector-react lodash-es
+> react effector effector-react lodash
 ## Main Components
 
 ### Form / Field
@@ -17,7 +17,7 @@ import { required, email } from 'efx-forms/validators';
 
 const Input = ({ id, label, error, errors, ...props }) => (
   <div>
-    <label for={id}>{label}</label>
+    <label htmlFor={id}>{label}</label>
     <input id={id} {...props} />
     <span>{error}</span>
   </div>
@@ -25,10 +25,9 @@ const Input = ({ id, label, error, errors, ...props }) => (
 
 const validations = {
   name: [required()],
-  email: [required({ msg: 'Email is required' }), email()], // custom error message
 }
 
-const Page = () => {
+const Page = ({ name }) => {
   const submit = (values) => {
     console.log(values);
   }
@@ -45,6 +44,7 @@ const Page = () => {
         Field={Input}
         label="Email"
         type="email"
+        validators={[required({ msg: `Hey ${name} email is required` }), email()]}
       />
       <button type="submit">Submit</button>
     </Form>
