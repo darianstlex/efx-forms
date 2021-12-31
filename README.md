@@ -87,7 +87,7 @@ interface Form {
   initialValues?: { fieldName: 'value' }
   // Keep form data on unmount
   // Default: false
-  keepFormOnUnmount: boolean;
+  keepOnUnmount: boolean;
   // Set fields validation behavior onBlur - field validateOnBlur is in priority
   // Default: true
   validateOnBlur?: boolean;

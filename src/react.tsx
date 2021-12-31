@@ -77,7 +77,7 @@ export const Form = ({
   children = null,
   onSubmit = formConfigDefault.onSubmit,
   name = formConfigDefault.name,
-  keepFormOnUnmount = formConfigDefault.keepFormOnUnmount,
+  keepOnUnmount = formConfigDefault.keepOnUnmount,
   remoteValidation = formConfigDefault.remoteValidation,
   skipClientValidation = formConfigDefault.skipClientValidation,
   initialValues = formConfigDefault.initialValues,
@@ -105,7 +105,7 @@ export const Form = ({
 
   useEffect(() => {
     return () => {
-      !keepFormOnUnmount && form.reset();
+      !keepOnUnmount && form.reset();
     }
   }, []);
 

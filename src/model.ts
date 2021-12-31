@@ -77,7 +77,7 @@ export interface IFormConfigDefault {
   name: string;
   initialValues: IFormInitialValues,
   onSubmit: IFormSubmitArgs['cb'];
-  keepFormOnUnmount: boolean;
+  keepOnUnmount: boolean;
   remoteValidation: boolean;
   skipClientValidation: boolean;
   validateOnBlur: boolean;
@@ -96,8 +96,8 @@ export interface IFormConfig {
   validateOnChange?: IFormConfigDefault['validateOnChange'];
   /** PROPERTY - formValidations array of validators per field */
   formValidators?: IFormConfigDefault['validators'];
-  /** PROPERTY - keepFormOnUnmount - keep form data on form unmount */
-  keepFormOnUnmount?: IFormConfigDefault['keepFormOnUnmount'];
+  /** PROPERTY - keepOnUnmount - keep form data on form unmount */
+  keepOnUnmount?: IFormConfigDefault['keepOnUnmount'];
 }
 
 export interface IFormSubmitArgs {
@@ -220,8 +220,8 @@ export interface IRFormProps extends Omit<IFormConfig, 'formValidations'> {
   skipClientValidation?: IFormConfigDefault['skipClientValidation'];
   /** PROPERTY - object of validators per field */
   validators?: IFormValidators;
-  /** PROPERTY - keepFormOnUnmount - keep form data on form unmount */
-  keepFormOnUnmount?: IFormConfigDefault['keepFormOnUnmount'];
+  /** PROPERTY - keepOnUnmount - keep form data on form unmount */
+  keepOnUnmount?: IFormConfigDefault['keepOnUnmount'];
   [any: string]: any;
 }
 
