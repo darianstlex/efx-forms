@@ -1,5 +1,10 @@
 #!/bin/bash
 
+shopt -s extglob
+
+mkdir -p lib/mjs
+cp -r lib/!(mjs) lib/mjs
+
 cp package.json lib
 cp README.md lib
 cp LICENSE lib

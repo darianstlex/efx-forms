@@ -1,15 +1,15 @@
 {
   "name": "efx-forms",
-  "version": "0.5.0",
+  "version": "0.5.6",
   "description": "Effector JS Forms",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "rm -rf lib/* && tsc && tsc --project tsconfig.mjs.json && ./npmize",
+    "build": "rm -rf lib/* && tsc && ./npmize",
     "publish-lib": "npm run build && npm publish lib",
-    "publish-beta": "npm run build && npm publish --tag beta",
-    "publish-dryrun": "npm run build && npm publish --dry-run"
+    "publish-beta": "npm run build && npm publish --tag beta lib",
+    "publish-dryrun": "npm run build && npm publish --dry-run lib"
   },
   "repository": {
     "type": "git",
@@ -28,8 +28,8 @@
   },
   "homepage": "https://github.com/darianstlex/efx-forms#readme",
   "devDependencies": {
-    "@types/lodash-es": "^4.17.5",
-    "@types/react": "^17.0.37",
+    "@types/lodash": "^4.14.178",
+    "@types/react": "^17.0.38",
     "effector": "^22.1.2",
     "effector-react": "^22.0.6",
     "lodash": "^4.17.21",
