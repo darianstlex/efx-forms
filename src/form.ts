@@ -34,7 +34,7 @@ export const formConfigDefault: IFormConfigDefault = {
   skipClientValidation: false,
   validateOnBlur: true,
   validateOnChange: false,
-  validations: {},
+  validators: {},
 };
 
 export const forms: IForms = {};

@@ -30,7 +30,7 @@ const Input = ({ id, label, error, errors, ...props }) => (
   </div>
 )
 
-const validations = {
+const validators = {
   name: [required()],
 }
 
@@ -39,7 +39,7 @@ const Page = ({ name }) => {
     console.log(values);
   }
   return (
-    <Form name="user" onSubmit={submit} validations={validations}>
+    <Form name="user" onSubmit={submit} validators={validators}>
       <Field
         name="name"
         Field={Input}
@@ -95,8 +95,8 @@ interface Form {
   // if set, validateOnBlur doesn't work
   // Default: false
   validateOnChange?: boolean;
-  // Validation config per field - field validators is in priority
-  validations?: { fieldName: [(value: TFieldValue) => string | false] };
+  // Validators config per field - field validators is in priority
+  validators?: { fieldName: [(value: TFieldValue) => string | false] };
 }
 ```
 

@@ -83,7 +83,7 @@ export const Form = ({
   initialValues = formConfigDefault.initialValues,
   validateOnBlur = formConfigDefault.validateOnBlur,
   validateOnChange = formConfigDefault.validateOnChange,
-  validations = formConfigDefault.validations,
+  validators = formConfigDefault.validators,
   ...props
 }: IRFormProps) => {
   const form: IForm = useMemo(() => createUpdateForm({
@@ -91,8 +91,8 @@ export const Form = ({
     initialValues,
     validateOnBlur,
     validateOnChange,
-    formValidations: validations,
-  }), [name, initialValues, validateOnBlur, validateOnChange, validations]);
+    formValidators: validators,
+  }), [name, initialValues, validateOnBlur, validateOnChange, validators]);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
@@ -120,13 +120,13 @@ Form.displayName = 'Form';
 
 export const Field = ({ Field, name, formName, ...rest }: IRFieldProps) => {
   const { config, fields, registerField } = useForm(formName);
-  const { name: N, initialValues = {}, formValidations = {}, ...formConfig } = config;
+  const { name: N, initialValues = {}, formValidators = {}, ...formConfig } = config;
 
   const {
     initialValue = initialValues[name] || fieldConfigDefault.initialValue,
     parse = fieldConfigDefault.parse,
     format = fieldConfigDefault.format,
-    validators = formValidations[name] || fieldConfigDefault.validators,
+    validators = formValidators[name] || fieldConfigDefault.validators,
     validateOnBlur = formConfig.validateOnBlur,
     validateOnChange = formConfig.validateOnChange,
     ...props

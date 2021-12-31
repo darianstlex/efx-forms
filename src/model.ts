@@ -82,7 +82,7 @@ export interface IFormConfigDefault {
   skipClientValidation: boolean;
   validateOnBlur: boolean;
   validateOnChange: boolean;
-  validations: IFormValidations;
+  validators: IFormValidators;
 }
 
 export interface IFormConfig {
@@ -95,7 +95,7 @@ export interface IFormConfig {
   /** PROPERTY - validateOnChange - will trigger validation on change */
   validateOnChange?: IFormConfigDefault['validateOnChange'];
   /** PROPERTY - formValidations array of validators per field */
-  formValidations?: IFormConfigDefault['validations'];
+  formValidators?: IFormConfigDefault['validators'];
   /** PROPERTY - keepFormOnUnmount - keep form data on form unmount */
   keepFormOnUnmount?: IFormConfigDefault['keepFormOnUnmount'];
 }
@@ -155,7 +155,7 @@ export interface IFormOnFieldChange {
   value: TFieldValue;
 }
 
-export interface IFormValidations {
+export interface IFormValidators {
   [name: string]: TFieldValidator[];
 }
 
@@ -218,8 +218,8 @@ export interface IRFormProps extends Omit<IFormConfig, 'formValidations'> {
   remoteValidation?: IFormConfigDefault['remoteValidation'];
   /** PROPERTY - skipClientValidation - if true will skip validation on submit */
   skipClientValidation?: IFormConfigDefault['skipClientValidation'];
-  /** PROPERTY - validations array of validators per field */
-  validations?: IFormValidations;
+  /** PROPERTY - object of validators per field */
+  validators?: IFormValidators;
   /** PROPERTY - keepFormOnUnmount - keep form data on form unmount */
   keepFormOnUnmount?: IFormConfigDefault['keepFormOnUnmount'];
   [any: string]: any;
