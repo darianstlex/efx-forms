@@ -5,6 +5,21 @@ export type TFieldValue = string | number | null | boolean | [] | {};
 export type TFieldValidator = (value: any) => string | false
 export type TFormErrors = { [name: string]: string };
 
+export interface ISubmitArgs {
+  cb: (values: IFormValues) => Promise<TFormErrors | void> | void;
+  skipClientValidation?: boolean;
+}
+
+export interface IFormSubmitArgs extends ISubmitArgs {
+  values: IFormValues;
+  errors: IFormErrors;
+  valid: boolean;
+}
+
+export interface IFormSubmitResponse {
+  values?: IFormValues;
+}
+
 export interface IFormSubmitResponseError {
   errors?: TFormErrors;
   remoteErrors?: TFormErrors;
@@ -59,6 +74,7 @@ export interface IField {
 
 export interface IFormHooks {
   formDomain: Domain;
+  onSubmit: Event<ISubmitArgs>;
   formChange: Event<IFormValueUpdate>;
   resetField: Event<void>;
   updateActive: Event<IFormActiveUpdate>;
@@ -76,9 +92,8 @@ export interface IFormInitialValues {
 export interface IFormConfigDefault {
   name: string;
   initialValues: IFormInitialValues,
-  onSubmit: IFormSubmitArgs['cb'];
+  onSubmit: ISubmitArgs['cb'];
   keepOnUnmount: boolean;
-  remoteValidation: boolean;
   skipClientValidation: boolean;
   validateOnBlur: boolean;
   validateOnChange: boolean;
@@ -98,11 +113,8 @@ export interface IFormConfig {
   formValidators?: IFormConfigDefault['validators'];
   /** PROPERTY - keepOnUnmount - keep form data on form unmount */
   keepOnUnmount?: IFormConfigDefault['keepOnUnmount'];
-}
-
-export interface IFormSubmitArgs {
-  cb: (values: IFormValues) => void;
-  skipClientValidation?: boolean;
+  /** PROPERTY - skipClientValidation - if true will skip validation on submit */
+  skipClientValidation?: IFormConfigDefault['skipClientValidation'];
 }
 
 export interface IFormErrors {
@@ -190,10 +202,11 @@ export interface IForm {
   $dirties: Store<IFormDirties>;
   /** EVENT - Form reset - resets form and all fields */
   reset: Event<void>;
-  /** METHOD - Form submit - callback will be called with form values if form is valid - sync */
-  submit: (args: IFormSubmitArgs) => void;
-  /** EFFECT - Form submit - callback will be called with form values to get remote validation */
-  submitRemote: Effect<IFormSubmitArgs, void, IFormSubmitResponseError>;
+  /**
+   * METHOD - Form submit - callback will be called with form values if form is valid
+   * or if callback returns promise reject with errors, will highlight them in the form
+   */
+  submit: Effect<ISubmitArgs, IFormSubmitResponse, IFormSubmitResponseError>
   /** DATA - Form config - get/set field config */
   config: IFormConfig;
   /** DATA - Form fields getter */
@@ -213,9 +226,7 @@ export interface IForms {
 export interface IRFormProps extends Omit<IFormConfig, 'formValidations'> {
   children?: ReactNode;
   /** METHOD - submit - will trigger submit based on remoteValidation property */
-  onSubmit?: IFormSubmitArgs['cb'];
-  /** PROPERTY - remoteValidation - if true will call remote submit */
-  remoteValidation?: IFormConfigDefault['remoteValidation'];
+  onSubmit?: ISubmitArgs['cb'];
   /** PROPERTY - skipClientValidation - if true will skip validation on submit */
   skipClientValidation?: IFormConfigDefault['skipClientValidation'];
   /** PROPERTY - object of validators per field */

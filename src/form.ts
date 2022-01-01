@@ -1,4 +1,4 @@
-import { combine, Effect, guard, sample } from 'effector';
+import { attach, combine, Effect, guard, sample } from 'effector';
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
 
@@ -23,6 +23,8 @@ import {
   IFormActiveUpdate,
   IFormDirties,
   IFormDirtyUpdate,
+  IFormSubmitResponse,
+  ISubmitArgs,
 } from './model';
 
 export const formConfigDefault: IFormConfigDefault = {
@@ -30,7 +32,6 @@ export const formConfigDefault: IFormConfigDefault = {
   initialValues: {},
   onSubmit: () => {},
   keepOnUnmount: false,
-  remoteValidation: false,
   skipClientValidation: false,
   validateOnBlur: true,
   validateOnChange: false,
@@ -113,36 +114,37 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     }), (_, values) => values);
 
   /**
-   * Sync form submit with option to skip validation
+   * Form submit effect.
+   * If callback is promise and returns errors object, will be highlighted in the
+   * corresponded fields: { fieldName: 'Name already exist' }.
+   * Return values on success and errors on error
    */
-  const submit = ({ cb, skipClientValidation }: IFormSubmitArgs) => {
-    Object.values(fields).forEach(({ validate }) => validate());
-    if ($valid.getState() || skipClientValidation) {
-      cb($values.getState());
-    }
-  };
-
-  /**
-   * Remote validation form submit with option to skip client validation
-   * cb - is api call for the remote validation, response contains validation
-   * results in format { field1: message, field2: message }, if empty - valid
-   */
-  const submitRemote: Effect<IFormSubmitArgs, void, IFormSubmitResponseError> = formDomain.effect({
-    handler: async ({ cb, skipClientValidation = false }) => {
-      if (!skipClientValidation) {
-        Object.values(fields).forEach(({ validate }) => validate());
-        if (!$valid.getState()) {
-          return Promise.reject({ errors: $errors.getState() });
+  const onSubmit: Effect<IFormSubmitArgs, IFormSubmitResponse, IFormSubmitResponseError> = formDomain.effect({
+    handler: async ({ cb, values, errors, valid, skipClientValidation }) => {
+      if (valid || skipClientValidation) {
+        try {
+          await cb(values);
+          return Promise.resolve({ values });
+        } catch (remoteErrors) {
+          return Promise.reject({ remoteErrors });
         }
       }
-      try {
-        await cb($values.getState());
-        return Promise.resolve();
-      } catch (remoteErrors) {
-        return Promise.reject({ remoteErrors });
-      }
+      return Promise.reject({ errors });
     },
     name: 'submit',
+  });
+
+  /**
+   * Form submit attached effect, triggers fields validation if not skipped,
+   * attach data needed to process onSubmit effect.
+   */
+  const submit: Effect<ISubmitArgs, IFormSubmitResponse, IFormSubmitResponseError> = attach({
+    source: { values: $values, errors: $errors, valid: $valid },
+    mapParams: (
+      { cb, skipClientValidation = config.skipClientValidation },
+      { values, errors, valid }
+    ) => ({ cb, values, errors, valid, skipClientValidation }),
+    effect: onSubmit,
   });
 
   return {
@@ -161,7 +163,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     $touches,
     $dirty,
     $dirties,
-    $submitting: submitRemote.pending,
+    $submitting: onSubmit.pending,
     get config() {
       return config;
     },
@@ -173,7 +175,6 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     },
     reset,
     submit,
-    submitRemote,
     getField: (name) => fields[name],
     registerField: ({ name, ...fieldConfig }) => {
       if (fields[name]) {
@@ -182,6 +183,10 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
       fields[name] = createField(
         { name, ...fieldConfig },
         {
+        onSubmit: guard({
+          clock: submit,
+          filter: ({ skipClientValidation }) => !skipClientValidation,
+        }),
         formDomain,
         formChange: onChange,
         resetField: reset,
@@ -191,7 +196,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
         updateTouch,
         updateValue,
         setRemoteErrors: guard({
-          source: submitRemote.failData,
+          source: onSubmit.failData,
           filter: ({ remoteErrors }) => !!remoteErrors,
         }),
       });

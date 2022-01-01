@@ -78,7 +78,6 @@ export const Form = ({
   onSubmit = formConfigDefault.onSubmit,
   name = formConfigDefault.name,
   keepOnUnmount = formConfigDefault.keepOnUnmount,
-  remoteValidation = formConfigDefault.remoteValidation,
   skipClientValidation = formConfigDefault.skipClientValidation,
   initialValues = formConfigDefault.initialValues,
   validateOnBlur = formConfigDefault.validateOnBlur,
@@ -96,11 +95,7 @@ export const Form = ({
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    if (remoteValidation) {
-      form.submitRemote({ cb: onSubmit, skipClientValidation });
-    } else {
-      form.submit({ cb: onSubmit, skipClientValidation });
-    }
+    form.submit({ cb: onSubmit, skipClientValidation });
   };
 
   useEffect(() => {

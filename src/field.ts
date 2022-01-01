@@ -14,6 +14,7 @@ export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
 export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format'>, {
   formDomain,
   formChange,
+  onSubmit,
   resetField,
   updateActive,
   updateError,
@@ -105,7 +106,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
    */
   const $changedAfterBlur = fieldDomain.store<boolean>(false, { name: '$changed-after-blur' })
     .on(onChange, () => true)
-    .on(validate, () => false)
+    .on([validate, onSubmit], () => false)
     .reset(reset);
 
   /**
@@ -125,7 +126,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
     updateFilter: (curr, prev) => JSON.stringify(curr) !== JSON.stringify(prev),
   }).on(
     sample({
-      clock: validate,
+      clock: [validate, onSubmit],
       source: $value,
       fn: (value) => config.validators.map((vd) => vd(value)).filter(Boolean) as string[],
     }),

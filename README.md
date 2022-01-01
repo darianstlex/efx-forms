@@ -76,10 +76,7 @@ interface Form {
    * @example
    * { 'user.name': 'John', 'user.age': '20' }
    */
-  onSubmit?: (values: IFormValues) => void;
-  // If set, submit function will be called to get API validation errors
-  // Default: false
-  remoteValidation?: boolean;
+  onSubmit?: (values: IFormValues) => void | Promise<IFormErrors>;
   // If set, submit will skip client form validation
   // Default: false
   skipClientValidation?: boolean;
@@ -179,11 +176,9 @@ interface FormInstance {
   $dirties: Store<{ [name: string]: boolean }>;
   // Form reset - resets form and all fields
   reset: Event<void>;
-  // Form submit - callback will be called with form values if form is valid - sync
-  submit: (args: { cb, skipClientValidation }) => void;
-  // Form submit - callback will be called with form values to get remote validation
-  // Will return promise reject with errors or resolve
-  submitRemote: ({cb, skipClientValidation}) => { [name]: string } | undefined;
+  // Form submit - callback will be called with form values if form is valid
+  // if callback returns promise reject with errors, will highlight them in the form
+  submit: (args: { cb, skipClientValidation }) => Promise<IFormErrors>;
   // Form config - getter / setter
   config: {
     initialValues?: {},
