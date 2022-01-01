@@ -68,7 +68,7 @@ interface Form {
   /**
    * Form submit method - on validation success will be called with form values.
    * If skipClientValidation is set - no validation will be applied.
-   * If remoteValidation is set - submit function should return promise:
+   * If submit return promise:
    * - reject - object with errors per field - errors will be passed to the form
    *   { 'user.name': 'Name is already taken', ... }
    * - resolve - success submit
