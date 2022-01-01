@@ -5,6 +5,21 @@ export type TFieldValue = string | number | null | boolean | [] | {};
 export type TFieldValidator = (value: any) => string | false
 export type TFormErrors = { [name: string]: string };
 
+type TFiltered<T, TK> = Pick<T, { [K in keyof T]: T[K] extends TK ? K : never }[keyof T]>;
+type TFilteredKeyOf<T, TK> = keyof TFiltered<T, TK>;
+type TFilteredType<T, TK> = Required<T>[TFilteredKeyOf<T, TK>];
+type TExtractStoreTypes<P> = P extends Store<infer T> ? T : never;
+
+export type TFormStores = TFiltered<IForm, Store<any>>;
+export type TFormStoreKey = TFilteredKeyOf<IForm, Store<any>>;
+export type TFormStore = TFilteredType<IForm, Store<any>>;
+export type TFormStoreValue = TExtractStoreTypes<TFormStore>;
+
+export type TFieldStores = TFiltered<IField, Store<any>>;
+export type TFieldStoreKey = TFilteredKeyOf<IField, Store<any>>;
+export type TFieldStore = TFilteredType<IField, Store<any>>;
+export type TFieldStoreValue = TExtractStoreTypes<TFieldStore>;
+
 export interface ISubmitArgs {
   cb: (values: IFormValues) => Promise<TFormErrors | void> | void;
   skipClientValidation?: boolean;
@@ -273,14 +288,21 @@ export interface IRDisplayWhenProps {
 }
 
 export interface IRFormDataProviderProps {
-  children: (values: any[]) => ReactElement;
+  /** render function - args are subscribed stores in array */
+  children: (values: TFormStoreValue[]) => ReactElement;
+  /** PROPERTY - form name to get data from */
   name?: string;
-  stores: string[];
+  /** PROPERTY - stores array - string - ['$values', '$errors'] */
+  stores: TFormStoreKey[];
 }
 
 export interface IRFieldDataProviderProps {
-  children: (values: any[]) => ReactElement;
+  /** render function - args are subscribed stores in array */
+  children: (values: TFieldStoreValue[]) => ReactElement;
+  /** PROPERTY - field name to get data from */
   name: string;
+  /** PROPERTY - form name to get data from */
   formName?: string;
-  stores: string[];
+  /** PROPERTY - stores array - string - ['$value', '$errors'] */
+  stores: TFieldStoreKey[];
 }

@@ -6,7 +6,7 @@ import React, {
   useMemo,
   FormEvent,
 } from 'react';
-import { combine } from 'effector';
+import { combine, Store } from 'effector';
 import { useStore } from 'effector-react';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -24,6 +24,7 @@ import {
   TFieldValue,
   IRFormDataProviderProps,
   IRFieldDataProviderProps,
+  TFormStoreKey, TFieldStoreKey, TFormStoreValue,
 } from './model';
 
 export const FormNameContext = createContext(formConfigDefault.name);
@@ -47,15 +48,15 @@ export const useFormValues = (formName?: string): IFormValues => {
 /**
  * Return form store values
  */
-export const useFormStore = (store: string, formName?: string): any => {
+export const useFormStore = (store: TFormStoreKey, formName?: string): any => {
   const form = useForm(formName);
-  return useStore(form[store]);
+  return useStore(form[store as string]);
 }
 
 /**
  * Return form stores values array
  */
-export const useFormStores = (stores: string[], formName?: string): any[] => {
+export const useFormStores = (stores: TFormStoreKey[], formName?: string): any[] => {
   const form = useForm(formName);
   const storesMap = stores.map((store) => form[store]).filter(Boolean);
   return useStore(combine(storesMap));
@@ -80,15 +81,15 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
 /**
  * Return field store value of the current or provided form
  */
-export const useFieldStore = (name: string, store: string, formName?: string): any => {
+export const useFieldStore = (name: string, store: TFieldStoreKey, formName?: string): any => {
   const field = useField(name, formName);
-  return useStore(field[store]);
+  return useStore(field[store as string]);
 }
 
 /**
  * Return field stores values array
  */
-export const useFieldStores = (name: string, stores: string[], formName?: string): any[] => {
+export const useFieldStores = (name: string, stores: TFieldStoreKey[], formName?: string): any[] => {
   const field = useField(name, formName);
   const storesMap = stores.map((store) => field[store]).filter(Boolean);
   return useStore(combine(storesMap));
