@@ -24,7 +24,8 @@ import {
   TFieldValue,
   IRFormDataProviderProps,
   IRFieldDataProviderProps,
-  TFormStoreKey, TFieldStoreKey, TFormStoreValue,
+  TFormStoreKey,
+  TFieldStoreKey,
 } from './model';
 
 export const FormNameContext = createContext(formConfigDefault.name);

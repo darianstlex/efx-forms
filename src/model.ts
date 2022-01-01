@@ -289,7 +289,7 @@ export interface IRDisplayWhenProps {
 
 export interface IRFormDataProviderProps {
   /** render function - args are subscribed stores in array */
-  children: (values: TFormStoreValue[]) => ReactElement;
+  children: (values: any[]) => ReactElement;
   /** PROPERTY - form name to get data from */
   name?: string;
   /** PROPERTY - stores array - string - ['$values', '$errors'] */
@@ -298,7 +298,7 @@ export interface IRFormDataProviderProps {
 
 export interface IRFieldDataProviderProps {
   /** render function - args are subscribed stores in array */
-  children: (values: TFieldStoreValue[]) => ReactElement;
+  children: (values: any[]) => ReactElement;
   /** PROPERTY - field name to get data from */
   name: string;
   /** PROPERTY - form name to get data from */
