@@ -6,6 +6,7 @@ import React, {
   useMemo,
   FormEvent,
 } from 'react';
+import { combine } from 'effector';
 import { useStore } from 'effector-react';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -24,7 +25,6 @@ import {
   IRFormDataProviderProps,
   IRFieldDataProviderProps,
 } from './model';
-import { combine } from 'effector';
 
 export const FormNameContext = createContext(formConfigDefault.name);
 
@@ -55,7 +55,7 @@ export const useFormStore = (store: string, formName?: string): any => {
 /**
  * Return form stores values array
  */
-export const useFormStores = (stores: string[], formName?: string): any => {
+export const useFormStores = (stores: string[], formName?: string): any[] => {
   const form = useForm(formName);
   const storesMap = stores.map((store) => form[store]).filter(Boolean);
   return useStore(combine(storesMap));
@@ -88,7 +88,7 @@ export const useFieldStore = (name: string, store: string, formName?: string): a
 /**
  * Return field stores values array
  */
-export const useFieldStores = (name: string, stores: string[], formName?: string): any => {
+export const useFieldStores = (name: string, stores: string[], formName?: string): any[] => {
   const field = useField(name, formName);
   const storesMap = stores.map((store) => field[store]).filter(Boolean);
   return useStore(combine(storesMap));
