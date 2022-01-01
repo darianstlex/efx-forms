@@ -21,7 +21,10 @@ import {
   IRFormProps,
   IRDisplayWhenProps,
   TFieldValue,
+  IRFormDataProviderProps,
+  IRFieldDataProviderProps,
 } from './model';
+import { combine } from 'effector';
 
 export const FormNameContext = createContext(formConfigDefault.name);
 
@@ -44,9 +47,18 @@ export const useFormValues = (formName?: string): IFormValues => {
 /**
  * Return form store values
  */
-export const useFormStoreValue = (store: string, formName?: string): any => {
+export const useFormStore = (store: string, formName?: string): any => {
   const form = useForm(formName);
   return useStore(form[store]);
+}
+
+/**
+ * Return form stores values array
+ */
+export const useFormStores = (stores: string[], formName?: string): any => {
+  const form = useForm(formName);
+  const storesMap = stores.map((store) => form[store]).filter(Boolean);
+  return useStore(combine(storesMap));
 }
 
 /**
@@ -68,11 +80,23 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
 /**
  * Return field store value of the current or provided form
  */
-export const useFieldStoreValue = (name: string, store: string, formName?: string): any => {
+export const useFieldStore = (name: string, store: string, formName?: string): any => {
   const field = useField(name, formName);
   return useStore(field[store]);
 }
 
+/**
+ * Return field stores values array
+ */
+export const useFieldStores = (name: string, stores: string[], formName?: string): any => {
+  const field = useField(name, formName);
+  const storesMap = stores.map((store) => field[store]).filter(Boolean);
+  return useStore(combine(storesMap));
+}
+
+/**
+ * Efx Form component
+ */
 export const Form = ({
   children = null,
   onSubmit = formConfigDefault.onSubmit,
@@ -113,6 +137,9 @@ export const Form = ({
 
 Form.displayName = 'Form';
 
+/**
+ * Efx Field component
+ */
 export const Field = ({ Field, name, formName, ...rest }: IRFieldProps) => {
   const { config, fields, registerField } = useForm(formName);
   const { name: N, initialValues = {}, formValidators = {}, ...formConfig } = config;
@@ -197,3 +224,23 @@ export const DisplayWhen = ({
 }
 
 DisplayWhen.displayName = 'DisplayWhen';
+
+/**
+ * Form data stores provider
+ */
+export const FormDataProvider = ({ children, name, stores }: IRFormDataProviderProps) => {
+  const data = useFormStores(stores, name);
+  return children(data);
+}
+
+FormDataProvider.displayName = 'FormDataProvider';
+
+/**
+ * Field data stores provider
+ */
+export const FieldDataProvider = ({ children, name, formName, stores }: IRFieldDataProviderProps) => {
+  const data = useFieldStores(name, stores, formName);
+  return children(data);
+}
+
+FieldDataProvider.displayName = 'FieldDataProvider';

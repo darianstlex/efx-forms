@@ -19,7 +19,7 @@ import { required, email } from 'efx-forms/mjs/validators';
 
 ### Form / Field
 ```jsx
-import { Form, Field } from 'efx-forms/react';
+import { Form, Field, FormDataProvider } from 'efx-forms/react';
 import { required, email } from 'efx-forms/validators';
 
 const Input = ({ id, label, error, errors, ...props }) => (
@@ -53,6 +53,14 @@ const Page = ({ name }) => {
         type="email"
         validators={[required({ msg: `Hey ${name} email is required` }), email()]}
       />
+      <FormDataProvider stores={['$values', '$errors']}>
+        {([values, errors]) =>(
+          <div>
+            <pre>JSON.stringify(values)</pre>
+            <pre>JSON.stringify(errors)</pre>
+          </div>
+        )}
+      </FormDataProvider>
       <button type="submit">Submit</button>
     </Form>
   )
@@ -142,6 +150,34 @@ interface DisplayWhen {
   // Debounce for fields update
   // Default: 0
   updateDebounce?: number;
+}
+```
+
+### FormDataProvider component
+Subscription data provider component
+```ts
+interface FormDataProvider {
+  // Function provides all subscribed data
+  children: (values: any[]) => ReactElement;
+  // Form name if used outside of context or refers to another form
+  name?: string;
+  // Form stores array to get values from
+  stores: string[];
+}
+```
+
+### FieldDataProvider component
+Subscription data provider component
+```ts
+interface FieldDataProvider {
+  // Function provides all subscribed data
+  children: (values: any[]) => ReactElement;
+  // Field name to get stores values from
+  name: string;
+  // Form name if used outside of context or refers to another form
+  formName?: string;
+  // Form stores array to get values from
+  stores: string[];
 }
 ```
 
@@ -251,10 +287,12 @@ import { getForm } from 'efx-forms';
 import {
   useForm,
   useFormValues,
-  useFormStoreValue,
+  useFormStore,
+  useFormStores,
   useField,
   useFieldValue,
-  useFieldStoreValue,
+  useFieldStore,
+  useFieldStores,
 } from 'efx-forms/react';
 
 /**
@@ -277,7 +315,15 @@ const formTwo = useForm();
  * or refers to another form
  * @type (store: string, formName?: string) => IFormErrors
  */
-const formErrors = useFormStoreValue('$errors');
+const formErrors = useFormStore('$errors');
+
+/**
+ * Hook - return form (from context) stores values array or from provided form
+ * form name is needed when hook is used outside of the form context
+ * or refers to another form
+ * @type (store: string[], formName?: string) => IFormErrors
+ */
+const [errors, values] = useFormStores(['$errors', '$values']);
 
 /**
  * Hook - return form (from context) values or from provided form
@@ -309,7 +355,15 @@ const fieldValue = useFieldValue('field-one', 'form-one');
  * or refers to another form
  * @type (name: string, store: string, formName?: string) => IFormErrors
  */
-const fieldErrors = useFieldStoreValue('field-one', '$errors');
+const fieldErrors = useFieldStore('field-one', '$errors');
+
+/**
+ * Hook - return field store values array from form in context or from provided form
+ * form name is needed when hook is used outside of form context
+ * or refers to another form
+ * @type (name: string, store: string[], formName?: string) => IFormErrors
+ */
+const [value, touched] = useFieldStores('field-one', ['$value', '$touched']);
 ```
 
 # Utils

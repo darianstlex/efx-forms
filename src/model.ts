@@ -271,3 +271,16 @@ export interface IRDisplayWhenProps {
   /** PROPERTY - form update debounce - 0 */
   updateDebounce?: number;
 }
+
+export interface IRFormDataProviderProps {
+  children: (values: any[]) => ReactElement;
+  name?: string;
+  stores: string[];
+}
+
+export interface IRFieldDataProviderProps {
+  children: (values: any[]) => ReactElement;
+  name: string;
+  formName?: string;
+  stores: string[];
+}
