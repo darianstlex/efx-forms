@@ -82,7 +82,14 @@ export const useFormStores = (stores: TFormStoreKey[], formName?: string) => {
  */
 export const useField = (name: string, formName?: string): IField => {
   const form = useForm(formName);
-  return useMemo(() => form.fields[name], [name, formName]);
+  return useMemo(() => {
+    const field = form.fields[name];
+    if (!field) throw Error(`
+      Field "${name}" doesnt exist in the given form "${form.name}"
+      or it was attempt to use it before it was created.
+    `);
+    return field;
+  }, [name, formName]);
 }
 
 /**
