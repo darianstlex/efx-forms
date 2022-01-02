@@ -20,18 +20,18 @@ export type TFieldStoreKey = TFilteredKeyOf<IField, Store<any>>;
 export type TFieldStore = TFilteredType<IField, Store<any>>;
 export type TFieldStoreValue = TExtractStoreTypes<TFieldStore>;
 
-export interface ISubmitArgs {
+export interface IFormSubmitArgs {
   cb: (values: IFormValues) => Promise<TFormErrors | void> | void;
   skipClientValidation?: boolean;
 }
 
-export interface IFormSubmitArgs extends ISubmitArgs {
+export interface IFormOnSubmitArgs extends IFormSubmitArgs {
   values: IFormValues;
   errors: IFormErrors;
   valid: boolean;
 }
 
-export interface IFormSubmitResponse {
+export interface IFormSubmitResponseSuccess {
   values?: IFormValues;
 }
 
@@ -89,7 +89,7 @@ export interface IField {
 
 export interface IFormHooks {
   formDomain: Domain;
-  onSubmit: Event<ISubmitArgs>;
+  onSubmit: Event<IFormSubmitArgs>;
   formChange: Event<IFormValueUpdate>;
   resetField: Event<void>;
   updateActive: Event<IFormActiveUpdate>;
@@ -107,7 +107,7 @@ export interface IFormInitialValues {
 export interface IFormConfigDefault {
   name: string;
   initialValues: IFormInitialValues,
-  onSubmit: ISubmitArgs['cb'];
+  onSubmit: IFormSubmitArgs['cb'];
   keepOnUnmount: boolean;
   skipClientValidation: boolean;
   validateOnBlur: boolean;
@@ -221,7 +221,7 @@ export interface IForm {
    * METHOD - Form submit - callback will be called with form values if form is valid
    * or if callback returns promise reject with errors, will highlight them in the form
    */
-  submit: Effect<ISubmitArgs, IFormSubmitResponse, IFormSubmitResponseError>
+  submit: Effect<IFormSubmitArgs, IFormSubmitResponseSuccess, IFormSubmitResponseError>
   /** DATA - Form config - get/set field config */
   config: IFormConfig;
   /** DATA - Form fields getter */
@@ -241,7 +241,7 @@ export interface IForms {
 export interface IRFormProps extends Omit<IFormConfig, 'formValidations'> {
   children?: ReactNode;
   /** METHOD - submit - will trigger submit based on remoteValidation property */
-  onSubmit?: ISubmitArgs['cb'];
+  onSubmit?: IFormSubmitArgs['cb'];
   /** PROPERTY - skipClientValidation - if true will skip validation on submit */
   skipClientValidation?: IFormConfigDefault['skipClientValidation'];
   /** PROPERTY - object of validators per field */

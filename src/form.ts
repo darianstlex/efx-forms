@@ -5,26 +5,26 @@ import pickBy from 'lodash/pickBy';
 import { domain } from './utils';
 import { createField } from './field';
 import {
-  IFormErrorUpdate,
+  IForm,
   IFormConfig,
-  IFormErrors,
-  IFormTouches,
-  IFormToucheUpdate,
+  IFormConfigDefault,
+  IFormFields,
   IFormValues,
   IFormValueUpdate,
-  IFormOnFieldChange,
-  IFormSubmitArgs,
-  IFormSubmitResponseError,
-  IForms,
-  IForm,
-  IFormFields,
-  IFormConfigDefault,
+  IFormErrors,
+  IFormErrorUpdate,
+  IFormTouches,
+  IFormToucheUpdate,
   IFormActive,
   IFormActiveUpdate,
   IFormDirties,
   IFormDirtyUpdate,
-  IFormSubmitResponse,
-  ISubmitArgs,
+  IFormOnFieldChange,
+  IFormSubmitArgs,
+  IFormSubmitResponseError,
+  IFormSubmitResponseSuccess,
+  IFormOnSubmitArgs,
+  IForms,
 } from './model';
 
 export const formConfigDefault: IFormConfigDefault = {
@@ -119,7 +119,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * corresponded fields: { fieldName: 'Name already exist' }.
    * Return values on success and errors on error
    */
-  const onSubmit: Effect<IFormSubmitArgs, IFormSubmitResponse, IFormSubmitResponseError> = formDomain.effect({
+  const onSubmit: Effect<IFormOnSubmitArgs, IFormSubmitResponseSuccess, IFormSubmitResponseError> = formDomain.effect({
     handler: async ({ cb, values, errors, valid, skipClientValidation }) => {
       if (valid || skipClientValidation) {
         try {
@@ -138,7 +138,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Form submit attached effect, triggers fields validation if not skipped,
    * attach data needed to process onSubmit effect.
    */
-  const submit: Effect<ISubmitArgs, IFormSubmitResponse, IFormSubmitResponseError> = attach({
+  const submit: Effect<IFormSubmitArgs, IFormSubmitResponseSuccess, IFormSubmitResponseError> = attach({
     source: { values: $values, errors: $errors, valid: $valid },
     mapParams: (
       { cb, skipClientValidation = config.skipClientValidation },
