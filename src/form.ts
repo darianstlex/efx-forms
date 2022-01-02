@@ -145,7 +145,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
       { values, errors, valid }
     ) => ({ cb, values, errors, valid, skipClientValidation }),
     effect: onSubmit,
-    name: `@forms.@${name}.attach-submit`,
+    name: `@forms/@${name}/attach-submit`,
   });
 
   return {
