@@ -6,7 +6,7 @@ import React, {
   useMemo,
   FormEvent,
 } from 'react';
-import { combine, Store } from 'effector';
+import { clearNode, combine, Store } from 'effector';
 import { useStore } from 'effector-react';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
@@ -29,6 +29,20 @@ import {
 } from './model';
 
 export const FormNameContext = createContext(formConfigDefault.name);
+
+const useCombine = (stores: string[], src: IForm | IField) => {
+  const $store = useMemo(() => {
+    const map = stores.map((store) => src[store]).filter(Boolean);
+    return combine(map);
+  }, [stores.join(',')]);
+  useEffect(() => {
+    return () => {
+      clearNode($store);
+    }
+  }, []);
+
+  return $store;
+}
 
 /**
  * Return parent or requested form instance
@@ -57,10 +71,10 @@ export const useFormStore = (store: TFormStoreKey, formName?: string): any => {
 /**
  * Return form stores values array
  */
-export const useFormStores = (stores: TFormStoreKey[], formName?: string): any[] => {
+export const useFormStores = (stores: TFormStoreKey[], formName?: string) => {
   const form = useForm(formName);
-  const storesMap = stores.map((store) => form[store]).filter(Boolean);
-  return useStore(combine(storesMap));
+  const $stores = useCombine(stores, form);
+  return useStore($stores);
 }
 
 /**
@@ -90,10 +104,10 @@ export const useFieldStore = (name: string, store: TFieldStoreKey, formName?: st
 /**
  * Return field stores values array
  */
-export const useFieldStores = (name: string, stores: TFieldStoreKey[], formName?: string): any[] => {
+export const useFieldStores = (name: string, stores: TFieldStoreKey[], formName?: string) => {
   const field = useField(name, formName);
-  const storesMap = stores.map((store) => field[store]).filter(Boolean);
-  return useStore(combine(storesMap));
+  const $stores = useCombine(stores, field);
+  return useStore($stores);
 }
 
 /**

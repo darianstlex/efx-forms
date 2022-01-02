@@ -1,6 +1,6 @@
 {
   "name": "efx-forms",
-  "version": "0.7.3",
+  "version": "0.7.5",
   "description": "Effector JS Forms",
   "main": "index.js",
   "types": "index.d.ts",
