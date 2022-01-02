@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useState,
   useMemo,
   FormEvent,
 } from 'react';
@@ -11,6 +12,7 @@ import { useStore } from 'effector-react';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 
+import { domain } from './utils';
 import { formConfigDefault, createUpdateForm, getForm } from './form';
 import { fieldConfigDefault } from './field';
 import {
@@ -28,13 +30,28 @@ import {
   TFieldStoreKey,
 } from './model';
 
+const $tempNull = domain.store<any>(null, { name: 'tempStore' });
+const $tempArray = domain.store<any>([], { name: 'tempStore' });
+
 export const FormNameContext = createContext(formConfigDefault.name);
 
-const useCombine = (stores: string[], src: IForm | IField) => {
+export const useRetry = ({ registered, error }) => {
+  const [tries, setTries] = useState(0);
+
+  useEffect(() => {
+    if (tries > 3) throw Error(error);
+    !registered && setTimeout(() => {
+      setTries((num) => num + 1);
+    }, 100);
+  }, [registered, tries]);
+};
+
+export const useCombine = (stores: string[], source: IForm | IField) => {
   const $store = useMemo(() => {
-    const map = stores.map((store) => src[store]).filter(Boolean);
-    return combine(map);
-  }, [stores.join(',')]);
+    const map = stores.map((store) => source?.[store]).filter(Boolean);
+    return source ? combine(map) : $tempArray;
+  }, [stores.join(','), source]);
+
   useEffect(() => {
     return () => {
       clearNode($store);
@@ -82,21 +99,20 @@ export const useFormStores = (stores: TFormStoreKey[], formName?: string) => {
  */
 export const useField = (name: string, formName?: string): IField => {
   const form = useForm(formName);
-  return useMemo(() => {
-    const field = form.fields[name];
-    if (!field) throw Error(`
-      Field "${name}" doesnt exist in the given form "${form.name}"
-      or it was attempt to use it before it was created.
-    `);
-    return field;
-  }, [name, formName]);
+  return useMemo(() => form.fields[name], [name, formName, form.fields[name]?.name]);
 }
 
 /**
  * Return field value of the current or provided form
  */
 export const useFieldValue = (name: string, formName?: string): TFieldValue => {
-  const { $value } = useField(name, formName);
+  const { $value = $tempNull } = useField(name, formName) || {};
+
+  useRetry({
+    registered: $value.shortName !== 'tempStore',
+    error: `Field "${name}" doesnt exist in the given form`},
+  );
+
   return useStore($value);
 }
 
@@ -105,7 +121,14 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
  */
 export const useFieldStore = (name: string, store: TFieldStoreKey, formName?: string): any => {
   const field = useField(name, formName);
-  return useStore(field[store as string]);
+  const $store = field[store as string] || $tempNull;
+
+  useRetry({
+    registered: $store.shortName !== 'tempStore',
+    error: `Field "${name}" doesnt exist in the given form`},
+  );
+
+  return useStore($store);
 }
 
 /**
@@ -114,6 +137,12 @@ export const useFieldStore = (name: string, store: TFieldStoreKey, formName?: st
 export const useFieldStores = (name: string, stores: TFieldStoreKey[], formName?: string) => {
   const field = useField(name, formName);
   const $stores = useCombine(stores, field);
+
+  useRetry({
+    registered: $stores.shortName !== 'tempStore',
+    error: `Field "${name}" doesnt exist in the given form`},
+  );
+
   return useStore($stores);
 }
 
@@ -262,8 +291,8 @@ FormDataProvider.displayName = 'FormDataProvider';
  * Field data stores provider
  */
 export const FieldDataProvider = ({ children, name, formName, stores }: IRFieldDataProviderProps) => {
-  const data = useFieldStores(name, stores, formName);
-  return children(data);
+  const values = useFieldStores(name, stores, formName);
+  return children(values);
 }
 
 FieldDataProvider.displayName = 'FieldDataProvider';
