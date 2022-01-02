@@ -196,8 +196,8 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
         updateTouch,
         updateValue,
         setRemoteErrors: guard({
-          source: onSubmit.failData,
-          filter: ({ remoteErrors }) => !!remoteErrors,
+          source: onSubmit.failData.map(({ remoteErrors }) => remoteErrors as IFormErrors),
+          filter: (remoteErrors) => !!remoteErrors,
         }),
       });
       setTimeout(() => fields[name].syncData(), 0);

@@ -2,8 +2,7 @@ import { Domain, Effect, Event, Store } from 'effector';
 import { ComponentType, ReactElement, ReactNode } from 'react';
 
 export type TFieldValue = string | number | null | boolean | [] | {};
-export type TFieldValidator = (value: any) => string | false
-export type TFormErrors = { [name: string]: string };
+export type TFieldValidator = (value: any) => string | false;
 
 type TFiltered<T, TK> = Pick<T, { [K in keyof T]: T[K] extends TK ? K : never }[keyof T]>;
 type TFilteredKeyOf<T, TK> = keyof TFiltered<T, TK>;
@@ -20,32 +19,12 @@ export type TFieldStoreKey = TFilteredKeyOf<IField, Store<any>>;
 export type TFieldStore = TFilteredType<IField, Store<any>>;
 export type TFieldStoreValue = TExtractStoreTypes<TFieldStore>;
 
-export interface IFormSubmitArgs {
-  cb: (values: IFormValues) => Promise<TFormErrors | void> | void;
-  skipClientValidation?: boolean;
-}
-
-export interface IFormOnSubmitArgs extends IFormSubmitArgs {
-  values: IFormValues;
-  errors: IFormErrors;
-  valid: boolean;
-}
-
-export interface IFormSubmitResponseSuccess {
-  values?: IFormValues;
-}
-
-export interface IFormSubmitResponseError {
-  errors?: TFormErrors;
-  remoteErrors?: TFormErrors;
-}
-
 export interface IFieldConfig {
   name: string;
   initialValue: TFieldValue;
-  parse: (value: any) => TFieldValue,
-  format: (value: TFieldValue) => any,
-  validators: TFieldValidator[],
+  parse: (value: any) => TFieldValue;
+  format: (value: TFieldValue) => any;
+  validators: TFieldValidator[];
   validateOnBlur: boolean;
   validateOnChange: boolean;
 }
@@ -87,6 +66,26 @@ export interface IField {
   config: Omit<IFieldConfig, 'format'>;
 }
 
+export interface IFormSubmitArgs {
+  cb: (values: IFormValues) => Promise<IFormErrors | void> | void;
+  skipClientValidation?: boolean;
+}
+
+export interface IFormOnSubmitArgs extends IFormSubmitArgs {
+  values: IFormValues;
+  errors: IFormErrors;
+  valid: boolean;
+}
+
+export interface IFormSubmitResponseSuccess {
+  values?: IFormValues;
+}
+
+export interface IFormSubmitResponseError {
+  errors?: IFormErrors;
+  remoteErrors?: IFormErrors;
+}
+
 export interface IFormHooks {
   formDomain: Domain;
   onSubmit: Event<IFormSubmitArgs>;
@@ -97,7 +96,7 @@ export interface IFormHooks {
   updateDirty: Event<IFormDirtyUpdate>;
   updateTouch: Event<IFormToucheUpdate>;
   updateValue: Event<IFormValueUpdate>;
-  setRemoteErrors: Event<IFormSubmitResponseError>;
+  setRemoteErrors: Event<IFormErrors>;
 }
 
 export interface IFormInitialValues {
@@ -187,7 +186,7 @@ export interface IFormValidators {
 }
 
 export interface IFormFields {
-  [name: string]: IField
+  [name: string]: IField;
 }
 
 export interface IForm {
@@ -202,7 +201,7 @@ export interface IForm {
   /** $$STORE - Form values - all fields values - flat */
   $values: Store<IFormValues>;
   /** $$STORE - Form errors - all fields errors - flat */
-  $errors: Store<IFormErrors>
+  $errors: Store<IFormErrors>;
   /** $$STORE - Form valid - true if form is valid */
   $valid: Store<boolean>;
   /** $$STORE - Form submitting - true if busy */
@@ -221,7 +220,7 @@ export interface IForm {
    * METHOD - Form submit - callback will be called with form values if form is valid
    * or if callback returns promise reject with errors, will highlight them in the form
    */
-  submit: Effect<IFormSubmitArgs, IFormSubmitResponseSuccess, IFormSubmitResponseError>
+  submit: Effect<IFormSubmitArgs, IFormSubmitResponseSuccess, IFormSubmitResponseError>;
   /** DATA - Form config - get/set field config */
   config: IFormConfig;
   /** DATA - Form fields getter */

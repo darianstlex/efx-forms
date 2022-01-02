@@ -133,15 +133,15 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
     (_, errors) => errors,
   ).on(
     setRemoteErrors,
-    (_, { remoteErrors = {} }) => (remoteErrors[name] ? [remoteErrors[name]] : []),
-  ).on(setError, (_, error) => ([error])).reset([resetError, reset]);
+    (_, errors) => (errors[name] ? [errors[name] as string] : []),
+  ).on(setError, (_, error) => [error]).reset([resetError, reset]);
 
   /**
    * Updates form errors on field validation change
    */
   sample({
     source: $errors,
-    fn: ([error = null]) => ({ name, error }),
+    fn: ([error]) => ({ name, error }),
     target: updateError,
   });
 
@@ -181,7 +181,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
    */
   const syncData = () => {
     updateValue({ name, value: $value.getState() });
-    const [error = null] = $errors.getState();
+    const [error] = $errors.getState();
     updateError({ name, error });
   };
 

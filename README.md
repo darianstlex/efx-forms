@@ -118,7 +118,7 @@ interface Field {
   // Format value before displaying
   format?: (value: TFieldValue) => any;
   // Validators array - applied on validation
-  validators?: [(value: TFieldValue) => string | false]
+  validators?: [(value: TFieldValue) => string | false];
   // Set validation behaviour onBlur, overrides form value
   // Default: true
   validateOnBlur?: boolean;

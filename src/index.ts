@@ -3,7 +3,7 @@ export { getForm, createUpdateForm } from './form';
 export type {
   IFormValues,
   IFormValidators,
-  TFormErrors,
+  IFormErrors,
   TFieldValue,
   TFieldValidator,
 } from './model';
