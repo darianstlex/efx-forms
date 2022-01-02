@@ -407,11 +407,11 @@ const $shapedStore = shapeFyStore($values);
 # Validators
 Check validators.d.ts file to see all built-in validators and their arguments
 ```ts
-import { required } from 'efx-forms/validators';
+import { required, email } from 'efx-forms/validators';
 
 const formValidations = {
   'user.name': [required()],
-  'user.email': [required({ msg: 'Email is required' })], // custom message
+  'user.email': [required({ msg: 'Email is required' }), email()], // custom message
 }
 ```
 

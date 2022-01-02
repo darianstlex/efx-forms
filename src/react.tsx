@@ -6,7 +6,7 @@ import React, {
   useMemo,
   FormEvent,
 } from 'react';
-import { clearNode, combine, Store } from 'effector';
+import { clearNode, combine } from 'effector';
 import { useStore } from 'effector-react';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
