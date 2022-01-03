@@ -137,7 +137,7 @@ interface Field {
 Conditional rendering based on form values
 ```ts
 interface IfFormValues {
-  children: ReactElement;
+  children: ReactNode;
   // Form name - used to get form values
   // if not provided will be taken from context
   form?: string;
@@ -153,12 +153,28 @@ interface IfFormValues {
   updateDebounce?: number;
 }
 ```
+```jsx
+import { IfFormValues } from 'efx-forms/react';
+
+const ConditionalRender = () => (
+  <IfFormValues check={({ age }) => age > 21 }>
+    <div>I am a big boy!</div>
+  </IfFormValues>
+);
+
+const ConditionalRenderProp = () => (
+  <IfFormValues
+    check={({ age }) => age > 21 }
+    render={({ age, name }) => <div>My name is {name}, I am {age}</div>}
+  />
+);
+```
 
 ### IfFieldsValue component
 Conditional rendering based on fields value
 ```ts
 interface IfFieldsValue {
-  children: ReactElement;
+  children: ReactNode;
   // Fields name array to check against
   fields: string[];
   // Form name - if fields belongs to a different form or used outside of the form context
@@ -168,13 +184,30 @@ interface IfFieldsValue {
   check: (values: any[]) => boolean;
 }
 ```
+```jsx
+import { IfFieldsValue } from 'efx-forms/react';
+
+const ConditionalRender = () => (
+  <IfFieldsValue fields={['height', 'age']} check={([height, age]) => height > 190 && age > 21 }>
+    <div>I am a big and tall boy!</div>
+  </IfFieldsValue>
+);
+
+const ConditionalRenderProp = () => (
+  <IfFieldsValue
+    fields={['height', 'age']}
+    check={([height, age]) => height > 190 && age > 21 }
+    render={([height, age]) => <div>Height: {height}, Age: {age}</div>}
+  />
+);
+```
 
 ### FormDataProvider component
 Subscribe for form values changes
 ```ts
 interface FormDataProvider {
   // Render function - provides all subscribed data
-  children: (values: any[]) => ReactElement;
+  children: (values: any[]) => ReactNode;
   // Form name if used outside of context or refers to another form
   name?: string;
   // Form stores array to get values from
@@ -187,7 +220,7 @@ Subscribe for field value changes
 ```ts
 interface FieldDataProvider {
   // Render function - provides all subscribed data
-  children: (values: any[]) => ReactElement;
+  children: (values: any[]) => ReactNode;
   // Field name to get stores values from
   name: string;
   // Form name if used outside of context or refers to another form
@@ -202,7 +235,7 @@ Subscribe for fields value changes
 ```ts
 interface FieldDataProvider {
   /** render function - args are subscribed stores values in array */
-  children: (values: any[]) => ReactElement;
+  children: (values: any[]) => ReactNode;
   /** PROPERTY - form name to get fields from */
   formName?: string;
   /** PROPERTY - fields array - string - ['user.name', 'user.age'] */

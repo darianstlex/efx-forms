@@ -1,6 +1,5 @@
 import { Domain, Effect, Event, Store } from 'effector';
 import { ComponentType, ReactElement, ReactNode } from 'react';
-import { IfFormValues, FieldsValueProvider } from './react';
 
 export type TFieldValue = string | number | null | boolean | [] | {};
 export type TFieldValidator = (value: any) => string | false;
@@ -275,7 +274,7 @@ export interface IRFieldProps {
 }
 
 export interface IRIfFormValuesProps {
-  children: ReactElement;
+  children?: ReactNode;
   /** PROPERTY - form name to check against */
   form?: string;
   /** METHOD - check - accepts form values and return boolean, if true render children */
@@ -286,21 +285,25 @@ export interface IRIfFormValuesProps {
   resetTo?: IFormValues;
   /** PROPERTY - form update debounce - 0 */
   updateDebounce?: number;
+  /** METHOD - render - accepts form values and return react element */
+  render?: (values: IFormValues) => ReactElement;
 }
 
 export interface IRIfFieldsValueProps {
-  children: ReactElement;
+  children?: ReactNode;
   /** PROPERTY - fields name array to check against */
   fields: string[];
   /** PROPERTY - form name to check against */
   formName?: string;
   /** METHOD - check - accepts form values and return boolean, if true render children */
   check: (values: any[]) => boolean;
+  /** METHOD - render - accepts values array and return react element */
+  render?: (values: any[]) => ReactElement;
 }
 
 export interface IRFormDataProviderProps {
   /** render function - args are subscribed stores in array */
-  children: (values: any[]) => ReactElement;
+  children: (values: any[]) => ReactNode;
   /** PROPERTY - form name to get data from */
   name?: string;
   /** PROPERTY - stores array - string - ['$values', '$errors'] */
@@ -309,7 +312,7 @@ export interface IRFormDataProviderProps {
 
 export interface IRFieldDataProviderProps {
   /** render function - args are subscribed stores in array */
-  children: (values: any[]) => ReactElement;
+  children: (values: any[]) => ReactNode;
   /** PROPERTY - field name to get data from */
   name: string;
   /** PROPERTY - form name to get data from */
@@ -320,7 +323,7 @@ export interface IRFieldDataProviderProps {
 
 export interface IRFieldsValueProviderProps {
   /** render function - args are subscribed stores values in array */
-  children: (values: any[]) => ReactElement;
+  children: (values: any[]) => ReactNode;
   /** PROPERTY - form name to get fields from */
   formName?: string;
   /** PROPERTY - fields array - string - ['user.name', 'user.age'] */

@@ -5,7 +5,7 @@ import React, {
   useEffect,
   useState,
   useMemo,
-  FormEvent,
+  FormEvent, ReactElement,
 } from 'react';
 import { clearNode, combine } from 'effector';
 import { useStore } from 'effector-react';
@@ -314,6 +314,7 @@ export const IfFormValues = ({
   form,
   setTo,
   resetTo,
+  render,
   updateDebounce = 0
 }: IRIfFormValuesProps) => {
   const formInst = useForm(form);
@@ -330,7 +331,9 @@ export const IfFormValues = ({
     return updateDeb.cancel;
   }, [show]);
 
-  return show ? children : null;
+  const output = () => render ? render(values) : children;
+
+  return (show ? output() : null) as ReactElement;
 }
 
 IfFormValues.displayName = 'IfFormValues';
@@ -343,10 +346,13 @@ export const IfFieldsValue = ({
   check,
   fields = [],
   formName,
+  render,
 }: IRIfFieldsValueProps) => {
-  const values = useFieldsValue(fields, formName)
+  const values = useFieldsValue(fields, formName);
   const show = check(values);
-  return show ? children : null;
+  const output = () => render ? render(values) : children;
+
+  return (show ? output() : null) as ReactElement;
 }
 
 IfFieldsValue.displayName = 'IfFieldsValue';
@@ -356,7 +362,7 @@ IfFieldsValue.displayName = 'IfFieldsValue';
  */
 export const FormDataProvider = ({ children, name, stores }: IRFormDataProviderProps) => {
   const data = useFormStores(stores, name);
-  return children(data);
+  return children(data) as ReactElement;
 }
 
 FormDataProvider.displayName = 'FormDataProvider';
@@ -366,7 +372,7 @@ FormDataProvider.displayName = 'FormDataProvider';
  */
 export const FieldDataProvider = ({ children, name, formName, stores }: IRFieldDataProviderProps) => {
   const values = useFieldStores(name, stores, formName);
-  return children(values);
+  return children(values) as ReactElement;
 }
 
 FieldDataProvider.displayName = 'FieldDataProvider';
@@ -376,7 +382,7 @@ FieldDataProvider.displayName = 'FieldDataProvider';
  */
 export const FieldsValueProvider = ({ children, fields, formName }: IRFieldsValueProviderProps) => {
   const values = useFieldsValue(fields, formName);
-  return children(values);
+  return children(values) as ReactElement;
 }
 
 FieldsValueProvider.displayName = 'FieldsValueProvider';
