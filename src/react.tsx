@@ -16,18 +16,18 @@ import { domain } from './utils';
 import { formConfigDefault, createUpdateForm, getForm } from './form';
 import { fieldConfigDefault } from './field';
 import {
+  IForm,
   IField,
   IFieldConfig,
-  IForm,
   IFormValues,
   IRFieldProps,
   IRFormProps,
-  IRDisplayWhenProps,
   TFieldValue,
-  IRFormDataProviderProps,
-  IRFieldDataProviderProps,
   TFormStoreKey,
   TFieldStoreKey,
+  IRFormDataProviderProps,
+  IRFieldDataProviderProps,
+  IRDisplayIfValuesProps,
 } from './model';
 
 const $tempNull = domain.store<any>(null, { name: 'tempStore' });
@@ -250,14 +250,14 @@ Field.displayName = 'Field';
 /**
  * Conditional rendering based on form values
  */
-export const DisplayWhen = ({
+export const DisplayIfValues = ({
   children,
   check,
   form,
   setTo,
   resetTo,
   updateDebounce = 0
-}: IRDisplayWhenProps) => {
+}: IRDisplayIfValuesProps) => {
   const formInst = useForm(form);
   const values = useStore(formInst.$values);
   const show = check(values);
@@ -275,7 +275,7 @@ export const DisplayWhen = ({
   return show ? children : null;
 }
 
-DisplayWhen.displayName = 'DisplayWhen';
+DisplayIfValues.displayName = 'DisplayIfValues';
 
 /**
  * Form data stores provider

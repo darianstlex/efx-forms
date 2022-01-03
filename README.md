@@ -133,10 +133,10 @@ interface Field {
 }
 ```
 
-### DisplayWhen component
+### DisplayIfValues component
 Conditional rendering helper component
 ```ts
-interface DisplayWhen {
+interface DisplayIfValues {
   // Form name - used to get form values
   // if not provided will be taken from context
   form?: string;

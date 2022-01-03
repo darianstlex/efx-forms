@@ -1,5 +1,6 @@
 import { Domain, Effect, Event, Store } from 'effector';
 import { ComponentType, ReactElement, ReactNode } from 'react';
+import { DisplayIfValues } from './react';
 
 export type TFieldValue = string | number | null | boolean | [] | {};
 export type TFieldValidator = (value: any) => string | false;
@@ -273,7 +274,7 @@ export interface IRFieldProps {
   [any: string]: any;
 }
 
-export interface IRDisplayWhenProps {
+export interface IRDisplayIfValuesProps {
   children: ReactElement;
   /** PROPERTY - form name to check against */
   form?: string;

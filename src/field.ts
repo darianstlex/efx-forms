@@ -83,8 +83,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
    * Field touched store - true onChange
    */
   const $active = fieldDomain.store<boolean>(false, { name: '$active' })
-    .on(setActive, (_, active) => active)
-    .reset(reset);
+    .on(setActive, (_, active) => active);
 
   /**
    * Update form active fields on activity change
@@ -105,7 +104,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   /**
    * Detect changes after blur to run validation
    */
-  const $changedAfterBlur = fieldDomain.store<boolean>(false, { name: '$changed-after-blur' })
+  const $hasChanges = fieldDomain.store<boolean>(false, { name: '$has-changes' })
     .on(onChange, () => true)
     .on([validate, onFormSubmit], () => false)
     .reset(reset);
@@ -152,7 +151,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
    */
   guard({
     clock: onBlur,
-    source: [$touched, $changedAfterBlur],
+    source: [$touched, $hasChanges],
     filter: ([touched, changed]) => changed && touched && config.validateOnBlur && !config.validateOnChange,
     target: validate,
   });
