@@ -50,19 +50,20 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
 
   const fields: IFormFields = {};
 
-  const updateActive = formDomain.event<IFormActiveUpdate>('update-active');
-  const updateError = formDomain.event<IFormErrorUpdate>('update-validation');
-  const updateTouch = formDomain.event<IFormToucheUpdate>('update-touch');
-  const updateDirty = formDomain.event<IFormDirtyUpdate>('update-dirty');
-  const updateValue = formDomain.event<IFormValueUpdate>('update-value');
+  const setFormActive = formDomain.event<IFormActiveUpdate>('update-active');
+  const setFormError = formDomain.event<IFormErrorUpdate>('update-validation');
+  const setFormTouch = formDomain.event<IFormToucheUpdate>('update-touch');
+  const setFormDirty = formDomain.event<IFormDirtyUpdate>('update-dirty');
+  const setFormValue = formDomain.event<IFormValueUpdate>('update-value');
+  const setFormChange = formDomain.event<IFormOnFieldChange>('change');
   const reset = formDomain.event<void>('reset');
-  const onChange = formDomain.event<IFormOnFieldChange>('change');
+  const update = formDomain.event<IFormValues>('update');
 
   /**
    * Validation errors store - keeps all fields validation errors
    */
   const $errors = formDomain.store<IFormErrors>({}, { name: '$errors'})
-    .on(updateError, (state, { name, error }) => ({ ...state, [name]: error }));
+    .on(setFormError, (state, { name, error }) => ({ ...state, [name]: error }));
 
   /**
    * Calculates form validation
@@ -73,13 +74,13 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Fields status store - keeps fields activity / visibility status
    */
   const $active = formDomain.store<IFormActive>({}, { name: '$active'})
-    .on(updateActive, (state, { name, active }) => ({ ...state, [name]: active }));
+    .on(setFormActive, (state, { name, active }) => ({ ...state, [name]: active }));
 
   /**
    * Touches store - keeps all fields touches
    */
   const $touches = formDomain.store<IFormTouches>({}, { name: '$touches'})
-    .on(updateTouch, (state, { name, touched }) => ({ ...state, [name]: touched }));
+    .on(setFormTouch, (state, { name, touched }) => ({ ...state, [name]: touched }));
 
   /**
    * Calculates form touched
@@ -90,7 +91,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Dirties store - keeps all fields dirty
    */
   const $dirties = formDomain.store<IFormDirties>({}, { name: '$dirties'})
-    .on(updateDirty, (state, { name, dirty }) => ({ ...state, [name]: dirty }));
+    .on(setFormDirty, (state, { name, dirty }) => ({ ...state, [name]: dirty }));
 
   /**
    * Calculates form dirty
@@ -101,14 +102,14 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Values store - keeps all fields values
    */
   const $values = formDomain.store<IFormValues>({}, { name: '$values'})
-    .on(updateValue, (state, { name, value }) => ({ ...state, [name]: value }));
+    .on(setFormValue, (state, { name, value }) => ({ ...state, [name]: value }));
 
   /**
    * Changes store, triggers change on field change event
    */
   const $changes = formDomain.store<IFormValues>({}, { name: '$changes'})
     .on(sample({
-      clock: onChange,
+      clock: setFormChange,
       fn: (values, { name, value }) => ({ ...values, [name]: value }),
       source: $values,
     }), (_, values) => values);
@@ -174,6 +175,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     get fields() {
       return fields;
     },
+    update,
     reset,
     submit,
     getField: (name) => fields[name],
@@ -184,30 +186,26 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
       fields[name] = createField(
         { name, ...fieldConfig },
         {
-        onSubmit: guard({
+        formDomain,
+        onFormUpdate: update,
+        onFormReset: reset,
+        onFormSubmit: guard({
           clock: submit,
           filter: ({ skipClientValidation }) => !skipClientValidation,
         }),
-        formDomain,
-        formChange: onChange,
-        resetField: reset,
-        updateActive,
-        updateError,
-        updateDirty,
-        updateTouch,
-        updateValue,
-        setRemoteErrors: guard({
+        onFormErrors: guard({
           source: onSubmit.failData.map(({ remoteErrors }) => remoteErrors as IFormErrors),
           filter: (remoteErrors) => !!remoteErrors,
         }),
+        setFormChange,
+        setFormActive,
+        setFormError,
+        setFormDirty,
+        setFormTouch,
+        setFormValue,
       });
       setTimeout(() => fields[name].syncData(), 0);
       return fields[name];
-    },
-    update: (values) => {
-      Object.entries(values).forEach(([field, value]) => {
-        fields[field]?.update(value);
-      })
     },
   };
 };

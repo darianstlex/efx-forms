@@ -88,15 +88,16 @@ export interface IFormSubmitResponseError {
 
 export interface IFormHooks {
   formDomain: Domain;
-  onSubmit: Event<IFormSubmitArgs>;
-  formChange: Event<IFormValueUpdate>;
-  resetField: Event<void>;
-  updateActive: Event<IFormActiveUpdate>;
-  updateError: Event<IFormErrorUpdate>;
-  updateDirty: Event<IFormDirtyUpdate>;
-  updateTouch: Event<IFormToucheUpdate>;
-  updateValue: Event<IFormValueUpdate>;
-  setRemoteErrors: Event<IFormErrors>;
+  onFormSubmit: Event<IFormSubmitArgs>;
+  onFormUpdate: Event<IFormValues>;
+  onFormReset: Event<void>;
+  onFormErrors: Event<IFormErrors>;
+  setFormChange: Event<IFormValueUpdate>;
+  setFormActive: Event<IFormActiveUpdate>;
+  setFormError: Event<IFormErrorUpdate>;
+  setFormDirty: Event<IFormDirtyUpdate>;
+  setFormTouch: Event<IFormToucheUpdate>;
+  setFormValue: Event<IFormValueUpdate>;
 }
 
 export interface IFormInitialValues {
@@ -217,7 +218,7 @@ export interface IForm {
   /** EVENT - Form reset - resets form and all fields */
   reset: Event<void>;
   /**
-   * METHOD - Form submit - callback will be called with form values if form is valid
+   * EFFECT - Form submit - callback will be called with form values if form is valid
    * or if callback returns promise reject with errors, will highlight them in the form
    */
   submit: Effect<IFormSubmitArgs, IFormSubmitResponseSuccess, IFormSubmitResponseError>;
@@ -229,8 +230,8 @@ export interface IForm {
   getField: (name: string) => IField;
   /** METHOD - Form register field */
   registerField: (config: Omit<IFieldConfig, 'format'>) => IField;
-  /** METHOD - Form update fields values */
-  update: (values: IFormValues) => void;
+  /** EVENT - Form update fields values */
+  update: Event<IFormValues>;
 }
 
 export interface IForms {

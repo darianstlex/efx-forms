@@ -13,15 +13,16 @@ export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
 
 export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format'>, {
   formDomain,
-  formChange,
-  onSubmit,
-  resetField,
-  updateActive,
-  updateError,
-  updateDirty,
-  updateTouch,
-  updateValue,
-  setRemoteErrors,
+  onFormSubmit,
+  onFormUpdate,
+  onFormReset,
+  onFormErrors,
+  setFormChange,
+  setFormActive,
+  setFormError,
+  setFormDirty,
+  setFormTouch,
+  setFormValue,
 }: IFormHooks): IField => {
   let config = { name, ...fieldConfig };
 
@@ -50,7 +51,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   sample({
     source: onChange,
     fn: (value) => ({ name, value }),
-    target: formChange,
+    target: setFormChange,
   });
 
   /**
@@ -59,7 +60,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   sample({
     source: $value,
     fn: (value) => ({ name, value }),
-    target: updateValue,
+    target: setFormValue,
   });
 
   /**
@@ -75,7 +76,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   sample({
     source: $dirty,
     fn: (dirty) => ({ name, dirty }),
-    target: updateDirty,
+    target: setFormDirty,
   });
 
   /**
@@ -91,7 +92,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   sample({
     source: $active,
     fn: (active) => ({ name, active }),
-    target: updateActive,
+    target: setFormActive,
   });
 
   /**
@@ -106,7 +107,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
    */
   const $changedAfterBlur = fieldDomain.store<boolean>(false, { name: '$changed-after-blur' })
     .on(onChange, () => true)
-    .on([validate, onSubmit], () => false)
+    .on([validate, onFormSubmit], () => false)
     .reset(reset);
 
   /**
@@ -115,7 +116,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   sample({
     source: $touched,
     fn: (touched) => ({ name, touched }),
-    target: updateTouch,
+    target: setFormTouch,
   });
 
   /**
@@ -126,13 +127,13 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
     updateFilter: (curr, prev) => JSON.stringify(curr) !== JSON.stringify(prev),
   }).on(
     sample({
-      clock: [validate, onSubmit],
+      clock: [validate, onFormSubmit, update],
       source: $value,
       fn: (value) => config.validators.map((vd) => vd(value)).filter(Boolean) as string[],
     }),
     (_, errors) => errors,
   ).on(
-    setRemoteErrors,
+    onFormErrors,
     (_, errors) => (errors[name] ? [errors[name] as string] : []),
   ).on(setError, (_, error) => [error]).reset([resetError, reset]);
 
@@ -142,7 +143,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   sample({
     source: $errors,
     fn: ([error = null]) => ({ name, error }),
-    target: updateError,
+    target: setFormError,
   });
 
   /**
@@ -170,19 +171,27 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
    * Reset field on form reset event if field is touched or has errors
    */
   guard({
-    clock: resetField,
+    clock: onFormReset,
     source: [$touched, $errors],
     filter: ([touched, [error]]) => touched || !!error,
     target: reset,
   });
 
   /**
+   * Update field on form update event
+   */
+  sample({
+    clock: onFormUpdate.filterMap(({ [name]: value }) => value),
+    target: update,
+  });
+
+  /**
    * Sync field data to form on initial setup
    */
   const syncData = () => {
-    updateValue({ name, value: $value.getState() });
+    setFormValue({ name, value: $value.getState() });
     const [error = null] = $errors.getState();
-    updateError({ name, error });
+    setFormError({ name, error });
   };
 
   return {
