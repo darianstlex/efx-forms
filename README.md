@@ -71,7 +71,7 @@ const Page = ({ name }) => {
 ### Form component
 ```ts
 interface Form {
-  // Form name
+  // Form name - required, used to get form instance outside of context
   name: string,
   /**
    * Form submit method - on validation success will be called with form values.
@@ -108,7 +108,7 @@ interface Form {
 ### Field component
 ```ts
 interface Field {
-  // Field name
+  // Field name - required, used to register/get field in the form
   name: string,
   // Field initial value - used on initial load and reset
   // default = ''
@@ -128,7 +128,7 @@ interface Field {
   validateOnChange?: boolean;
   // Field component - component to be used as form field
   Field: ReactComponent;
-  // Form name - if field belongs to a different form or used outside of the form
+  // Form name - if field belongs to a different form or used outside of the form context
   formName?: string;
 }
 ```
@@ -140,7 +140,7 @@ interface DisplayWhen {
   // Form name - used to get form values
   // if not provided will be taken from context
   form?: string;
-  // Conition check - accepts form values and return boolean,
+  // Condition check - accepts form values and return boolean,
   // if true render children
   check: (values: IFormValues) => boolean;
   // Set fields values on show - { fieldName: 'value' }
@@ -157,7 +157,7 @@ interface DisplayWhen {
 Subscription data provider component
 ```ts
 interface FormDataProvider {
-  // Function provides all subscribed data
+  // Render function - provides all subscribed data
   children: (values: any[]) => ReactElement;
   // Form name if used outside of context or refers to another form
   name?: string;
@@ -170,7 +170,7 @@ interface FormDataProvider {
 Subscription data provider component
 ```ts
 interface FieldDataProvider {
-  // Function provides all subscribed data
+  // Render function - provides all subscribed data
   children: (values: any[]) => ReactElement;
   // Field name to get stores values from
   name: string;
