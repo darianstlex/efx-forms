@@ -51,7 +51,10 @@ const Page = ({ name }) => {
         Field={Input}
         label="Email"
         type="email"
-        validators={[required({ msg: `Hey ${name} email is required` }), email()]}
+        validators={[
+          required({ msg: `Hey ${name} email is required` }),
+          email(),
+        ]}
       />
       <FormDataProvider stores={['$values', '$errors']}>
         {([values, errors]) =>(
@@ -93,10 +96,12 @@ interface Form {
   // Keep form data on unmount
   // Default: false
   keepOnUnmount: boolean;
-  // Set fields validation behavior onBlur - field validateOnBlur is in priority
+  // Set fields validation behavior onBlur
+  // field validateOnBlur is in priority
   // Default: true
   validateOnBlur?: boolean;
-  // Set fields validation behavior onChange - field validateOnChange is in priority
+  // Set fields validation behavior onChange
+  // field validateOnChange is in priority
   // if set, validateOnBlur doesn't work
   // Default: false
   validateOnChange?: boolean;
@@ -128,7 +133,8 @@ interface Field {
   validateOnChange?: boolean;
   // Field component - component to be used as form field
   Field: ReactComponent;
-  // Form name - if field belongs to a different form or used outside of the form context
+  // Form name - if field belongs to a different form or used outside
+  // of the form context
   formName?: string;
 }
 ```
@@ -177,7 +183,8 @@ interface IfFieldsValue {
   children: ReactNode;
   // Fields name array to check against
   fields: string[];
-  // Form name - if fields belongs to a different form or used outside of the form context
+  // Form name - if fields belongs to a different form or used outside
+  // of the form context
   formName?: string;
   // Condition check - accepts stores array and return boolean,
   // if true render children
@@ -188,7 +195,10 @@ interface IfFieldsValue {
 import { IfFieldsValue } from 'efx-forms/react';
 
 const ConditionalRender = () => (
-  <IfFieldsValue fields={['height', 'age']} check={([height, age]) => height > 190 && age > 21 }>
+  <IfFieldsValue
+    fields={['height', 'age']}
+    check={([height, age]) => height > 190 && age > 21}
+  >
     <div>I am a big and tall boy!</div>
   </IfFieldsValue>
 );
@@ -276,16 +286,16 @@ Form Instance
 interface FormInstance {
   // Form name
   name: string;
-  // Form active fields - all fields statuses - flat
+  // Form active fields - all fields statuses
   // Indicates if field is mounted / unmounted
   $active: Store<{ [name: string]: boolean }>;
-  // Form active values - all active / visible fields values - flat
+  // Form active values - all active / visible fields values
   $actives: Store<{ [name: string]: TFieldValue }>;
-  // Form values onChange - emits form values only on field change event - flat
+  // Form values onChange - emits form values only on field change event
   $changes: Store<{ [name: string]: TFieldValue }>;
-  // Form values - emits any form values changes - flat
+  // Form values - emits any form values changes
   $values: Store<{ [name: string]: TFieldValue }>;
-  // Form errors - all fields errors - flat
+  // Form errors - all fields errors
   $errors: Store<{ [name: string]: string }>
   // Form validity - true if form is valid
   $valid: Store<boolean>;
@@ -293,16 +303,17 @@ interface FormInstance {
   $submitting: Store<boolean>;
   // Form touched - true if form is touched
   $touched: Store<boolean>;
-  // Form touches - all fields touches - flat
+  // Form touches - all fields touches
   $touches: Store<{ [name: string]: boolean }>;
   // Form dirty - true if different from initial values
   $dirty: Store<boolean>;
-  // Form dirties - all fields dirty state - flat
+  // Form dirties - all fields dirty state
   $dirties: Store<{ [name: string]: boolean }>;
   // Form reset - resets form and all fields
   reset: Event<void>;
   // Form submit - callback will be called with form values if form is valid,
-  // if callback returns promise reject with errors, will highlight them in the form
+  // if callback returns promise reject with errors, will highlight them
+  // in the form
   submit: (args: { cb, skipClientValidation }) => Promise<IFormErrors>;
   // Form config - getter / setter
   config: {
@@ -343,7 +354,8 @@ interface FieldInstance {
   onChange: Event<any>;
   // Field onBlur event
   onBlur: Event<void>;
-  // Field update - updates field value without triggering form change event
+  // Field update - updates field value without triggering
+  // form change event, but will trigger validation
   update: Event<TFieldValue>;
   // Field reset - if field is touched or not valid
   reset: Event<void>;
@@ -386,8 +398,9 @@ import {
 } from 'efx-forms/react';
 
 /**
- * For all Field hooks, before usage make sure field is registered in the form, or will be registered
- * on the next render cycle. Otherwise it will return empty non reactive store.
+ * For all Field hooks, before usage make sure field is registered
+ * in the form or will be register on the next render cycle. Otherwise
+ * it will return empty non reactive store.
  */
 
 /**
@@ -429,7 +442,7 @@ const [errors, values] = useFormStores(['$errors', '$values']);
 const formValues = useFormValues();
 
 /**
- * Hook - return field by name, if form name is not provided takes it from context.
+ * Hook - return field by name
  * Form name is needed when hook is used outside of the form context
  * or refers to another form
  * @type (name: string, formName?: string) => IField
@@ -437,7 +450,7 @@ const formValues = useFormValues();
 const field = useField('field-one');
 
 /**
- * Hook - return field value by name, if form name is not provided takes it from context.
+ * Hook - return field value by name
  * Form name is needed when hook is used outside of form context
  * or refers to another form
  * @type (name: string, formName?: string) => IField
@@ -445,7 +458,7 @@ const field = useField('field-one');
 const fieldValue = useFieldValue('field-one');
 
 /**
- * Hook - return fields values by names, if form name is not provided takes it from context.
+ * Hook - return fields values by names
  * Form name is needed when hook is used outside of form context
  * or refers to another form
  * @type (fields: string[], formName?: string) => IField
@@ -453,7 +466,7 @@ const fieldValue = useFieldValue('field-one');
 const [fieldOne, fieldTwo] = useFieldsValue(['field-one', 'field-two']);
 
 /**
- * Hook - return field store values from form in context or from provided form.
+ * Hook - return field store values
  * Form name is needed when hook is used outside of form context
  * or refers to another form
  * @type (name: string, store: string, formName?: string) => IFormErrors
@@ -461,7 +474,7 @@ const [fieldOne, fieldTwo] = useFieldsValue(['field-one', 'field-two']);
 const fieldErrors = useFieldStore('field-one', '$errors');
 
 /**
- * Hook - return field store values array from form in context or from provided form.
+ * Hook - return field stores value array
  * Form name is needed when hook is used outside of form context
  * or refers to another form
  * @type (name: string, store: string[], formName?: string) => IFormErrors
@@ -514,7 +527,10 @@ import { required, email } from 'efx-forms/validators';
 
 const formValidations = {
   'user.name': [required()],
-  'user.email': [required({ msg: 'Email is required' }), email()], // custom message
+  'user.email': [
+    required({ msg: 'Email is required' }), // custom message
+    email(),
+  ],
 }
 ```
 
