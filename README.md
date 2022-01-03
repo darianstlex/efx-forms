@@ -138,7 +138,7 @@ Conditional rendering based on form values
 ```ts
 interface IfFormValues {
   children: ReactNode;
-  // Form name - used to get form values
+  // Form name - used to get form values,
   // if not provided will be taken from context
   form?: string;
   // Condition check - accepts form values and return boolean,
@@ -252,11 +252,11 @@ const FieldData = () => (
 Subscribe for fields value changes
 ```ts
 interface FieldsValueProvider {
-  /** render function - args are subscribed stores values in array */
+  // Render function - args are subscribed stores values in array
   children: (values: any[]) => ReactNode;
-  /** PROPERTY - form name to get fields from */
+  // Form name to get fields from
   formName?: string;
-  /** PROPERTY - fields array - string - ['user.name', 'user.age'] */
+  // Fields array - string - ['user.name', 'user.age']
   fields: string[];
 }
 ```
@@ -301,7 +301,7 @@ interface FormInstance {
   $dirties: Store<{ [name: string]: boolean }>;
   // Form reset - resets form and all fields
   reset: Event<void>;
-  // Form submit - callback will be called with form values if form is valid
+  // Form submit - callback will be called with form values if form is valid,
   // if callback returns promise reject with errors, will highlight them in the form
   submit: (args: { cb, skipClientValidation }) => Promise<IFormErrors>;
   // Form config - getter / setter
@@ -315,7 +315,7 @@ interface FormInstance {
   fields: { [name: string]: IField };
   // Return given field by name
   getField: (name: string) => IField;
-  // Register new field -  internal usage
+  // Register new field - internal usage
   registerField: (config) => IField;
   // Form bulk update field values
   update: (values: IFormValues) => void;
@@ -397,72 +397,72 @@ import {
 const formOne = getForm('form-one');
 
 /**
- * Hook - return form (from context) instance or provided form by name
- * form name is needed when hook is used outside of the form context
+ * Hook - return form (from context) instance or provided form by name.
+ * Form name is needed when hook is used outside of the form context
  * or refers to another form
  * @type (formName?: string) => IForm
  */
 const formTwo = useForm();
 
 /**
- * Hook - return form (from context) store values or from provided form
- * form name is needed when hook is used outside of the form context
+ * Hook - return form (from context) store values or from provided form.
+ * Form name is needed when hook is used outside of the form context
  * or refers to another form
  * @type (store: string, formName?: string) => IFormErrors
  */
 const formErrors = useFormStore('$errors');
 
 /**
- * Hook - return form (from context) stores values array or from provided form
- * form name is needed when hook is used outside of the form context
+ * Hook - return form (from context) stores values array or from provided form.
+ * Form name is needed when hook is used outside of the form context
  * or refers to another form
  * @type (store: string[], formName?: string) => IFormErrors
  */
 const [errors, values] = useFormStores(['$errors', '$values']);
 
 /**
- * Hook - return form (from context) values or from provided form
- * form name is needed when hook is used outside of the form context
+ * Hook - return form (from context) values or from provided form.
+ * Form name is needed when hook is used outside of the form context
  * or refers to another form
  * @type (formName?: string) => IFormValues
  */
 const formValues = useFormValues();
 
 /**
- * Hook - return field by name, if form name is not provided takes it from context
- * form name is needed when hook is used outside of the form context
+ * Hook - return field by name, if form name is not provided takes it from context.
+ * Form name is needed when hook is used outside of the form context
  * or refers to another form
  * @type (name: string, formName?: string) => IField
  */
 const field = useField('field-one');
 
 /**
- * Hook - return field value by name, if form name is not provided takes it from context
- * form name is needed when hook is used outside of form context
+ * Hook - return field value by name, if form name is not provided takes it from context.
+ * Form name is needed when hook is used outside of form context
  * or refers to another form
  * @type (name: string, formName?: string) => IField
  */
 const fieldValue = useFieldValue('field-one');
 
 /**
- * Hook - return fields values by names, if form name is not provided takes it from context
- * form name is needed when hook is used outside of form context
+ * Hook - return fields values by names, if form name is not provided takes it from context.
+ * Form name is needed when hook is used outside of form context
  * or refers to another form
  * @type (fields: string[], formName?: string) => IField
  */
 const [fieldOne, fieldTwo] = useFieldsValue(['field-one', 'field-two']);
 
 /**
- * Hook - return field store values from form in context or from provided form
- * form name is needed when hook is used outside of form context
+ * Hook - return field store values from form in context or from provided form.
+ * Form name is needed when hook is used outside of form context
  * or refers to another form
  * @type (name: string, store: string, formName?: string) => IFormErrors
  */
 const fieldErrors = useFieldStore('field-one', '$errors');
 
 /**
- * Hook - return field store values array from form in context or from provided form
- * form name is needed when hook is used outside of form context
+ * Hook - return field store values array from form in context or from provided form.
+ * Form name is needed when hook is used outside of form context
  * or refers to another form
  * @type (name: string, store: string[], formName?: string) => IFormErrors
  */
