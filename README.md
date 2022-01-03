@@ -211,8 +211,17 @@ interface FormDataProvider {
   // Form name if used outside of context or refers to another form
   name?: string;
   // Form stores array to get values from
-  stores: string[];
+  stores: TFormStoreKey[];
 }
+```
+```jsx
+import { FormDataProvider } from 'efx-forms/react';
+
+const FormData = () => (
+  <FormDataProvider stores={['$values', '$errors']}>
+    {([values, errors]) => <div>{values} - {errors}</div>}
+  </FormDataProvider>
+);
 ```
 
 ### FieldDataProvider component
@@ -226,14 +235,23 @@ interface FieldDataProvider {
   // Form name if used outside of context or refers to another form
   formName?: string;
   // Form stores array to get values from
-  stores: string[];
+  stores: TFieldStoreKey[];
 }
+```
+```jsx
+import { FieldDataProvider } from 'efx-forms/react';
+
+const FieldData = () => (
+  <FieldDataProvider name="user.name" stores={['$value', '$active']}>
+    {([value, mounted]) => <div>{value} - {mounted}</div>}
+  </FieldDataProvider>
+);
 ```
 
 ### FieldsValueProvider component
 Subscribe for fields value changes
 ```ts
-interface FieldDataProvider {
+interface FieldsValueProvider {
   /** render function - args are subscribed stores values in array */
   children: (values: any[]) => ReactNode;
   /** PROPERTY - form name to get fields from */
@@ -241,6 +259,15 @@ interface FieldDataProvider {
   /** PROPERTY - fields array - string - ['user.name', 'user.age'] */
   fields: string[];
 }
+```
+```jsx
+import { FieldsValueProvider } from 'efx-forms/react';
+
+const FieldsData = () => (
+  <FieldsValueProvider fields={['user.name', 'user.age']}>
+    {([name, age]) => <div>{name} - {age}</div>}
+  </FieldsValueProvider>
+);
 ```
 
 # Instances
