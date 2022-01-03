@@ -25,9 +25,10 @@ import {
   TFieldValue,
   TFormStoreKey,
   TFieldStoreKey,
+  IRDisplayIfValuesProps,
   IRFormDataProviderProps,
   IRFieldDataProviderProps,
-  IRDisplayIfValuesProps,
+  IRFieldsValueProviderProps,
 } from './model';
 
 const $tempNull = domain.store<any>(null, { name: 'tempStore' });
@@ -35,20 +36,35 @@ const $tempArray = domain.store<any>([], { name: 'tempStore' });
 
 export const FormNameContext = createContext(formConfigDefault.name);
 
-export const useRetry = ({ registered, error }) => {
+/**
+ * Rerender until done
+ */
+export const useRetry = ({
+  done,
+  error = '',
+  warn = '',
+  times = 3,
+  interval = 50
+}) => {
   const [tries, setTries] = useState(0);
 
   useEffect(() => {
-    if (tries > 3) throw Error(error);
-    !registered && setTimeout(() => {
+    if (tries >= times) {
+      error && console.error(error);
+      warn && console.warn(warn);
+    }
+    !done && tries < times && setTimeout(() => {
       setTries((num) => num + 1);
-    }, 100);
-  }, [registered, tries]);
+    }, interval);
+  }, [done, tries]);
 };
 
+/**
+ * Combine provided stores
+ */
 export const useCombine = (stores: string[], source: IForm | IField) => {
   const $store = useMemo(() => {
-    const map = stores.map((store) => source?.[store]).filter(Boolean);
+    const map = stores.map((store) => source?.[store] || $tempNull);
     return source ? combine(map) : $tempArray;
   }, [stores.join(','), source]);
 
@@ -59,6 +75,29 @@ export const useCombine = (stores: string[], source: IForm | IField) => {
   }, []);
 
   return $store;
+}
+
+/**
+ * Combine provided fields $value stores
+ */
+export const useCombineFieldsValue = (fields: string[], form: IForm) => {
+  const key = fields.map((it) => !!form.fields[it] ? it : null).filter(Boolean).join(',');
+  const { stores, missing } = useMemo(() => {
+    const stores = fields.map((field) => form.fields[field]?.['$value'] || $tempNull);
+    const missing = stores.map((it, idx) => it.shortName === 'tempStore'
+      ? fields[idx]
+      : false
+    ).filter(Boolean);
+    return { stores: combine(stores), missing };
+  }, [key, form]);
+
+  useEffect(() => {
+    return () => {
+      clearNode(stores);
+    }
+  }, []);
+
+  return { $stores: stores, missing };
 }
 
 /**
@@ -109,9 +148,9 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
   const { $value = $tempNull } = useField(name, formName) || {};
 
   useRetry({
-    registered: $value.shortName !== 'tempStore',
-    error: `Field "${name}" doesnt exist in the given form`},
-  );
+    done: $value.shortName !== 'tempStore',
+    warn: `Field "${name}" doesnt exist in the given form`,
+  });
 
   return useStore($value);
 }
@@ -121,12 +160,12 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
  */
 export const useFieldStore = (name: string, store: TFieldStoreKey, formName?: string): any => {
   const field = useField(name, formName);
-  const $store = field[store as string] || $tempNull;
+  const $store = field?.[store as string] || $tempNull;
 
   useRetry({
-    registered: $store.shortName !== 'tempStore',
-    error: `Field "${name}" doesnt exist in the given form`},
-  );
+    done: $store.shortName !== 'tempStore',
+    warn: `Field "${name}" doesnt exist in the given form`,
+  });
 
   return useStore($store);
 }
@@ -139,9 +178,27 @@ export const useFieldStores = (name: string, stores: TFieldStoreKey[], formName?
   const $stores = useCombine(stores, field);
 
   useRetry({
-    registered: $stores.shortName !== 'tempStore',
-    error: `Field "${name}" doesnt exist in the given form`},
-  );
+    done: $stores.shortName !== 'tempStore',
+    warn: `Field "${name}" doesnt exist in the given form`,
+  });
+
+  return useStore($stores);
+}
+
+/**
+ * Return fields $value stores array
+ */
+export const useFieldsValue = (fields: string[], formName?: string) => {
+  const form = useForm(formName);
+  const { $stores, missing } = useCombineFieldsValue(fields, form);
+
+  useRetry({
+    done: !missing.length,
+    warn: `
+      Not all provided fields exist in the form.
+      missing: ${missing.join(', ')}
+    `,
+  });
 
   return useStore($stores);
 }
@@ -250,7 +307,7 @@ Field.displayName = 'Field';
 /**
  * Conditional rendering based on form values
  */
-export const DisplayIfValues = ({
+export const IfFormValues = ({
   children,
   check,
   form,
@@ -275,7 +332,7 @@ export const DisplayIfValues = ({
   return show ? children : null;
 }
 
-DisplayIfValues.displayName = 'DisplayIfValues';
+IfFormValues.displayName = 'IfFormValues';
 
 /**
  * Form data stores provider
@@ -296,3 +353,13 @@ export const FieldDataProvider = ({ children, name, formName, stores }: IRFieldD
 }
 
 FieldDataProvider.displayName = 'FieldDataProvider';
+
+/**
+ * Fields value provider
+ */
+export const FieldsValueProvider = ({ children, fields, formName }: IRFieldsValueProviderProps) => {
+  const values = useFieldsValue(fields, formName);
+  return children(values);
+}
+
+FieldsValueProvider.displayName = 'FieldsValueProvider';

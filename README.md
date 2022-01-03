@@ -133,10 +133,10 @@ interface Field {
 }
 ```
 
-### DisplayIfValues component
+### IfFormValues component
 Conditional rendering helper component
 ```ts
-interface DisplayIfValues {
+interface IfFormValues {
   // Form name - used to get form values
   // if not provided will be taken from context
   form?: string;
@@ -154,7 +154,7 @@ interface DisplayIfValues {
 ```
 
 ### FormDataProvider component
-Subscription data provider component
+Subscribe for form values changes
 ```ts
 interface FormDataProvider {
   // Render function - provides all subscribed data
@@ -167,7 +167,7 @@ interface FormDataProvider {
 ```
 
 ### FieldDataProvider component
-Subscription data provider component
+Subscribe for field value changes
 ```ts
 interface FieldDataProvider {
   // Render function - provides all subscribed data
@@ -178,6 +178,19 @@ interface FieldDataProvider {
   formName?: string;
   // Form stores array to get values from
   stores: string[];
+}
+```
+
+### FieldsValueProvider component
+Subscribe for fields value changes
+```ts
+interface FieldDataProvider {
+  /** render function - args are subscribed stores values in array */
+  children: (values: any[]) => ReactElement;
+  /** PROPERTY - form name to get fields from */
+  formName?: string;
+  /** PROPERTY - fields array - string - ['user.name', 'user.age'] */
+  fields: string[];
 }
 ```
 
@@ -291,6 +304,7 @@ import {
   useFormStores,
   useField,
   useFieldValue,
+  useFieldsValue,
   useFieldStore,
   useFieldStores,
 } from 'efx-forms/react';
@@ -347,7 +361,15 @@ const field = useField('field-one');
  * or refers to another form
  * @type (name: string, formName?: string) => IField
  */
-const fieldValue = useFieldValue('field-one', 'form-one');
+const fieldValue = useFieldValue('field-one');
+
+/**
+ * Hook - return fields values by names, if form name is not provided takes it from context
+ * form name is needed when hook is used outside of form context
+ * or refers to another form
+ * @type (fields: string[], formName?: string) => IField
+ */
+const [fieldOne, fieldTwo] = useFieldsValue(['field-one', 'field-two']);
 
 /**
  * Hook - return field store values from form in context or from provided form

@@ -1,6 +1,6 @@
 import { Domain, Effect, Event, Store } from 'effector';
 import { ComponentType, ReactElement, ReactNode } from 'react';
-import { DisplayIfValues } from './react';
+import { IfFormValues, FieldsValueProvider } from './react';
 
 export type TFieldValue = string | number | null | boolean | [] | {};
 export type TFieldValidator = (value: any) => string | false;
@@ -306,4 +306,13 @@ export interface IRFieldDataProviderProps {
   formName?: string;
   /** PROPERTY - stores array - string - ['$value', '$errors'] */
   stores: TFieldStoreKey[];
+}
+
+export interface IRFieldsValueProviderProps {
+  /** render function - args are subscribed stores values in array */
+  children: (values: any[]) => ReactElement;
+  /** PROPERTY - form name to get fields from */
+  formName?: string;
+  /** PROPERTY - fields array - string - ['user.name', 'user.age'] */
+  fields: string[];
 }
