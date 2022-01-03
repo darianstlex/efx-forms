@@ -134,9 +134,10 @@ interface Field {
 ```
 
 ### IfFormValues component
-Conditional rendering helper component
+Conditional rendering based on form values
 ```ts
 interface IfFormValues {
+  children: ReactElement;
   // Form name - used to get form values
   // if not provided will be taken from context
   form?: string;
@@ -150,6 +151,21 @@ interface IfFormValues {
   // Debounce for fields update
   // Default: 0
   updateDebounce?: number;
+}
+```
+
+### IfFieldsValue component
+Conditional rendering based on fields value
+```ts
+interface IfFieldsValue {
+  children: ReactElement;
+  // Fields name array to check against
+  fields: string[];
+  // Form name - if fields belongs to a different form or used outside of the form context
+  formName?: string;
+  // Condition check - accepts stores array and return boolean,
+  // if true render children
+  check: (values: any[]) => boolean;
 }
 ```
 
@@ -308,6 +324,11 @@ import {
   useFieldStore,
   useFieldStores,
 } from 'efx-forms/react';
+
+/**
+ * For all Field hooks, before usage make sure field is registered in the form, or will be registered
+ * on the next render cycle. Otherwise it will return empty non reactive store.
+ */
 
 /**
  * Return form by name

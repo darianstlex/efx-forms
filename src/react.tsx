@@ -25,7 +25,8 @@ import {
   TFieldValue,
   TFormStoreKey,
   TFieldStoreKey,
-  IRDisplayIfValuesProps,
+  IRIfFormValuesProps,
+  IRIfFieldsValueProps,
   IRFormDataProviderProps,
   IRFieldDataProviderProps,
   IRFieldsValueProviderProps,
@@ -314,7 +315,7 @@ export const IfFormValues = ({
   setTo,
   resetTo,
   updateDebounce = 0
-}: IRDisplayIfValuesProps) => {
+}: IRIfFormValuesProps) => {
   const formInst = useForm(form);
   const values = useStore(formInst.$values);
   const show = check(values);
@@ -333,6 +334,22 @@ export const IfFormValues = ({
 }
 
 IfFormValues.displayName = 'IfFormValues';
+
+/**
+ * Conditional rendering based on fields values
+ */
+export const IfFieldsValue = ({
+  children,
+  check,
+  fields = [],
+  formName,
+}: IRIfFieldsValueProps) => {
+  const values = useFieldsValue(fields, formName)
+  const show = check(values);
+  return show ? children : null;
+}
+
+IfFieldsValue.displayName = 'IfFieldsValue';
 
 /**
  * Form data stores provider

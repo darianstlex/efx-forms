@@ -274,7 +274,7 @@ export interface IRFieldProps {
   [any: string]: any;
 }
 
-export interface IRDisplayIfValuesProps {
+export interface IRIfFormValuesProps {
   children: ReactElement;
   /** PROPERTY - form name to check against */
   form?: string;
@@ -286,6 +286,16 @@ export interface IRDisplayIfValuesProps {
   resetTo?: IFormValues;
   /** PROPERTY - form update debounce - 0 */
   updateDebounce?: number;
+}
+
+export interface IRIfFieldsValueProps {
+  children: ReactElement;
+  /** PROPERTY - fields name array to check against */
+  fields: string[];
+  /** PROPERTY - form name to check against */
+  formName?: string;
+  /** METHOD - check - accepts form values and return boolean, if true render children */
+  check: (values: any[]) => boolean;
 }
 
 export interface IRFormDataProviderProps {
