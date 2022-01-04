@@ -1,7 +1,7 @@
 import { Domain, Effect, Event, Store } from 'effector';
 import { ComponentType, ReactElement, ReactNode } from 'react';
 
-export type TFieldValue = string | number | null | boolean | [] | {};
+export type TFieldValue = string | number | null | boolean | [] | Record<string, unknown>;
 export type TFieldValidator = (value: any) => string | false;
 
 type TFiltered<T, TK> = Pick<T, { [K in keyof T]: T[K] extends TK ? K : never }[keyof T]>;

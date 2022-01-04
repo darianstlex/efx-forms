@@ -3,8 +3,8 @@ import { guard, sample } from 'effector';
 import { IField, IFieldConfig, IFormHooks, TFieldValue } from './model';
 
 export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
-  parse: value => value,
-  format: value => value,
+  parse: (value) => value,
+  format: (value) => value,
   validators: [],
   initialValue: '',
   validateOnBlur: true,

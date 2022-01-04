@@ -9,7 +9,8 @@
     "build": "rm -rf lib/* && tsc && ./npmize",
     "publish-lib": "npm run build && npm publish lib",
     "publish-beta": "npm run build && npm publish --tag beta lib",
-    "publish-dryrun": "npm run build && npm publish --dry-run lib"
+    "publish-dryrun": "npm run build && npm publish --dry-run lib",
+    "lint": "eslint . --ext .ts --ext .tsx"
   },
   "repository": {
     "type": "git",
@@ -30,8 +31,11 @@
   "devDependencies": {
     "@types/lodash": "^4.14.178",
     "@types/react": "^17.0.38",
+    "@typescript-eslint/eslint-plugin": "^5.9.0",
+    "@typescript-eslint/parser": "^5.9.0",
     "effector": "^22.1.2",
     "effector-react": "^22.0.6",
+    "eslint": "^8.6.0",
     "lodash": "^4.17.21",
     "typescript": "^4.5.4"
   },

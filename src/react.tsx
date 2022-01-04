@@ -5,7 +5,8 @@ import React, {
   useEffect,
   useState,
   useMemo,
-  FormEvent, ReactElement,
+  FormEvent,
+  ReactElement,
 } from 'react';
 import { clearNode, combine } from 'effector';
 import { useStore } from 'effector-react';
@@ -45,7 +46,7 @@ export const useRetry = ({
   error = '',
   warn = '',
   times = 3,
-  interval = 50
+  interval = 50,
 }) => {
   const [tries, setTries] = useState(0);
 
@@ -72,17 +73,17 @@ export const useCombine = (stores: string[], source: IForm | IField) => {
   useEffect(() => {
     return () => {
       clearNode($store);
-    }
+    };
   }, []);
 
   return $store;
-}
+};
 
 /**
  * Combine provided fields $value stores
  */
 export const useCombineFieldsValue = (fields: string[], form: IForm) => {
-  const key = fields.map((it) => !!form.fields[it] ? it : null).filter(Boolean).join(',');
+  const key = fields.map((it) => form.fields[it] ? it : null).filter(Boolean).join(',');
   const { stores, missing } = useMemo(() => {
     const stores = fields.map((field) => form.fields[field]?.['$value'] || $tempNull);
     const missing = stores.map((it, idx) => it.shortName === 'tempStore'
@@ -95,11 +96,11 @@ export const useCombineFieldsValue = (fields: string[], form: IForm) => {
   useEffect(() => {
     return () => {
       clearNode(stores);
-    }
+    };
   }, []);
 
   return { $stores: stores, missing };
-}
+};
 
 /**
  * Return parent or requested form instance
@@ -107,7 +108,7 @@ export const useCombineFieldsValue = (fields: string[], form: IForm) => {
 export const useForm = (name?: string): IForm => {
   const formName = useContext(FormNameContext);
   return useMemo(() => getForm(name || formName), [name, formName]);
-}
+};
 
 /**
  * Return form values - flat
@@ -115,7 +116,7 @@ export const useForm = (name?: string): IForm => {
 export const useFormValues = (formName?: string): IFormValues => {
   const { $values } = useForm(formName);
   return useStore($values);
-}
+};
 
 /**
  * Return form store values
@@ -123,7 +124,7 @@ export const useFormValues = (formName?: string): IFormValues => {
 export const useFormStore = (store: TFormStoreKey, formName?: string): any => {
   const form = useForm(formName);
   return useStore(form[store as string]);
-}
+};
 
 /**
  * Return form stores values array
@@ -132,7 +133,7 @@ export const useFormStores = (stores: TFormStoreKey[], formName?: string) => {
   const form = useForm(formName);
   const $stores = useCombine(stores, form);
   return useStore($stores);
-}
+};
 
 /**
  * Return field instance belongs to the current or provided form
@@ -140,7 +141,7 @@ export const useFormStores = (stores: TFormStoreKey[], formName?: string) => {
 export const useField = (name: string, formName?: string): IField => {
   const form = useForm(formName);
   return useMemo(() => form.fields[name], [name, formName, form.fields[name]?.name]);
-}
+};
 
 /**
  * Return field value of the current or provided form
@@ -154,7 +155,7 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
   });
 
   return useStore($value);
-}
+};
 
 /**
  * Return field store value of the current or provided form
@@ -169,7 +170,7 @@ export const useFieldStore = (name: string, store: TFieldStoreKey, formName?: st
   });
 
   return useStore($store);
-}
+};
 
 /**
  * Return field stores values array
@@ -184,7 +185,7 @@ export const useFieldStores = (name: string, stores: TFieldStoreKey[], formName?
   });
 
   return useStore($stores);
-}
+};
 
 /**
  * Return fields $value stores array
@@ -202,7 +203,7 @@ export const useFieldsValue = (fields: string[], formName?: string) => {
   });
 
   return useStore($stores);
-}
+};
 
 /**
  * Efx Form component
@@ -235,7 +236,7 @@ export const Form = ({
   useEffect(() => {
     return () => {
       !keepOnUnmount && form.reset();
-    }
+    };
   }, []);
 
   return (
@@ -252,7 +253,8 @@ Form.displayName = 'Form';
  */
 export const Field = ({ Field, name, formName, ...rest }: IRFieldProps) => {
   const { config, fields, registerField } = useForm(formName);
-  const { name: N, initialValues = {}, formValidators = {}, ...formConfig } = config;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { name: _name, initialValues = {}, formValidators = {}, ...formConfig } = config;
 
   const {
     initialValue = initialValues[name] || fieldConfigDefault.initialValue,
@@ -315,7 +317,7 @@ export const IfFormValues = ({
   setTo,
   resetTo,
   render,
-  updateDebounce = 0
+  updateDebounce = 0,
 }: IRIfFormValuesProps) => {
   const formInst = useForm(form);
   const values = useStore(formInst.$values);
@@ -334,7 +336,7 @@ export const IfFormValues = ({
   const output = () => render ? render(values) : children;
 
   return (show ? output() : null) as ReactElement;
-}
+};
 
 IfFormValues.displayName = 'IfFormValues';
 
@@ -353,7 +355,7 @@ export const IfFieldsValue = ({
   const output = () => render ? render(values) : children;
 
   return (show ? output() : null) as ReactElement;
-}
+};
 
 IfFieldsValue.displayName = 'IfFieldsValue';
 
@@ -363,7 +365,7 @@ IfFieldsValue.displayName = 'IfFieldsValue';
 export const FormDataProvider = ({ children, name, stores }: IRFormDataProviderProps) => {
   const data = useFormStores(stores, name);
   return children(data) as ReactElement;
-}
+};
 
 FormDataProvider.displayName = 'FormDataProvider';
 
@@ -373,7 +375,7 @@ FormDataProvider.displayName = 'FormDataProvider';
 export const FieldDataProvider = ({ children, name, formName, stores }: IRFieldDataProviderProps) => {
   const values = useFieldStores(name, stores, formName);
   return children(values) as ReactElement;
-}
+};
 
 FieldDataProvider.displayName = 'FieldDataProvider';
 
@@ -383,6 +385,6 @@ FieldDataProvider.displayName = 'FieldDataProvider';
 export const FieldsValueProvider = ({ children, fields, formName }: IRFieldsValueProviderProps) => {
   const values = useFieldsValue(fields, formName);
   return children(values) as ReactElement;
-}
+};
 
 FieldsValueProvider.displayName = 'FieldsValueProvider';

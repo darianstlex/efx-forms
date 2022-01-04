@@ -5,22 +5,24 @@ import pickBy from 'lodash/pickBy';
 
 export const domain: Domain = createDomain('@forms');
 
+type TObject = Record<string, unknown>;
+
 /**
  * Return truthy values only
  */
-export const truthyFy = (values = {}): {} => pickBy(values, Boolean);
+export const truthyFy = (values = {}): TObject => pickBy(values, Boolean);
 
 /**
  * Transform flat to structured object
  */
-export const shapeFy = (values = {}): {} => reduce(values, (acc, val, key) => set(acc, key, val), {});
+export const shapeFy = (values = {}): TObject => reduce(values, (acc, val, key) => set(acc, key, val), {});
 
 /**
  * Return store with truthy values only
  */
-export const truthyFyStore = ($store: Store<{}>) => $store.map(truthyFy);
+export const truthyFyStore = ($store: Store<TObject>) => $store.map(truthyFy);
 
 /**
  * Transform flat to structured store
  */
-export const shapeFyStore = ($store: Store<{}>) => $store.map(shapeFy);
+export const shapeFyStore = ($store: Store<TObject>) => $store.map(shapeFy);

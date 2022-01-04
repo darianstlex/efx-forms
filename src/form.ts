@@ -30,7 +30,7 @@ import {
 export const formConfigDefault: IFormConfigDefault = {
   name: 'default',
   initialValues: {},
-  onSubmit: () => {},
+  onSubmit: () => undefined,
   keepOnUnmount: false,
   skipClientValidation: false,
   validateOnBlur: true,
@@ -46,7 +46,7 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
   let config: IFormConfig = { ...formConfig };
   const { name } = formConfig;
 
-  const formDomain = domain.domain(`@${name}`)
+  const formDomain = domain.domain(`@${name}`);
 
   const fields: IFormFields = {};
 
