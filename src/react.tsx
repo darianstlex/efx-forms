@@ -84,22 +84,22 @@ export const useCombine = (stores: string[], source: IForm | IField) => {
  */
 export const useCombineFieldsValue = (fields: string[], form: IForm) => {
   const key = fields.map((it) => form.fields[it] ? it : null).filter(Boolean).join(',');
-  const { stores, missing } = useMemo(() => {
+  const { $stores, missing } = useMemo(() => {
     const stores = fields.map((field) => form.fields[field]?.['$value'] || $tempNull);
     const missing = stores.map((it, idx) => it.shortName === 'tempStore'
       ? fields[idx]
       : false
     ).filter(Boolean);
-    return { stores: combine(stores), missing };
+    return { $stores: combine(stores), missing };
   }, [key, form]);
 
   useEffect(() => {
     return () => {
-      clearNode(stores);
+      clearNode($stores);
     };
   }, []);
 
-  return { $stores: stores, missing };
+  return { $stores, missing };
 };
 
 /**
@@ -151,7 +151,7 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
 
   useRetry({
     done: $value.shortName !== 'tempStore',
-    warn: `Field "${name}" doesnt exist in the given form`,
+    warn: `Field "${name}" doesn't exist in the given form${formName ? `: "${formName}"` : ''}.`,
   });
 
   return useStore($value);
@@ -166,7 +166,7 @@ export const useFieldStore = (name: string, store: TFieldStoreKey, formName?: st
 
   useRetry({
     done: $store.shortName !== 'tempStore',
-    warn: `Field "${name}" doesnt exist in the given form`,
+    warn: `Field "${name}" doesn't exist in the given form${formName ? `: "${formName}"` : ''}.`,
   });
 
   return useStore($store);
@@ -181,7 +181,7 @@ export const useFieldStores = (name: string, stores: TFieldStoreKey[], formName?
 
   useRetry({
     done: $stores.shortName !== 'tempStore',
-    warn: `Field "${name}" doesnt exist in the given form`,
+    warn: `Field "${name}" doesn't exist in the given form${formName ? `: "${formName}"` : ''}.`,
   });
 
   return useStore($stores);
@@ -197,8 +197,8 @@ export const useFieldsValue = (fields: string[], formName?: string) => {
   useRetry({
     done: !missing.length,
     warn: `
-      Not all provided fields exist in the form.
-      missing: ${missing.join(', ')}
+      Not all provided fields exist in the form${formName ? `: "${formName}"` : ''}.
+      missing fields: "${missing.join(', ')}"
     `,
   });
 
