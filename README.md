@@ -77,10 +77,12 @@ interface Form {
   // Form name - required, used to get form instance outside of context
   name: string,
   /**
-   * Form submit method - on validation success will be called with form values.
+   * Form submit method - on validation success will be called with
+   * form values.
    * If skipClientValidation is set - no validation will be applied.
    * If submit return promise:
-   * - reject - object with errors per field - errors will be passed to the form
+   * - reject - object with errors per field - errors will be passed
+   *   to the form
    *   { 'user.name': 'Name is already taken', ... }
    * - resolve - success submit
    * @param values - FormValues - flat
@@ -311,9 +313,9 @@ interface FormInstance {
   $dirties: Store<{ [name: string]: boolean }>;
   // Form reset - resets form and all fields
   reset: Event<void>;
-  // Form submit - callback will be called with form values if form is valid,
-  // if callback returns promise reject with errors, will highlight them
-  // in the form
+  // Form submit - callback will be called with form values if form
+  // is valid, if callback returns promise reject with errors, will
+  // highlight them in the form.
   submit: (args: { cb, skipClientValidation }) => Promise<IFormErrors>;
   // Form config - getter / setter
   config: {
@@ -412,7 +414,7 @@ const formOne = getForm('form-one');
 /**
  * Hook - return form (from context) instance or provided form by name.
  * Form name is needed when hook is used outside of the form context
- * or refers to another form
+ * or refers to another form.
  * @type (formName?: string) => IForm
  */
 const formTwo = useForm();
@@ -420,15 +422,15 @@ const formTwo = useForm();
 /**
  * Hook - return form (from context) store values or from provided form.
  * Form name is needed when hook is used outside of the form context
- * or refers to another form
+ * or refers to another form.
  * @type (store: string, formName?: string) => IFormErrors
  */
 const formErrors = useFormStore('$errors');
 
 /**
- * Hook - return form (from context) stores values array or from provided form.
- * Form name is needed when hook is used outside of the form context
- * or refers to another form
+ * Hook - return form (from context) stores values array or from
+ * provided form. Form name is needed when hook is used outside of the
+ * form context or refers to another form.
  * @type (store: string[], formName?: string) => IFormErrors
  */
 const [errors, values] = useFormStores(['$errors', '$values']);
@@ -436,7 +438,7 @@ const [errors, values] = useFormStores(['$errors', '$values']);
 /**
  * Hook - return form (from context) values or from provided form.
  * Form name is needed when hook is used outside of the form context
- * or refers to another form
+ * or refers to another form.
  * @type (formName?: string) => IFormValues
  */
 const formValues = useFormValues();
@@ -444,7 +446,7 @@ const formValues = useFormValues();
 /**
  * Hook - return field by name
  * Form name is needed when hook is used outside of the form context
- * or refers to another form
+ * or refers to another form.
  * @type (name: string, formName?: string) => IField
  */
 const field = useField('field-one');
@@ -452,7 +454,7 @@ const field = useField('field-one');
 /**
  * Hook - return field value by name
  * Form name is needed when hook is used outside of form context
- * or refers to another form
+ * or refers to another form.
  * @type (name: string, formName?: string) => IField
  */
 const fieldValue = useFieldValue('field-one');
@@ -460,7 +462,7 @@ const fieldValue = useFieldValue('field-one');
 /**
  * Hook - return fields values by names
  * Form name is needed when hook is used outside of form context
- * or refers to another form
+ * or refers to another form.
  * @type (fields: string[], formName?: string) => IField
  */
 const [fieldOne, fieldTwo] = useFieldsValue(['field-one', 'field-two']);
@@ -479,7 +481,10 @@ const fieldErrors = useFieldStore('field-one', '$errors');
  * or refers to another form
  * @type (name: string, store: string[], formName?: string) => IFormErrors
  */
-const [value, touched] = useFieldStores('field-one', ['$value', '$touched']);
+const [value, touched] = useFieldStores(
+  'field-one',
+  ['$value', '$touched'],
+);
 ```
 
 # Utils
