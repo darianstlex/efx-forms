@@ -1,6 +1,6 @@
 {
   "name": "efx-forms",
-  "version": "0.9.11",
+  "version": "0.9.13",
   "description": "Effector JS Forms",
   "main": "index.js",
   "types": "index.d.ts",
@@ -42,7 +42,7 @@
   "peerDependencies": {
     "effector": "^22.1.2",
     "effector-react": "^22.0.6",
-    "lodash-es": "^4.17.21",
+    "lodash": "^4.17.21",
     "react": "^17.0.2"
   }
 }
