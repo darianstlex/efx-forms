@@ -63,7 +63,10 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Validation errors store - keeps all fields validation errors
    */
   const $errors = formDomain.store<IFormErrors>({}, { name: '$errors'})
-    .on(setFormError, (state, { name, error }) => ({ ...state, [name]: error }));
+    .on(setFormError, (
+      state,
+      { name, error }) => ({ ...state, [name]: error }),
+    );
 
   /**
    * Calculates form validation
@@ -74,13 +77,19 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Fields status store - keeps fields activity / visibility status
    */
   const $active = formDomain.store<IFormActive>({}, { name: '$active'})
-    .on(setFormActive, (state, { name, active }) => ({ ...state, [name]: active }));
+    .on(setFormActive, (
+      state,
+      { name, active }) => ({ ...state, [name]: active }),
+    );
 
   /**
    * Touches store - keeps all fields touches
    */
   const $touches = formDomain.store<IFormTouches>({}, { name: '$touches'})
-    .on(setFormTouch, (state, { name, touched }) => ({ ...state, [name]: touched }));
+    .on(setFormTouch, (
+      state,
+      { name, touched }) => ({ ...state, [name]: touched }),
+    );
 
   /**
    * Calculates form touched
@@ -91,7 +100,10 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Dirties store - keeps all fields dirty
    */
   const $dirties = formDomain.store<IFormDirties>({}, { name: '$dirties'})
-    .on(setFormDirty, (state, { name, dirty }) => ({ ...state, [name]: dirty }));
+    .on(setFormDirty, (
+      state,
+      { name, dirty }) => ({ ...state, [name]: dirty }),
+    );
 
   /**
    * Calculates form dirty
@@ -102,7 +114,10 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Values store - keeps all fields values
    */
   const $values = formDomain.store<IFormValues>({}, { name: '$values'})
-    .on(setFormValue, (state, { name, value }) => ({ ...state, [name]: value }));
+    .on(setFormValue, (
+      state,
+      { name, value }) => ({ ...state, [name]: value }),
+    );
 
   /**
    * Changes store, triggers change on field change event
@@ -120,8 +135,18 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * corresponded fields: { fieldName: 'Name already exist' }.
    * Return values on success and errors on error
    */
-  const onSubmit: Effect<IFormOnSubmitArgs, IFormSubmitResponseSuccess, IFormSubmitResponseError> = formDomain.effect({
-    handler: async ({ cb, values, errors, valid, skipClientValidation }) => {
+  const onSubmit: Effect<
+    IFormOnSubmitArgs,
+    IFormSubmitResponseSuccess,
+    IFormSubmitResponseError
+  > = formDomain.effect({
+    handler: async ({
+      cb,
+      values,
+      errors,
+      valid,
+      skipClientValidation,
+    }) => {
       if (valid || skipClientValidation) {
         try {
           await cb(values);
@@ -139,7 +164,11 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Form submit attached effect, triggers fields validation if not skipped,
    * attach data needed to process onSubmit effect.
    */
-  const submit: Effect<IFormSubmitArgs, IFormSubmitResponseSuccess, IFormSubmitResponseError> = attach({
+  const submit: Effect<
+    IFormSubmitArgs,
+    IFormSubmitResponseSuccess,
+    IFormSubmitResponseError
+  > = attach({
     source: { values: $values, errors: $errors, valid: $valid },
     mapParams: (
       { cb, skipClientValidation = config.skipClientValidation },

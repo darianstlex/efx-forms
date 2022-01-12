@@ -128,7 +128,9 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
     sample({
       clock: [validate, onFormSubmit, update],
       source: $value,
-      fn: (value) => config.validators.map((vd) => vd(value)).filter(Boolean) as string[],
+      fn: (value) => config.validators.map(
+        (vd) => vd(value),
+      ).filter(Boolean) as string[],
     }),
     (_, errors) => errors,
   ).on(
