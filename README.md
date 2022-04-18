@@ -108,7 +108,11 @@ interface Form {
   // Default: false
   validateOnChange?: boolean;
   // Validators config per field - field validators is in priority
-  validators?: { fieldName: [(value: TFieldValue, values: IFormValues) => string | false] };
+  validators?: {
+    fieldName: [
+      (value: TFieldValue, values: IFormValues) => string | false,
+    ]
+  };
 }
 ```
 
@@ -125,7 +129,9 @@ interface Field {
   // Format value before displaying
   format?: (value: TFieldValue) => any;
   // Validators array - applied on validation
-  validators?: [(value: TFieldValue, values: IFormValues) => string | false];
+  validators?: [
+    (value: TFieldValue, values: IFormValues) => string | false,
+  ];
   // Set validation behaviour onBlur, overrides form value
   // Default: true
   validateOnBlur?: boolean;
