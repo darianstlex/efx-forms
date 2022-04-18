@@ -1,4 +1,5 @@
-import { createDomain, Domain, Store } from 'effector';
+import { createDomain } from 'effector';
+import type { Domain, Store } from 'effector';
 import reduce from 'lodash/reduce';
 import set from 'lodash/set';
 import pickBy from 'lodash/pickBy';

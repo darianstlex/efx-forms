@@ -1,8 +1,8 @@
-import { Domain, Effect, Event, Store } from 'effector';
-import { ComponentType, ReactElement, ReactNode } from 'react';
+import type { Domain, Effect, Event, Store } from 'effector';
+import type { ComponentType, ReactElement, ReactNode } from 'react';
 
 export type TFieldValue = string | number | null | boolean | [] | Record<string, unknown>;
-export type TFieldValidator = (value: any) => string | false;
+export type TFieldValidator = (value: any, values: IFormValues) => string | false;
 
 type TFiltered<T, TK> = Pick<T, { [K in keyof T]: T[K] extends TK ? K : never }[keyof T]>;
 type TFilteredKeyOf<T, TK> = keyof TFiltered<T, TK>;
@@ -87,6 +87,7 @@ export interface IFormSubmitResponseError {
 }
 
 export interface IFormHooks {
+  $formValues: Store<IFormValues>;
   formDomain: Domain;
   onFormSubmit: Event<IFormSubmitArgs>;
   onFormUpdate: Event<IFormValues>;

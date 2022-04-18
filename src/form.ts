@@ -1,10 +1,11 @@
-import { attach, combine, Effect, guard, sample } from 'effector';
+import { attach, combine, sample } from 'effector';
+import type { Effect } from 'effector';
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
 
 import { domain } from './utils';
 import { createField } from './field';
-import {
+import type {
   IForm,
   IFormConfig,
   IFormConfigDefault,
@@ -215,14 +216,15 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
       fields[name] = createField(
         { name, ...fieldConfig },
         {
+        $formValues: $values,
         formDomain,
         onFormUpdate: update,
         onFormReset: reset,
-        onFormSubmit: guard({
+        onFormSubmit: sample({
           clock: submit,
           filter: ({ skipClientValidation }) => !skipClientValidation,
         }),
-        onFormErrors: guard({
+        onFormErrors: sample({
           source: onSubmit.failData.map(({ remoteErrors }) => remoteErrors as IFormErrors),
           filter: (remoteErrors) => !!remoteErrors,
         }),

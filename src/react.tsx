@@ -5,9 +5,8 @@ import React, {
   useEffect,
   useState,
   useMemo,
-  FormEvent,
-  ReactElement,
 } from 'react';
+import type { FormEvent, ReactElement } from 'react';
 import { clearNode, combine } from 'effector';
 import { useStore } from 'effector-react';
 import debounce from 'lodash/debounce';
@@ -16,7 +15,7 @@ import isEmpty from 'lodash/isEmpty';
 import { domain } from './utils';
 import { formConfigDefault, createUpdateForm, getForm } from './form';
 import { fieldConfigDefault } from './field';
-import {
+import type {
   IForm,
   IField,
   IFieldConfig,

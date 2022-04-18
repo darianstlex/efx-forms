@@ -1,4 +1,4 @@
-import { TFieldValidator } from './model';
+import type { TFieldValidator } from './model';
 
 export const required = ({ msg = 'This field is required' } = {}): TFieldValidator =>
   (val: string) => !val ? msg : false;

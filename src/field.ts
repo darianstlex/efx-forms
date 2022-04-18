@@ -1,6 +1,6 @@
-import { guard, sample } from 'effector';
+import { sample } from 'effector';
 
-import { IField, IFieldConfig, IFormHooks, TFieldValue } from './model';
+import type { IField, IFieldConfig, IFormHooks, TFieldValue } from './model';
 
 export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
   parse: (value) => value,
@@ -12,6 +12,7 @@ export const fieldConfigDefault: Omit<IFieldConfig, 'name'> = {
 };
 
 export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format'>, {
+  $formValues,
   formDomain,
   onFormSubmit,
   onFormUpdate,
@@ -129,7 +130,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
       clock: [validate, onFormSubmit, update],
       source: $value,
       fn: (value) => config.validators.map(
-        (vd) => vd(value),
+        (vd) => vd(value, $formValues.getState()),
       ).filter(Boolean) as string[],
     }),
     (_, errors) => errors,
@@ -151,7 +152,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
    * Validate field onBlur if field is touched and has changes
    * from the last blur event and validateOnBlur is set
    */
-  guard({
+  sample({
     clock: onBlur,
     source: [$touched, $hasChanges],
     filter: ([touched, changed]) => changed && touched && config.validateOnBlur && !config.validateOnChange,
@@ -161,7 +162,7 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   /**
    * Validate field onChange if field is touched and validateOnChange is set
    */
-  guard({
+  sample({
     clock: onChange,
     source: $touched,
     filter: (touched) => touched && config.validateOnChange,
@@ -171,10 +172,13 @@ export const createField = ({ name, ...fieldConfig }: Omit<IFieldConfig, 'format
   /**
    * Reset field on form reset event if field is touched or has errors
    */
-  guard({
+  sample({
     clock: onFormReset,
-    source: [$touched, $errors],
-    filter: ([touched, [error]]) => touched || !!error,
+    source: {
+      touched: $touched,
+      errors: $errors,
+    },
+    filter: ({ touched, errors: [error] }) => touched || !!error,
     target: reset,
   });
 
