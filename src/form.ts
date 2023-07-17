@@ -3,7 +3,7 @@ import type { Effect } from 'effector';
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
 
-import { domain } from './utils';
+import { domain, hasTruthy } from './utils';
 import { createField } from './field';
 import type {
   IForm,
@@ -40,8 +40,6 @@ export const formConfigDefault: IFormConfigDefault = {
 };
 
 export const forms: IForms = {};
-
-const hasTruthy = (object) => Object.values(object).some((it) => it);
 
 const createFormHandler = (formConfig: IFormConfig): IForm => {
   let config: IFormConfig = { ...formConfig };

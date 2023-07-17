@@ -1,15 +1,15 @@
 {
   "name": "efx-forms",
-  "version": "0.9.14",
+  "version": "0.9.17",
   "description": "Effector JS Forms",
   "main": "index.js",
   "types": "index.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rm -rf lib/* && tsc && ./npmize",
-    "publish-lib": "npm run build && npm publish lib",
-    "publish-beta": "npm run build && npm publish --tag beta lib",
-    "publish-dryrun": "npm run build && npm publish --dry-run lib",
+    "publish-lib": "npm run build && npm publish ./lib",
+    "publish-beta": "npm run build && npm publish --tag beta ./lib",
+    "publish-dryrun": "npm run build && npm publish --dry-run ./lib",
     "lint": "eslint . --ext .ts --ext .tsx"
   },
   "repository": {
@@ -29,20 +29,20 @@
   },
   "homepage": "https://github.com/darianstlex/efx-forms#readme",
   "devDependencies": {
-    "@types/lodash": "^4.14.181",
-    "@types/react": "^17.0.44",
-    "@typescript-eslint/eslint-plugin": "^5.19.0",
-    "@typescript-eslint/parser": "^5.19.0",
-    "effector": "^22.3.0",
-    "effector-react": "^22.0.6",
-    "eslint": "^8.13.0",
+    "@types/lodash": "^4.14.195",
+    "@types/react": "^18.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "effector": "^22.8.6",
+    "effector-react": "^22.5.3",
+    "eslint": "^8.45.0",
     "lodash": "^4.17.21",
-    "typescript": "^4.6.3"
+    "typescript": "^4.9.5"
   },
   "peerDependencies": {
-    "effector": "^22.3.0",
-    "effector-react": "^22.0.6",
+    "effector": "^22.8.6",
+    "effector-react": "^22.5.3",
     "lodash": "^4.17.21",
-    "react": "^17.0.2"
+    "react": "^18.0.0"
   }
 }

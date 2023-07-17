@@ -31,3 +31,8 @@ export const truthyFyStore = ($store: Store<TObject>) => $store.map(truthyFy);
  * Transform flat to structured store
  */
 export const shapeFyStore = ($store: Store<TObject>) => $store.map(shapeFy);
+
+/**
+ * Check if object have truthy value
+ */
+export const hasTruthy = (obj: Record<string, any>) => Object.values(obj).some(Boolean);

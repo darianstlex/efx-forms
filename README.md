@@ -157,7 +157,7 @@ interface IfFormValues {
   form?: string;
   // Condition check - accepts form values and return boolean,
   // if true render children
-  check: (values: IFormValues) => boolean;
+  check: (values: IFormValues, activeValues: IFormValues) => boolean;
   // Set fields values on show - { fieldName: 'value' }
   setTo?: IFormValues;
   // Set fields values on hide - { fieldName: 'value' }

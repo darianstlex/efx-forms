@@ -8,7 +8,7 @@ import React, {
 } from 'react';
 import type { FormEvent, ReactElement } from 'react';
 import { clearNode, combine } from 'effector';
-import { useStore } from 'effector-react';
+import { useUnit } from 'effector-react';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 
@@ -114,7 +114,7 @@ export const useForm = (name?: string): IForm => {
  */
 export const useFormValues = (formName?: string): IFormValues => {
   const { $values } = useForm(formName);
-  return useStore($values);
+  return useUnit($values);
 };
 
 /**
@@ -122,7 +122,7 @@ export const useFormValues = (formName?: string): IFormValues => {
  */
 export const useFormStore = (store: TFormStoreKey, formName?: string): any => {
   const form = useForm(formName);
-  return useStore(form[store as string]);
+  return useUnit(form[store as string]);
 };
 
 /**
@@ -131,7 +131,7 @@ export const useFormStore = (store: TFormStoreKey, formName?: string): any => {
 export const useFormStores = (stores: TFormStoreKey[], formName?: string) => {
   const form = useForm(formName);
   const $stores = useCombine(stores, form);
-  return useStore($stores);
+  return useUnit($stores);
 };
 
 /**
@@ -153,7 +153,7 @@ export const useFieldValue = (name: string, formName?: string): TFieldValue => {
     warn: `Field "${name}" doesn't exist in the given form${formName ? `: "${formName}"` : ''}.`,
   });
 
-  return useStore($value);
+  return useUnit($value);
 };
 
 /**
@@ -168,7 +168,7 @@ export const useFieldStore = (name: string, store: TFieldStoreKey, formName?: st
     warn: `Field "${name}" doesn't exist in the given form${formName ? `: "${formName}"` : ''}.`,
   });
 
-  return useStore($store);
+  return useUnit($store);
 };
 
 /**
@@ -183,7 +183,7 @@ export const useFieldStores = (name: string, stores: TFieldStoreKey[], formName?
     warn: `Field "${name}" doesn't exist in the given form${formName ? `: "${formName}"` : ''}.`,
   });
 
-  return useStore($stores);
+  return useUnit($stores);
 };
 
 /**
@@ -201,7 +201,7 @@ export const useFieldsValue = (fields: string[], formName?: string) => {
     `,
   });
 
-  return useStore($stores);
+  return useUnit($stores);
 };
 
 /**
@@ -288,15 +288,14 @@ export const Field = ({ Field, name, formName, ...rest }: IRFieldProps) => {
     };
   }, []);
 
-  const value = useStore($value) || '';
-  const [error, ...errors] = useStore($errors);
+  const [value, [error, ...errors]] = useUnit([$value, $errors]);
 
   return (
     <Field {...{
       error,
       errors,
       name,
-      value: format(value),
+      value: format(value || ''),
       onChange,
       onBlur: () => onBlur(),
       ...props,
@@ -319,8 +318,8 @@ export const IfFormValues = ({
   updateDebounce = 0,
 }: IRIfFormValuesProps) => {
   const formInst = useForm(form);
-  const values = useStore(formInst.$values);
-  const show = check(values);
+  const [values, activeValues] = useUnit([formInst.$values, formInst.$actives]);
+  const show = check(values, activeValues);
   const updateDeb = useCallback(
     debounce(formInst.update, updateDebounce),
     [formInst, updateDebounce],

@@ -279,7 +279,7 @@ export interface IRIfFormValuesProps {
   /** PROPERTY - form name to check against */
   form?: string;
   /** METHOD - check - accepts form values and return boolean, if true render children */
-  check: (values: IFormValues) => boolean;
+  check: (values: IFormValues, activeValues: IFormValues) => boolean;
   /** PROPERTY - setTo set fields on show */
   setTo?: IFormValues;
   /** PROPERTY - setTo set fields on hide */
