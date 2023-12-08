@@ -1,4 +1,4 @@
-import type { Domain, Effect, Event, Store } from 'effector';
+import type { Domain, Effect, Event, EventCallable, Store } from 'effector';
 import type { ComponentType, ReactElement, ReactNode } from 'react';
 
 export type TFieldValue = string | number | null | boolean | [] | Record<string, unknown>;
@@ -45,21 +45,21 @@ export interface IField {
   /** $$STORE - Field error messages on validation */
   $errors: Store<string[]>;
   /** EVENT - Field onChange */
-  onChange: Event<any>;
+  onChange: EventCallable<any>;
   /** EVENT - Field onBlur */
-  onBlur: Event<void>;
+  onBlur: EventCallable<void>;
   /** EVENT - Field update - updates field value without triggering change event */
-  update: Event<TFieldValue>;
+  update: EventCallable<TFieldValue>;
   /** EVENT - Field reset - if field is touched or not valid */
-  reset: Event<void>;
+  reset: EventCallable<void>;
   /** EVENT - Field validate - runs field validation */
-  validate: Event<void>;
+  validate: EventCallable<void>;
   /** EVENT - Field setActive - set field activity / visibility */
-  setActive: Event<boolean>;
+  setActive: EventCallable<boolean>;
   /** EVENT - Field setError - set provided field error */
-  setError: Event<string>;
+  setError: EventCallable<string>;
   /** EVENT - Field reset errors */
-  resetError: Event<void>;
+  resetError: EventCallable<void>;
   /** METHOD - internal use */
   syncData: () => void;
   /** DATA - Field config - get/set field config */
@@ -90,15 +90,15 @@ export interface IFormHooks {
   $formValues: Store<IFormValues>;
   formDomain: Domain;
   onFormSubmit: Event<IFormSubmitArgs>;
-  onFormUpdate: Event<IFormValues>;
-  onFormReset: Event<void>;
+  onFormUpdate: EventCallable<IFormValues>;
+  onFormReset: EventCallable<void>;
   onFormErrors: Event<IFormErrors>;
-  setFormChange: Event<IFormValueUpdate>;
-  setFormActive: Event<IFormActiveUpdate>;
-  setFormError: Event<IFormErrorUpdate>;
-  setFormDirty: Event<IFormDirtyUpdate>;
-  setFormTouch: Event<IFormToucheUpdate>;
-  setFormValue: Event<IFormValueUpdate>;
+  setFormChange: EventCallable<IFormValueUpdate>;
+  setFormActive: EventCallable<IFormActiveUpdate>;
+  setFormError: EventCallable<IFormErrorUpdate>;
+  setFormDirty: EventCallable<IFormDirtyUpdate>;
+  setFormTouch: EventCallable<IFormToucheUpdate>;
+  setFormValue: EventCallable<IFormValueUpdate>;
 }
 
 export interface IFormInitialValues {
@@ -217,7 +217,7 @@ export interface IForm {
   /** $$STORE - Form dirties - all fields dirty state - flat */
   $dirties: Store<IFormDirties>;
   /** EVENT - Form reset - resets form and all fields */
-  reset: Event<void>;
+  reset: EventCallable<void>;
   /**
    * EFFECT - Form submit - callback will be called with form values if form is valid
    * or if callback returns promise reject with errors, will highlight them in the form
@@ -232,7 +232,7 @@ export interface IForm {
   /** METHOD - Form register field */
   registerField: (config: Omit<IFieldConfig, 'format'>) => IField;
   /** EVENT - Form update fields values */
-  update: Event<IFormValues>;
+  update: EventCallable<IFormValues>;
 }
 
 export interface IForms {
