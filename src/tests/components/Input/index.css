@@ -1,0 +1,23 @@
+.input-wrapper {
+  padding: 0 0 24px 0;
+  position: relative;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.input-input {
+  font-size: inherit;
+  width: 100%;
+  height: 28px;
+  box-sizing: border-box;
+  padding: 0 5px;
+  margin: 5px 0;
+}
+
+.input-error {
+  font-size: .75rem;
+  color: #d91c78;
+  position: absolute;
+  top: 53px;
+  left: 0;
+}

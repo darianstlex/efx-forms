@@ -4,129 +4,145 @@ import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
 
 import { domain, hasTruthy } from './utils';
-import { createField } from './field';
+
 import type {
+  IFieldConfig,
   IForm,
   IFormConfig,
-  IFormConfigDefault,
-  IFormFields,
-  IFormValues,
-  IFormValueUpdate,
-  IFormErrors,
-  IFormErrorUpdate,
-  IFormTouches,
-  IFormToucheUpdate,
-  IFormActive,
-  IFormActiveUpdate,
-  IFormDirties,
-  IFormDirtyUpdate,
-  IFormOnFieldChange,
-  IFormSubmitArgs,
-  IFormSubmitResponseError,
-  IFormSubmitResponseSuccess,
   IFormOnSubmitArgs,
-  IForms,
-} from './model';
+  INameErrors,
+  INameBoolean,
+  INameValue,
+  ISubmitArgs,
+  ISubmitResponseError,
+  ISubmitResponseSuccess,
+  IValidationParams,
+} from './types';
 
-export const formConfigDefault: IFormConfigDefault = {
-  name: 'default',
-  initialValues: {},
-  onSubmit: () => undefined,
-  keepOnUnmount: false,
-  skipClientValidation: false,
-  validateOnBlur: true,
-  validateOnChange: false,
-  validators: {},
-};
+import { FORM_CONFIG, FIELD_CONFIG } from './constants';
 
-export const forms: IForms = {};
+export const createFormHandler = (formConfig: IFormConfig): IForm => {
+  const data = {
+    config: { ...FORM_CONFIG, ...formConfig },
+    configs: {},
+  } as { config: IFormConfig, configs: Record<string, IFieldConfig> };
 
-const createFormHandler = (formConfig: IFormConfig): IForm => {
-  let config: IFormConfig = { ...formConfig };
-  const { name } = formConfig;
+  const dm = domain.domain(formConfig.name);
 
-  const formDomain = domain.domain(`@${name}`);
-
-  const fields: IFormFields = {};
-
-  const setFormActive = formDomain.event<IFormActiveUpdate>('update-active');
-  const setFormError = formDomain.event<IFormErrorUpdate>('update-validation');
-  const setFormTouch = formDomain.event<IFormToucheUpdate>('update-touch');
-  const setFormDirty = formDomain.event<IFormDirtyUpdate>('update-dirty');
-  const setFormValue = formDomain.event<IFormValueUpdate>('update-value');
-  const setFormChange = formDomain.event<IFormOnFieldChange>('change');
-  const reset = formDomain.event<void>('reset');
-  const update = formDomain.event<IFormValues>('update');
-
-  /**
-   * Validation errors store - keeps all fields validation errors
-   */
-  const $errors = formDomain.store<IFormErrors>({}, { name: '$errors'})
-    .on(setFormError, (
-      state,
-      { name, error }) => ({ ...state, [name]: error }),
-    );
-
-  /**
-   * Calculates form validation
-   */
-  const $valid = $errors.map((state) => !isEmpty(state) ? !hasTruthy(state) : true);
+  const setActive = dm.event<INameBoolean>('set-active');
+  const setError = dm.event<INameErrors>('set-error');
+  const setErrors = dm.event<Record<string, string[] | null>>('set-errors');
+  const setValues = dm.event<Record<string, any>>('set-values');
+  const onChange = dm.event<INameValue>('on-change');
+  const onBlur = dm.event<INameValue>('on-blur');
+  const reset = dm.event<string | void>('reset');
+  const erase = dm.event<void>('erase');
+  const validate = dm.event<IValidationParams>('validate');
 
   /**
    * Fields status store - keeps fields activity / visibility status
    */
-  const $active = formDomain.store<IFormActive>({}, { name: '$active'})
-    .on(setFormActive, (
+  const $active = dm.store<Record<string, boolean>>({}, { name: '$active'})
+    .on(setActive, (
       state,
-      { name, active }) => ({ ...state, [name]: active }),
-    );
+      { name, value }) => ({ ...state, [name]: value }),
+    ).reset(erase);
 
   /**
-   * Touches store - keeps all fields touches
+   * Values store - fields values
    */
-  const $touches = formDomain.store<IFormTouches>({}, { name: '$touches'})
-    .on(setFormTouch, (
+  const $values = dm.store<Record<string, any>>({}, { name: '$values'})
+    .on(setValues, (state, values) => ({ ...state, ...values }))
+    .on(onChange, (state, { name, value }) => {
+      const parse = data.configs[name]?.parse || FIELD_CONFIG.parse!;
+      return { ...state, [name]: parse(value) };
+    })
+    .reset(erase);
+
+  /**
+   * Fields status store - keeps active fields values
+   */
+  const $activeValues = combine(
+    $active,
+    $values,
+    (active, values) => pickBy(values, (_, name) => active[name]),
+  );
+
+  /**
+   * Validations store - keeps all fields validation errors
+   */
+  const $errors = dm.store<Record<string, string[]>>({}, { name: '$errors'})
+    .on(setError, (
       state,
-      { name, touched }) => ({ ...state, [name]: touched }),
-    );
-
-  /**
-   * Calculates form touched
-   */
-  const $touched = $touches.map((state) => !isEmpty(state) ? !hasTruthy(state) : true);
-
-  /**
-   * Dirties store - keeps all fields dirty
-   */
-  const $dirties = formDomain.store<IFormDirties>({}, { name: '$dirties'})
-    .on(setFormDirty, (
+      { name, errors }) => pickBy({ ...state, [name]: errors }, (error) => !!error),
+    ).on(setErrors, (
       state,
-      { name, dirty }) => ({ ...state, [name]: dirty }),
-    );
+      errors) => pickBy({ ...state, ...errors }, (error) => !!error),
+    ).reset(erase, reset);
 
   /**
-   * Calculates form dirty
+   * Errors store - keeps all fields validation errors
+   */
+  const $error = $errors.map((errors) => {
+    return Object.keys(errors).reduce((acc, key) => ({
+      ...acc,
+      [key]: errors[key][0],
+    }), {});
+  });
+
+  /**
+   * Calculates form valid state
+   */
+  const $valid = $error.map((state) => !isEmpty(state) ? !hasTruthy(state) : true);
+
+  /**
+   * Touches store - keeps all fields touch state
+   */
+  const $touches = dm.store<Record<string, boolean>>({}, { name: '$touches'})
+    .on(onChange, (
+      state,
+      { name }) => ({ ...state, [name]: true }),
+    ).reset(erase, reset);
+
+  /**
+   * Calculates form touched state
+   */
+  const $touched = $touches.map((state) => !isEmpty(state) ? hasTruthy(state) : false);
+
+  /**
+   * Dirties store - keeps all active fields dirty state
+   */
+  const $dirties = $activeValues.map((values) => {
+    const dirties = Object.keys(values).reduce((acc, field: string) => {
+      const initialValue = data.configs[field]?.initialValue || data.config.initialValues?.[field];
+      acc[field] = values[field] !== initialValue;
+      return acc;
+    }, {} as Record<string, boolean>);
+    return pickBy(dirties, (dirty) => dirty);
+  });
+
+  /**
+   * Calculates form dirty state
    */
   const $dirty = $dirties.map((state) => !isEmpty(state) ? hasTruthy(state) : false);
 
   /**
-   * Values store - keeps all fields values
+   * Reset form value/values to the initial value
    */
-  const $values = formDomain.store<IFormValues>({}, { name: '$values'})
-    .on(setFormValue, (
-      state,
-      { name, value }) => ({ ...state, [name]: value }),
-    );
-
-  /**
-   * Changes store, triggers change on field change event
-   */
-  const $changes = formDomain.store<IFormValues>({}, { name: '$changes'})
-    .on(sample({
-      clock: setFormChange,
-      fn: (values, { name, value }) => ({ ...values, [name]: value }),
-      source: $values,
-    }), (_, values) => values);
+  sample({
+    clock: reset,
+    source: { values: $values },
+    fn: ({ values }, field) => {
+      return field ? {
+        ...values,
+        [field]: data.configs?.[field]?.initialValue || data.config.initialValues?.[field],
+      } : Object.keys(values).reduce((acc, key) => ({
+        ...acc,
+        [key]: data.configs?.[key]?.initialValue || data.config.initialValues?.[key],
+      }), {});
+    },
+    target: $values,
+  });
 
   /**
    * Form submit effect.
@@ -136,9 +152,9 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   const onSubmit: Effect<
     IFormOnSubmitArgs,
-    IFormSubmitResponseSuccess,
-    IFormSubmitResponseError
-  > = formDomain.effect({
+    ISubmitResponseSuccess,
+    ISubmitResponseError
+  > = dm.effect({
     handler: async ({
       cb,
       values,
@@ -148,15 +164,16 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
     }) => {
       if (valid || skipClientValidation) {
         try {
-          await cb(values);
+          await cb?.(values);
           return Promise.resolve({ values });
         } catch (remoteErrors) {
+          console.log('ERRORS: ', remoteErrors);
           return Promise.reject({ remoteErrors });
         }
       }
       return Promise.reject({ errors });
     },
-    name: 'submit',
+    name: `@fx-forms/${formConfig.name}/submit`,
   });
 
   /**
@@ -164,95 +181,157 @@ const createFormHandler = (formConfig: IFormConfig): IForm => {
    * attach data needed to process onSubmit effect.
    */
   const submit: Effect<
-    IFormSubmitArgs,
-    IFormSubmitResponseSuccess,
-    IFormSubmitResponseError
+    ISubmitArgs,
+    ISubmitResponseSuccess,
+    ISubmitResponseError
   > = attach({
-    source: { values: $values, errors: $errors, valid: $valid },
+    source: { values: $values, errors: $error, valid: $valid },
     mapParams: (
-      { cb, skipClientValidation = config.skipClientValidation },
-      { values, errors, valid }
-    ) => ({ cb, values, errors, valid, skipClientValidation }),
+      { cb, skipClientValidation },
+      { values, errors, valid },
+    ) => ({ cb, values, errors, valid, skipClientValidation: skipClientValidation || data.config.skipClientValidation }),
     effect: onSubmit,
-    name: `@forms/@${name}/attach-submit`,
+    name: `@fx-forms/${formConfig.name}/attach-submit`,
+  });
+
+
+  /**
+   * Form validation logic
+   */
+  sample({
+    clock: [validate, sample({
+      clock: submit,
+      filter: ({ skipClientValidation }) => !skipClientValidation,
+      fn: () => ({}) as IValidationParams,
+    })],
+    source: { values: $values, active: $active },
+    filter: (_, source) => !source?.name,
+    fn: ({ values, active }) => {
+      return Object.keys(active).reduce((acc, field) => {
+        const validators = data.configs[field].validators || data.config.validators?.[field] || [];
+        const errors = validators.map((vd) => vd(values[field], values)).filter(Boolean) as string[];
+        return { ...acc, [field]: errors.length ? errors : null };
+      }, {});
+    },
+    target: setErrors,
+  });
+
+  /**
+   * Field validation logic
+   */
+  sample({
+    clock: validate,
+    source: { values: $values },
+    filter: (_, source) => !!source?.name,
+    fn: ({ values }, source) => {
+      const validators = data.configs[source?.name as string].validators || data.config.validators?.[source?.name as string] || [];
+      const errors = validators.map((vd) => vd(values[source?.name as string], values)).filter(Boolean) as string[];
+      return { name: source?.name as string, errors: errors.length ? errors : null };
+    },
+    target: setError,
+  });
+
+  setErrors.watch((errs) => console.log('SET_ERRORS', errs));
+
+  /**
+   * Validate field onBlur if the field is touched and validateOnBlur is set
+   */
+  sample({
+    clock: onBlur,
+    source: { touches: $touches, active: $active },
+    filter: ({ touches }, { name }) => touches[name] && (data.configs?.[name]?.validateOnBlur || !!data.config.validateOnBlur),
+    fn: (_, { name }) => ({ name }),
+    target: validate,
+  });
+
+  /**
+   * Validate field onChange if the field is touched and validateOnChange is set
+   */
+  sample({
+    clock: onChange,
+    filter: ({ name }) => (data.configs?.[name]?.validateOnChange || !!data.config.validateOnChange),
+    fn: ({ name }) => ({ name }),
+    target: validate,
+  });
+
+  /**
+   * Reset errors on change if validateOnChange is disabled
+   */
+  sample({
+    clock: onChange,
+    fn: ({ name }) => ({ name, errors: null }),
+    filter: ({ name }) => !(data.configs?.[name]?.validateOnChange || !!data.config.validateOnChange),
+    target: setError,
+  });
+
+  /**
+   * Reset errors on setValues
+   */
+  sample({
+    clock: setValues,
+    fn: (values) => Object.keys(values).reduce((acc, field) => ({ ...acc, [field]: null }), {}),
+    target: setErrors,
+  });
+
+  /**
+   * Erase form configs
+   */
+  sample({
+    clock: erase,
+    fn: () => {
+      data.config = { ...FORM_CONFIG };
+      data.configs = {};
+    },
+  });
+
+  /**
+   * Set submit remote validation errors
+   */
+  sample({
+    clock: submit.failData,
+    filter: (it) => !!it.remoteErrors,
+    fn: ({ remoteErrors }) => {
+      return Object.keys(remoteErrors!).reduce((acc, key) => ({
+        ...acc,
+        [key]: [remoteErrors?.[key]].filter(Boolean),
+      }), {});
+    },
+    target: setErrors,
   });
 
   return {
-    name,
+    domain: dm,
+    name: formConfig.name,
     $active,
-    $actives: combine(
-      $active,
-      $values,
-      (active, values) => pickBy(values, (_, name) => active[name])
-    ),
-    $changes,
+    $activeValues,
+    $error,
     $errors,
-    $valid,
-    $values,
-    $touched,
-    $touches,
     $dirty,
     $dirties,
     $submitting: onSubmit.pending,
-    get config() {
-      return config;
-    },
-    set config({ name, ...formConfig}) {
-      config = { ...config, ...formConfig };
-    },
-    get fields() {
-      return fields;
-    },
-    update,
+    $touched,
+    $touches,
+    $valid,
+    $values,
+    erase,
+    onBlur,
+    onChange,
     reset,
+    setActive,
+    setValues,
     submit,
-    getField: (name) => fields[name],
-    registerField: ({ name, ...fieldConfig }) => {
-      if (fields[name]) {
-        fields[name].config = { name, ...fieldConfig };
-      }
-      fields[name] = createField(
-        { name, ...fieldConfig },
-        {
-        $formValues: $values,
-        formDomain,
-        onFormUpdate: update,
-        onFormReset: reset,
-        onFormSubmit: sample({
-          clock: submit,
-          filter: ({ skipClientValidation }) => !skipClientValidation,
-        }),
-        onFormErrors: sample({
-          source: onSubmit.failData.map(({ remoteErrors }) => remoteErrors as IFormErrors),
-          filter: (remoteErrors) => !!remoteErrors,
-        }),
-        setFormChange,
-        setFormActive,
-        setFormError,
-        setFormDirty,
-        setFormTouch,
-        setFormValue,
-      });
-      setTimeout(() => fields[name].syncData(), 0);
-      return fields[name];
+    validate,
+    get config() {
+      return data.config;
+    },
+    setConfig: (cfg: IFormConfig) => {
+      data.config = { ...FORM_CONFIG, ...cfg };
+    },
+    get configs() {
+      return data.configs;
+    },
+    setFieldConfig: (cfg: IFieldConfig) => {
+      data.configs[cfg.name] = { ...FIELD_CONFIG, ...cfg };
     },
   };
 };
-
-/**
- * Create/Update form with the given config
- */
-export const createUpdateForm = (config: IFormConfig) => {
-  const { name = formConfigDefault.name } = config;
-  if (forms[name]) {
-    forms[name].config = config;
-    return forms[name];
-  }
-  return forms[name] = createFormHandler(config);
-};
-
-/**
- * Return form with given name or create new one if it doesn't exist
- */
-export const getForm = (name = formConfigDefault.name) => createUpdateForm({ name });
-

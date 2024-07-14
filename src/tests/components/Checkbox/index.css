@@ -1,0 +1,30 @@
+.checkbox-wrapper {
+  padding: 0 0 24px 0;
+  position: relative;
+  font-size: 1rem;
+}
+
+.checkbox-field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checkbox-label {
+  text-align: left;
+}
+
+.checkbox-input {
+  font-size: inherit;
+  height: 24px;
+  width: 24px;
+  margin: 12px 0;
+}
+
+.checkbox-error {
+  font-size: .75rem;
+  color: #d91c78;
+  position: absolute;
+  top: 53px;
+  left: 0;
+}

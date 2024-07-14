@@ -1,9 +1,6 @@
-export { getForm, createUpdateForm } from './form';
+export { getForm } from './forms';
+export { useFormInstance } from './useFormInstance';
+export { Form } from './FormComponent';
+export { Field } from './FieldComponent';
 
-export type {
-  IFormValues,
-  IFormValidators,
-  IFormErrors,
-  TFieldValue,
-  TFieldValidator,
-} from './model';
+export * from './types';

@@ -4,7 +4,7 @@ import reduce from 'lodash/reduce';
 import set from 'lodash/set';
 import pickBy from 'lodash/pickBy';
 
-export const domain: Domain = createDomain('@forms');
+export const domain: Domain = createDomain('@fx-forms');
 
 type TObject = Record<string, unknown>;
 
