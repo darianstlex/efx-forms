@@ -297,12 +297,6 @@ import { useField } from 'efx-forms/useField';
 import { useFieldData } from 'efx-forms/useFieldData';
 
 /**
- * For all Field hooks, before usage make sure field is registered
- * in the form or will be register on the next render cycle. Otherwise
- * it will return empty non reactive store.
- */
-
-/**
  * Return form by name
  * @type (config: IFormConfig) => IForm
  */
