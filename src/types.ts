@@ -105,7 +105,7 @@ export interface IForm {
   /** $$STORE - Form values - all fields values - flat */
   $values: Store<Record<string, any>>;
   /** $$STORE - Form errors - all field errors */
-  $errors: Store<Record<string, string[]>>;
+  $errors: Store<Record<string, string[] | null>>;
   /** $$STORE - Form errors - fields last error - flat */
   $error: Store<Record<string, string | null>>;
   /** $$STORE - Form valid - true if form is valid */
@@ -213,7 +213,7 @@ export interface IRIfFieldValueProps {
   /** METHOD - check - accepts form values and return boolean, if true render children */
   check: (value: any) => boolean;
   /** METHOD - render - accepts values array and return react element */
-  render?: (values: any[]) => ReactElement;
+  render?: (value: any) => ReactElement;
 }
 
 export interface IRFormDataProviderProps {

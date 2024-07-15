@@ -15,7 +15,7 @@ export const IfFieldValue = ({
   render,
 }: IRIfFieldValueProps) => {
   const form = useFormInstance(formName);
-  const value = useStoreMap(form.$values, (it) => it[field] || '');
+  const value = useStoreMap(form.$values, (it) => it[field]);
   const show = check(value);
   const output = () => render ? render(value) : children;
 

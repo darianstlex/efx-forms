@@ -71,7 +71,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Validations store - keeps all fields validation errors
    */
-  const $errors = dm.store<Record<string, string[]>>({}, { name: '$errors'})
+  const $errors = dm.store<Record<string, string[] | null>>({}, { name: '$errors'})
     .on(setError, (
       state,
       { name, errors }) => pickBy({ ...state, [name]: errors }, (error) => !!error),
@@ -86,7 +86,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const $error = $errors.map((errors) => {
     return Object.keys(errors).reduce((acc, key) => ({
       ...acc,
-      [key]: errors[key][0],
+      [key]: errors?.[key]?.[0] || null,
     }), {});
   });
 

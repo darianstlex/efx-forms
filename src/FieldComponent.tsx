@@ -22,7 +22,7 @@ export const Field = ({
 }: IRFieldProps) => {
   const form = useFormInstance(formName);
 
-  const value = useStoreMap(form.$values, (it) => it[name] || '');
+  const value = useStoreMap(form.$values, (it) => it[name]);
   const error = useStoreMap(form.$error, (it) => it[name] || null);
   const errors = useStoreMap(form.$errors, (it) => it[name] || ARR_0);
   const touched = useStoreMap(form.$touches, (it) => it[name]);
@@ -62,7 +62,7 @@ export const Field = ({
       error,
       errors,
       name,
-      value: formatValue(value || ''),
+      value: formatValue(value),
       onChange: (value: any) => onChange({ name, value }),
       onBlur: (value: any) => onBlur({ name, value }),
       ...rest,

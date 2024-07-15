@@ -203,6 +203,42 @@ const FormData = () => (
 );
 ```
 
+### IfFieldValue component
+Conditional rendering based on field value
+```ts
+interface IfFieldValue {
+  children?: ReactNode;
+  // Field name
+  field: string;
+  // Form name - used to get form values,
+  // if not provided will be taken from context
+  formName?: string;
+  // Condition check - accepts form values and return boolean,
+  // if true render children
+  check: (value: any) => boolean;
+  // Render prop - accepts form values and return react element
+  // if defined will be used instead of children
+  render?: (values: any) => ReactElement;
+}
+```
+
+```jsx
+import { IfFieldValue } from 'efx-forms/IfFieldValue';
+
+const ConditionalRender = () => (
+  <IfFieldValue check={(age) => age > 21 }>
+    <div>Hey, I am here</div>
+  </IfFieldValue>
+);
+
+const ConditionalRenderProp = () => (
+  <IfFieldValue
+    check={(age) => age > 21 }
+    render={(age) => <div>Hi, I am {age}</div>}
+  />
+);
+```
+
 ### FieldDataProvider component
 Subscribe for field value changes
 
