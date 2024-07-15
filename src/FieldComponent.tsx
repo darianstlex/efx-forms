@@ -62,7 +62,7 @@ export const Field = ({
       error,
       errors,
       name,
-      value: formatValue(value),
+      value: formatValue(value || ''),
       onChange: (value: any) => onChange({ name, value }),
       onBlur: (value: any) => onBlur({ name, value }),
       ...rest,
