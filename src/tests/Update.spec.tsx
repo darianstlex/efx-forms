@@ -4,11 +4,19 @@ import { Update } from './Update';
 import { sel } from './selectors';
 
 test('Form update should update data correctly', async ({ mount }) => {
+  const data = {
+    config: {},
+    configs: {},
+  };
   const component = await mount(
     <Update
       initialValues={{
         'user.name': 'Initial User',
         'user.password': 'pass1',
+      }}
+      setConfig={({ config, configs }) => {
+        data.config = config;
+        data.configs = configs;
       }}
     />
   );
@@ -18,6 +26,7 @@ test('Form update should update data correctly', async ({ mount }) => {
   const userPassword = component.locator(sel.userPassword);
   const submit = component.locator(sel.submit);
   const reset = component.locator(sel.reset);
+  const config = component.locator(sel.config);
 
   const values = component.locator(sel.values);
 
@@ -27,12 +36,44 @@ test('Form update should update data correctly', async ({ mount }) => {
     "user.password": "pass1"
   `);
 
+  await config.click();
+  expect(data.config).toEqual({
+    initialValues: {
+      'user.name': 'Initial User',
+      'user.password': 'pass1',
+    },
+    keepOnUnmount: false,
+    name: 'formUpdate',
+    onSubmit: undefined,
+    skipClientValidation: false,
+    validateOnBlur: true,
+    validateOnChange: false,
+    validators: {},
+  });
+  expect(data.configs['user.name']).toEqual({
+    format: undefined,
+    initialValue: undefined,
+    name: 'user.name',
+    parse: undefined,
+    validateOnBlur: true,
+    validateOnChange: true,
+    validators: [null],
+  });
+
   await component.update(
     <Update
+      keepOnUnmount
+      skipClientValidation
       initialValues={{
         'user.name': 'Second User',
         'user.password': 'pass2',
       }}
+      setConfig={({ config, configs }) => {
+        data.config = config;
+        data.configs = configs;
+      }}
+      validateOnBlur={false}
+      validateOnChange={true}
     />
   );
 
@@ -41,6 +82,30 @@ test('Form update should update data correctly', async ({ mount }) => {
     "user.name": "Second User",
     "user.password": "pass2"
   `);
+
+  await config.click();
+  expect(data.config).toEqual({
+    initialValues: {
+      'user.name': 'Second User',
+      'user.password': 'pass2',
+    },
+    keepOnUnmount: true,
+    name: 'formUpdate',
+    onSubmit: undefined,
+    skipClientValidation: true,
+    validateOnBlur: false,
+    validateOnChange: true,
+    validators: {},
+  });
+  expect(data.configs['user.name']).toEqual({
+    format: undefined,
+    initialValue: undefined,
+    name: 'user.name',
+    parse: undefined,
+    validateOnBlur: true,
+    validateOnChange: false,
+    validators: [null],
+  });
 
   // edit fields
   await userName.fill('Edit User');
@@ -53,8 +118,27 @@ test('Form update should update data correctly', async ({ mount }) => {
         'user.name': 'Second User',
         'user.password': 'pass2',
       }}
+      setConfig={({ config, configs }) => {
+        data.config = config;
+        data.configs = configs;
+      }}
     />
   );
+
+  await config.click();
+  expect(data.config).toEqual({
+    initialValues: {
+      'user.name': 'Second User',
+      'user.password': 'pass2',
+    },
+    keepOnUnmount: false,
+    name: 'formUpdate',
+    onSubmit: undefined,
+    skipClientValidation: false,
+    validateOnBlur: true,
+    validateOnChange: false,
+    validators: {},
+  });
 
   // values should not change as fields are touched
   await expect(values).toContainText(`

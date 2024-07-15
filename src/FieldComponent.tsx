@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import { useStoreMap, useUnit } from 'effector-react';
+import pickBy from 'lodash/pickBy';
 
 import { ARR_0, FIELD_CONFIG } from './constants';
 import { useFormInstance } from './useFormInstance';
@@ -32,15 +33,10 @@ export const Field = ({
   ]);
 
   useEffect(() => {
-    form.setFieldConfig({
-      name,
-      ...(parse ? { parse } : {}),
-      ...(format ? { format } : {}),
-      ...(validators ? { validators } : {}),
-      ...(initialValue ? { initialValue } : {}),
-      ...(validateOnBlur ? { validateOnBlur } : {}),
-      ...(validateOnChange ? { validateOnChange } : {}),
-    });
+    const config = pickBy({
+      parse, format, validators, initialValue, validateOnBlur, validateOnChange,
+    }, (val) => val !== undefined);
+    form.setFieldConfig({ name, ...config });
   }, [form, format, initialValue, name, parse, validateOnBlur, validateOnChange, validators]);
 
   useEffect(() => {

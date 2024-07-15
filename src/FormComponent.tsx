@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import type { FormEvent } from 'react';
 import { useUnit } from 'effector-react';
+import pickBy from 'lodash/pickBy';
 
 import { FORM_CONFIG } from './constants';
 import { getForm } from './forms';
@@ -22,28 +23,30 @@ export const Form = ({
   validators,
   ...props
 }: IRFormProps) => {
-  const form: IForm = useMemo(() => getForm({
-    name,
-    ...(keepOnUnmount ? { keepOnUnmount } : {}),
-    ...(skipClientValidation ? { skipClientValidation } : {}),
-    ...(initialValues ? { initialValues } : {}),
-    ...(validateOnBlur ? { validateOnBlur } : {}),
-    ...(validateOnChange ? { validateOnChange } : {}),
-    ...(validators ? { validators } : {}),
-  }), [name, keepOnUnmount, skipClientValidation, initialValues, validateOnBlur, validateOnChange, validators]);
+  const form: IForm = useMemo(() => {
+    const config = pickBy({
+      keepOnUnmount,
+      skipClientValidation,
+      initialValues,
+      validateOnBlur,
+      validateOnChange,
+      validators,
+    }, (val) => val !== undefined);
+    return getForm({ name, ...config });
+  }, [name, keepOnUnmount, skipClientValidation, initialValues, validateOnBlur, validateOnChange, validators]);
 
   const [formSubmit, formReset] = useUnit([form.submit, form.reset]);
 
   useEffect(() => {
-    form.setConfig({
-      name,
-      ...(keepOnUnmount ? { keepOnUnmount } : {}),
-      ...(skipClientValidation ? { skipClientValidation } : {}),
-      ...(initialValues ? { initialValues } : {}),
-      ...(validateOnBlur ? { validateOnBlur } : {}),
-      ...(validateOnChange ? { validateOnChange } : {}),
-      ...(validators ? { validators } : {}),
-    });
+    const config = pickBy({
+      keepOnUnmount,
+      skipClientValidation,
+      initialValues,
+      validateOnBlur,
+      validateOnChange,
+      validators,
+    }, (val) => val !== undefined);
+    form.setConfig({ name, ...config });
   }, [keepOnUnmount, skipClientValidation, initialValues, validateOnBlur, validateOnChange, validators, name, form]);
 
   useEffect(() => {

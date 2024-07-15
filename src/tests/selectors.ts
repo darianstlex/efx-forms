@@ -8,6 +8,7 @@ export const sel = {
   userPasswordError: '[data-test="user.password-error"]',
   submit: '[data-test="submit"]',
   reset: '[data-test="reset"]',
+  config: '[data-test="config"]',
 
   isTouched: '[data-test="touched-result"]',
   touches: '[data-test="touches-result"]',
