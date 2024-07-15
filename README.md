@@ -21,10 +21,10 @@ import { Form, Field } from 'efx-forms';
 import { FormDataProvider } from 'efx-forms/FormDataProvider';
 import { required, email } from 'efx-forms/validators';
 
-const Input = ({ id, label, error, errors, ...props }) => (
+const Input = ({ id, label, error, errors, value, ...props }) => (
   <div>
     <label htmlFor={id}>{label}</label>
-    <input id={id} {...props} />
+    <input id={id} value={value || ''} {...props} />
     <span>{error}</span>
   </div>
 )
