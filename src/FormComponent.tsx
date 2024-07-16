@@ -33,7 +33,7 @@ export const Form = ({
       validators,
     }, (val) => val !== undefined);
     return getForm({ name, ...config });
-  }, [name, keepOnUnmount, skipClientValidation, initialValues, validateOnBlur, validateOnChange, validators]);
+  }, [name]);
 
   const [formSubmit, formReset] = useUnit([form.submit, form.reset]);
 
@@ -47,7 +47,7 @@ export const Form = ({
       validators,
     }, (val) => val !== undefined);
     form.setConfig({ name, ...config });
-  }, [keepOnUnmount, skipClientValidation, initialValues, validateOnBlur, validateOnChange, validators, name, form]);
+  }, [keepOnUnmount, skipClientValidation, initialValues, validateOnBlur, validateOnChange, validators, name, form.setConfig]);
 
   useEffect(() => {
     return () => {

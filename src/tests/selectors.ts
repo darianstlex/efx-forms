@@ -9,6 +9,7 @@ export const sel = {
   submit: '[data-test="submit"]',
   reset: '[data-test="reset"]',
   config: '[data-test="config"]',
+  action: '[data-test="action"]',
 
   isTouched: '[data-test="touched-result"]',
   touches: '[data-test="touches-result"]',

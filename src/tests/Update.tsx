@@ -40,13 +40,14 @@ export const Update = (props: Props) => {
         validators={[required()]}
       />
       <UseFormStore title="values" store="$values"/>
+      <UseFormStore title="touches" store="$touches"/>
       <Button data-test="submit" type="submit">Submit</Button>
       <span style={{display: 'inline-block', width: 20}}/>
       <Button data-test="reset" onClick={() => reset()}>Reset</Button>
       <span style={{display: 'inline-block', width: 20}}/>
       <Button
         data-test="config"
-        onClick={() => props?.setConfig?.({ config: form.config, configs: form.configs })}
+        onClick={() => props?.setConfig?.({config: form.config, configs: form.configs})}
       >
         Config
       </Button>

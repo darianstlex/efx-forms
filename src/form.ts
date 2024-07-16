@@ -5,7 +5,7 @@ import pickBy from 'lodash/pickBy';
 
 import { domain, hasTruthy } from './utils';
 
-import type {
+import {
   IFieldConfig,
   IForm,
   IFormConfig,
@@ -16,7 +16,7 @@ import type {
   ISubmitArgs,
   ISubmitResponseError,
   ISubmitResponseSuccess,
-  IValidationParams,
+  IValidationParams, TFieldValidator,
 } from './types';
 
 import { FORM_CONFIG, FIELD_CONFIG } from './constants';
@@ -26,6 +26,18 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     config: { ...FORM_CONFIG, ...formConfig },
     configs: {},
   } as { config: IFormConfig, configs: Record<string, IFieldConfig> };
+
+  const getFieldProp = (name: string, prop: string) => {
+    return data.configs?.[name]?.[prop] !== undefined
+      ? data.configs[name][prop]
+      : data.config[prop];
+  };
+
+  const getFieldInitVal = (name: string) => {
+    return data.configs?.[name]?.initialValue !== undefined
+      ? data.configs[name].initialValue
+      : data.config?.initialValues?.[name];
+  };
 
   const dm = domain.domain(formConfig.name);
 
@@ -114,7 +126,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   const $dirties = $activeValues.map((values) => {
     const dirties = Object.keys(values).reduce((acc, field: string) => {
-      const initialValue = data.configs[field]?.initialValue || data.config.initialValues?.[field];
+      const initialValue = getFieldInitVal(field);
       acc[field] = values[field] !== initialValue;
       return acc;
     }, {} as Record<string, boolean>);
@@ -135,10 +147,10 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     fn: ({ values }, field) => {
       return field ? {
         ...values,
-        [field]: data.configs?.[field]?.initialValue || data.config.initialValues?.[field],
+        [field]: getFieldInitVal(field),
       } : Object.keys(values).reduce((acc, key) => ({
         ...acc,
-        [key]: data.configs?.[key]?.initialValue || data.config.initialValues?.[key],
+        [key]: getFieldInitVal(key),
       }), {});
     },
     target: $values,
@@ -167,7 +179,6 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
           await cb?.(values);
           return Promise.resolve({ values });
         } catch (remoteErrors) {
-          console.log('ERRORS: ', remoteErrors);
           return Promise.reject({ remoteErrors });
         }
       }
@@ -187,9 +198,15 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   > = attach({
     source: { values: $values, errors: $error, valid: $valid },
     mapParams: (
-      { cb, skipClientValidation },
+      params = {},
       { values, errors, valid },
-    ) => ({ cb, values, errors, valid, skipClientValidation: skipClientValidation || data.config.skipClientValidation }),
+    ) => ({
+      cb: params?.cb,
+      values,
+      errors,
+      valid,
+      skipClientValidation: Object.hasOwn(params, 'skipClientValidation') ? params.skipClientValidation : data.config.skipClientValidation,
+    }),
     effect: onSubmit,
     name: `@fx-forms/${formConfig.name}/attach-submit`,
   });
@@ -208,7 +225,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     filter: (_, source) => !source?.name,
     fn: ({ values, active }) => {
       return Object.keys(active).reduce((acc, field) => {
-        const validators = data.configs[field].validators || data.config.validators?.[field] || [];
+        const validators: ReturnType<TFieldValidator>[] = getFieldProp(field, 'validators') || [];
         const errors = validators.map((vd) => vd(values[field], values)).filter(Boolean) as string[];
         return { ...acc, [field]: errors.length ? errors : null };
       }, {});
@@ -224,14 +241,12 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     source: { values: $values },
     filter: (_, source) => !!source?.name,
     fn: ({ values }, source) => {
-      const validators = data.configs[source?.name as string].validators || data.config.validators?.[source?.name as string] || [];
+      const validators: ReturnType<TFieldValidator>[] = getFieldProp(source?.name as string, 'validators') || [];
       const errors = validators.map((vd) => vd(values[source?.name as string], values)).filter(Boolean) as string[];
       return { name: source?.name as string, errors: errors.length ? errors : null };
     },
     target: setError,
   });
-
-  setErrors.watch((errs) => console.log('SET_ERRORS', errs));
 
   /**
    * Validate field onBlur if the field is touched and validateOnBlur is set
@@ -239,7 +254,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   sample({
     clock: onBlur,
     source: { touches: $touches, active: $active },
-    filter: ({ touches }, { name }) => touches[name] && (data.configs?.[name]?.validateOnBlur || !!data.config.validateOnBlur),
+    filter: ({ touches }, { name }) => touches[name] && getFieldProp(name, 'validateOnBlur'),
     fn: (_, { name }) => ({ name }),
     target: validate,
   });
@@ -249,7 +264,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: onChange,
-    filter: ({ name }) => (data.configs?.[name]?.validateOnChange || !!data.config.validateOnChange),
+    filter: ({ name }) => getFieldProp(name, 'validateOnChange'),
     fn: ({ name }) => ({ name }),
     target: validate,
   });
@@ -260,7 +275,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   sample({
     clock: onChange,
     fn: ({ name }) => ({ name, errors: null }),
-    filter: ({ name }) => !(data.configs?.[name]?.validateOnChange || !!data.config.validateOnChange),
+    filter: ({ name }) => !getFieldProp(name, 'validateOnChange'),
     target: setError,
   });
 
@@ -331,7 +346,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
       return data.configs;
     },
     setFieldConfig: (cfg: IFieldConfig) => {
-      data.configs[cfg.name] = { ...FIELD_CONFIG, ...cfg };
+      data.configs[cfg.name] = { ...cfg };
     },
   };
 };

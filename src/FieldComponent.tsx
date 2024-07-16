@@ -37,7 +37,7 @@ export const Field = ({
       parse, format, validators, initialValue, validateOnBlur, validateOnChange,
     }, (val) => val !== undefined);
     form.setFieldConfig({ name, ...config });
-  }, [form, format, initialValue, name, parse, validateOnBlur, validateOnChange, validators]);
+  }, [form.setFieldConfig, format, initialValue, name, parse, validateOnBlur, validateOnChange, validators]);
 
   useEffect(() => {
     setActive({ name, value: true });
@@ -47,9 +47,9 @@ export const Field = ({
   }, [name, setActive]);
 
   useEffect(() => {
-    const fieldInitialValue = initialValue || form.config.initialValues?.[name];
+    const fieldInitialValue = initialValue !== undefined ? initialValue : form.config.initialValues?.[name];
     fieldInitialValue && !touched && setValues({ [name]: fieldInitialValue });
-  }, [form.config, form.config.initialValues, initialValue, name, setValues]);
+  }, [initialValue, name, setValues]);
 
   const formatValue = form.configs?.[name]?.format || FIELD_CONFIG.format!;
 
