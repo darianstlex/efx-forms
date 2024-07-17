@@ -119,8 +119,8 @@ test('Form update should update data correctly', async ({ mount }) => {
   await component.update(
     <Update
       initialValues={{
-        'user.name': 'Second User',
-        'user.password': 'pass2',
+        'user.name': 'Third User',
+        'user.password': 'pass3',
       }}
       setConfig={({ config, configs }) => {
         data.config = config;
@@ -132,8 +132,8 @@ test('Form update should update data correctly', async ({ mount }) => {
   await config.click();
   expect(data.config).toEqual({
     initialValues: {
-      'user.name': 'Second User',
-      'user.password': 'pass2',
+      'user.name': 'Third User',
+      'user.password': 'pass3',
     },
     keepOnUnmount: false,
     name: 'formUpdate',
@@ -164,8 +164,8 @@ test('Form update should update data correctly', async ({ mount }) => {
   await reset.click();
   // values should reset to tha latest updated initial values
   await expect(values).toContainText(`
-    "user.name": "Second User",
-    "user.password": "pass2"
+    "user.name": "Third User",
+    "user.password": "pass3"
   `);
   await expect(touches).toContainText('{}');
 

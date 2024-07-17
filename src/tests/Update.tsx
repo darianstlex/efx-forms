@@ -16,6 +16,7 @@ export const Update = (props: Props) => {
   const form = useFormInstance('formUpdate');
   const [reset] = useUnit([form.reset]);
   const submit = async (values: IFormValues) => {
+    console.log(values);
     return Promise.reject({
       'user.name': 'This user is taken',
     });

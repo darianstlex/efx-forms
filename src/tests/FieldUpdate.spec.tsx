@@ -10,13 +10,9 @@ test('Field update should behave correctly', async ({ mount }) => {
   };
   const component = await mount(
     <FieldUpdate
-      formConfig={{
-        name: 'formFieldUpdate',
-        initialValues: {
-          'user.name': 'Initial User',
-        },
+      fieldConfig={{
+        initialValue: 'Initial User',
       }}
-      fieldConfig={{}}
       setConfig={({ config, configs }) => {
         data.config = config;
         data.configs = configs;
@@ -25,12 +21,12 @@ test('Field update should behave correctly', async ({ mount }) => {
   );
 
   const userName = component.locator(sel.userName);
-  const reset = component.locator(sel.reset);
   const config = component.locator(sel.config);
 
   const values = component.locator(sel.values);
   const touches = component.locator(sel.touches);
 
+  // initial values should be ok
   await expect(userName).toHaveValue('Initial User');
   await expect(values).toContainText(`
     "user.name": "Initial User"
@@ -38,19 +34,14 @@ test('Field update should behave correctly', async ({ mount }) => {
   await expect(touches).toContainText('{}');
   await config.click();
   expect(data.configs['user.name']).toEqual({
+    initialValue: 'Initial User',
     name: 'user.name',
   });
 
   await component.update(
     <FieldUpdate
-      formConfig={{
-        name: 'formFieldUpdate',
-        initialValues: {
-          'user.name': 'Initial User',
-        },
-      }}
       fieldConfig={{
-        initialValue: 'Field User',
+        initialValue: 'First User',
         validateOnBlur: false,
         validateOnChange: true,
         validators: [],
@@ -62,17 +53,45 @@ test('Field update should behave correctly', async ({ mount }) => {
     />
   );
 
-  await expect(userName).toHaveValue('Field User');
+  // values should change after update
+  await expect(userName).toHaveValue('First User');
   await expect(values).toContainText(`
-    "user.name": "Field User"
+    "user.name": "First User"
   `);
   await expect(touches).toContainText('{}');
   await config.click();
   expect(data.configs['user.name']).toEqual({
     name: 'user.name',
-    initialValue: 'Field User',
+    initialValue: 'First User',
     validateOnBlur: false,
     validateOnChange: true,
     validators: [],
   });
+
+  await userName.fill('Edit User');
+  await component.update(
+    <FieldUpdate
+      fieldConfig={{
+        initialValue: 'Second User',
+      }}
+      setConfig={({ config, configs }) => {
+        data.config = config;
+        data.configs = configs;
+      }}
+    />
+  );
+
+  // values should not change if field is touched
+  await expect(touches).toContainText(`
+    "user.name": true
+  `);
+  await config.click();
+  expect(data.configs['user.name']).toEqual({
+    name: 'user.name',
+    initialValue: 'Second User',
+  });
+  await expect(userName).toHaveValue('Edit User');
+  await expect(values).toContainText(`
+    "user.name": "Edit User"
+  `);
 });
