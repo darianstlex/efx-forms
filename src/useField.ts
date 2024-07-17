@@ -7,7 +7,9 @@ import { useFormInstance } from './useFormInstance';
  */
 export const useField = (name: string, formName?: string) => {
   const form = useFormInstance(formName);
-  const [reset, validate, setActive] = useUnit([form.reset, form.validate, form.setActive]);
+  const [reset, validate, setActive, setValue, onChange] = useUnit([
+    form.reset, form.validate, form.setActive, form.setValues, form.onChange,
+  ]);
   return {
     value: useStoreMap(form.$values, (it) => it[name]),
     active: useStoreMap(form.$active, (it) => it[name]),
@@ -17,6 +19,9 @@ export const useField = (name: string, formName?: string) => {
     reset: () => reset(name),
     validate: () => validate({ name }),
     setActive: (value: boolean) => setActive({ name, value }),
+    setValue: (value: any) => setValue({ name, value }),
+    update: (value: any) => onChange({ name, value }),
+    setConfig: form.setFieldConfig,
     config: form.configs[name],
   };
 };

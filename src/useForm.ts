@@ -8,24 +8,28 @@ import { useFormInstance } from './useFormInstance';
 export const useForm = (name?: string) => {
   const form = useFormInstance(name);
 
-  const data = useUnit({
-    active: form.$active,
-    activeValues: form.$activeValues,
-    dirties: form.$dirties,
-    dirty: form.$dirty,
-    error: form.$error,
-    erase: form.erase,
-    reset: form.reset,
-    setActive: form.setActive,
-    setValues: form.setValues,
-    submitting: form.$submitting,
-    submit: form.submit,
-    touched: form.$touched,
-    touches: form.$touches,
-    values: form.$values,
-    valid: form.$valid,
-    validate: form.validate,
-  });
-
-  return { config: form.config, configs: form.configs, ...data };
+  return {
+    setConfig: form.setConfig,
+    setFieldConfig: form.setFieldConfig,
+    ...useUnit({
+      active: form.$active,
+      activeValues: form.$activeValues,
+      dirties: form.$dirties,
+      dirty: form.$dirty,
+      error: form.$error,
+      errors: form.$errors,
+      erase: form.erase,
+      reset: form.reset,
+      setActive: form.setActive,
+      setValues: form.setValues,
+      update: form.onChange,
+      submitting: form.$submitting,
+      submit: form.submit,
+      touched: form.$touched,
+      touches: form.$touches,
+      values: form.$values,
+      valid: form.$valid,
+      validate: form.validate,
+    }),
+  };
 };

@@ -1,13 +1,13 @@
 import type { ReactElement } from 'react';
 
-import { useForm } from './useForm';
+import { useFormData } from './useFormData';
 import type { IRFormDataProviderProps } from './types';
 
 /**
  * Form data stores provider
  */
 export const FormDataProvider = ({ children, name }: IRFormDataProviderProps) => {
-  const data = useForm(name);
+  const data = useFormData(name);
   return children(data) as ReactElement;
 };
 

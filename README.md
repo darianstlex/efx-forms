@@ -188,7 +188,7 @@ Subscribe for form values changes
 ```ts
 interface FormDataProvider {
   // Render function - provides all subscribed data
-  children: (values: ReturnType<typeof useForm>) => ReactNode;
+  children: (values: ReturnType<typeof useFormData>) => ReactNode;
   // Form name if used outside of context or refers to another form
   name?: string;
 }
@@ -326,6 +326,7 @@ interface FormInstance {
 ```ts
 import { getForm, useFormInstance } from 'efx-forms';
 import { useForm } from 'efx-forms/useForm';
+import { useFormData } from 'efx-forms/useFormData';
 import { useFormValues } from 'efx-forms/useFormValues';
 import { useFormStore } from 'efx-forms/useFormStore';
 import { useFormStores } from 'efx-forms/useFormStores';
@@ -339,13 +340,22 @@ import { useFieldData } from 'efx-forms/useFieldData';
 const formOne = getForm({ name: 'form-one' });
 
 /**
- * Hook - return form (from context) data or provided form by name.
+ * Hook - return form (from context) data/methods or provided form by name.
  * Form name is needed when hook is used outside of the form context
  * or refers to another form.
  * Result includes all form data in plain objects and units in scope
  * @type (formName?: string) => ReturnType<typeof useForm>
  */
 const formTwo = useForm();
+
+/**
+ * Hook - return form (from context) data or provided form by name.
+ * Form name is needed when hook is used outside of the form context
+ * or refers to another form.
+ * Result includes all form data in plain objects and units in scope
+ * @type (formName?: string) => ReturnType<typeof useFormData>
+ */
+const formThree = useFormData();
 
 /**
  * Hook - return form (from context) instance or provided form by name.
