@@ -6,6 +6,11 @@ export const sel = {
   userHasEmail: '[data-test="user.hasEmail"]',
   userPassword: '[data-test="user.password"]',
   userPasswordError: '[data-test="user.password-error"]',
+
+  one: '[data-test="one"]',
+  two: '[data-test="two"]',
+  three: '[data-test="three"]',
+
   submit: '[data-test="submit"]',
   reset: '[data-test="reset"]',
   config: '[data-test="config"]',
