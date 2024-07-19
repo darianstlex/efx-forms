@@ -27,3 +27,14 @@ export const Input = ({ id, label, error, onChange, name,  ...rest }: InputProps
 export const TextField = ({ name, ...rest }: Omit<IRFieldProps, 'Field'> & InputProps) => (
   <Field name={name} Field={Input} {...rest} />
 );
+
+export const NumberField = ({ name, ...rest }: Omit<IRFieldProps, 'Field'> & InputProps) => (
+  <Field
+    name={name}
+    Field={Input}
+    type="number"
+    format={(num: number) => `${num}`}
+    parse={(num: number) => Number(num)}
+    {...rest}
+  />
+);

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { getForm } from '../index';
 import { Form } from '../index';
-import { TextField } from './components/Input';
+import { NumberField } from './components/Input';
 import { sample } from 'effector';
 import { UseFormStore } from './components/Hooks';
 
@@ -42,35 +42,26 @@ export const SampleUpdate = () => {
   return (
     <>
       <div style={{width: 400, margin: '20px auto'}}>
-        <TextField
+        <NumberField
           formName="formSampleUpdate"
           data-test="one"
           name="one"
           label="One"
           initialValue={0}
-          type="number"
-          format={(num: number) => `${num}`}
-          parse={(num: number) => Number(num)}
         />
       </div>
       <Form name="formSampleUpdate">
-        <TextField
+        <NumberField
           data-test="two"
           name="two"
           label="Two"
           initialValue={0}
-          type="number"
-          format={(num: number) => `${num}`}
-          parse={(num: number) => Number(num)}
         />
-        <TextField
+        <NumberField
           data-test="three"
           name="three"
           label="Three"
           initialValue={0}
-          type="number"
-          format={(num: number) => `${num}`}
-          parse={(num: number) => Number(num)}
         />
         <UseFormStore title="values" store="$values"/>
       </Form>
