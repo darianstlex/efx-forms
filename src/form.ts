@@ -224,8 +224,8 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     fn: ({ values, active }) => {
       return Object.keys(active).reduce((acc, field) => {
         const validators: ReturnType<TFieldValidator>[] = getFieldProp(field, 'validators') || [];
-        const errors = validators.map((vd) => vd(values[field], values)).filter(Boolean) as string[];
-        return { ...acc, [field]: errors.length ? errors : null };
+        const errors = validators?.map?.((vd) => vd(values[field], values))?.filter(Boolean) as string[];
+        return { ...acc, [field]: errors?.length ? errors : null };
       }, {});
     },
     target: setErrors,
@@ -240,8 +240,8 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     filter: (_, source) => !!source?.name,
     fn: ({ values }, source) => {
       const validators: ReturnType<TFieldValidator>[] = getFieldProp(source?.name as string, 'validators') || [];
-      const errors = validators.map((vd) => vd(values[source?.name as string], values)).filter(Boolean) as string[];
-      return { name: source?.name as string, errors: errors.length ? errors : null };
+      const errors = validators.map?.((vd) => vd(values[source?.name as string], values))?.filter?.(Boolean) as string[];
+      return { name: source?.name as string, errors: errors?.length ? errors : null };
     },
     target: setError,
   });
