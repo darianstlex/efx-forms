@@ -10,13 +10,11 @@ import {
   IForm,
   IFormConfig,
   IFormOnSubmitArgs,
-  INameErrors,
-  INameBoolean,
-  INameValue,
   ISubmitArgs,
   ISubmitResponseError,
   ISubmitResponseSuccess,
-  IValidationParams, TFieldValidator,
+  IValidationParams,
+  TFieldValidator,
 } from './types';
 
 import { FORM_CONFIG, FIELD_CONFIG } from './constants';
@@ -41,12 +39,12 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
 
   const dm = domain.domain(formConfig.name);
 
-  const setActive = dm.event<INameBoolean>('set-active');
-  const setError = dm.event<INameErrors>('set-error');
+  const setActive = dm.event<{ name: string, value: boolean }>('set-active');
+  const setError = dm.event<{ name: string, errors: string[] | null }>('set-error');
   const setErrors = dm.event<Record<string, string[] | null>>('set-errors');
   const setValues = dm.event<Record<string, any>>('set-values');
-  const onChange = dm.event<INameValue>('on-change');
-  const onBlur = dm.event<INameValue>('on-blur');
+  const onChange = dm.event<{ name: string, value: any }>('on-change');
+  const onBlur = dm.event<{ name: string, value: any }>('on-blur');
   const reset = dm.event<string | void>('reset');
   const erase = dm.event<void>('erase');
   const validate = dm.event<IValidationParams>('validate');

@@ -25,7 +25,7 @@ export const Field = ({
 
   const value = useStoreMap(form.$values, (it) => it[name]);
   const error = useStoreMap(form.$error, (it) => it[name] || null);
-  const errors = useStoreMap(form.$errors, (it) => it[name] || ARR_0);
+  const errors = useStoreMap(form.$errors, (it) => it[name] || ARR_0 as unknown as string[]);
   const touched = useStoreMap(form.$touches, (it) => it[name]);
 
   const [setActive, onBlur, onChange, setValues] = useUnit([

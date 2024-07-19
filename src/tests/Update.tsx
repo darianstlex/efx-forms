@@ -1,10 +1,10 @@
 import React from 'react';
 import { useUnit } from 'effector-react';
 
-import type {IRFormProps, IFormValues, IFormConfig, IFieldConfig} from '../index';
-import { Form, Field, useFormInstance } from '../index';
+import type { IRFormProps, IFormConfig, IFieldConfig } from '../index';
+import { Form, useFormInstance } from '../index';
 import { required } from '../validators';
-import { Input } from './components/Input';
+import { TextField } from './components/Input';
 import { Button } from './components/Button';
 import { UseFormStore } from './components/Hooks';
 
@@ -15,7 +15,7 @@ interface Props extends Partial<IRFormProps> {
 export const Update = (props: Props) => {
   const form = useFormInstance('formUpdate');
   const [reset] = useUnit([form.reset]);
-  const submit = async (values: IFormValues) => {
+  const submit = async (values: Record<string, any>) => {
     console.log(values);
     return Promise.reject({
       'user.name': 'This user is taken',
@@ -23,21 +23,17 @@ export const Update = (props: Props) => {
   };
   return (
     <Form name="formUpdate" {...props} onSubmit={submit}>
-      <Field
+      <TextField
         data-test="user.name"
         name="user.name"
-        Field={Input}
         label="Name"
-        type="text"
         validateOnChange={!props.validateOnChange}
         validators={[required()]}
       />
-      <Field
+      <TextField
         data-test="user.password"
         name="user.password"
-        Field={Input}
         label="Password"
-        type="text"
         validators={[required()]}
       />
       <UseFormStore title="values" store="$values"/>

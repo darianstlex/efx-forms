@@ -2,9 +2,9 @@ import React from 'react';
 import { useUnit } from 'effector-react';
 
 import type { IRFormProps } from '../index';
-import { Form, Field, useFormInstance } from '../index';
+import { Form, useFormInstance } from '../index';
 import { required, email } from '../validators';
-import { Input } from './components/Input';
+import { TextField } from './components/Input';
 import { Button } from './components/Button';
 import { UseFormStore } from './components/Hooks';
 
@@ -13,30 +13,24 @@ export const DirtyTouchErrors = (props: Partial<IRFormProps>) => {
   const [reset] = useUnit([form.reset]);
   return (
     <Form name="formOne" onSubmit={props?.onSubmit} {...props}>
-      <Field
+      <TextField
         data-test="user.name"
         name="user.name"
-        Field={Input}
         label="Name"
-        type="text"
         initialValue="Initial User"
         validators={[required({ msg: 'Must have' })]}
       />
-      <Field
+      <TextField
         validateOnChange
         data-test="user.email"
         name="user.email"
-        Field={Input}
         label="Email"
-        type="text"
         validators={[required(), email()]}
       />
-      <Field
+      <TextField
         data-test="user.password"
         name="user.password"
-        Field={Input}
         label="Password"
-        type="text"
         validators={[required({ msg: 'Required!'})]}
       />
       <UseFormStore title="touched" store="$touched" />

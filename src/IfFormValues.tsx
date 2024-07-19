@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useUnit } from 'effector-react';
 
 import { useFormInstance } from './useFormInstance';
-import type { IFormValues, IRIfFormValuesProps } from './types';
+import type { IRIfFormValuesProps } from './types';
 import debounce from 'lodash/debounce';
 import isEmpty from 'lodash/isEmpty';
 
@@ -29,8 +29,8 @@ export const IfFormValues = ({
   const updateDeb = useRef(debounce(setValues, updateDebounce)).current;
 
   useEffect(() => {
-    show && !isEmpty(setTo) && updateDeb(setTo as IFormValues);
-    !show && !isEmpty(resetTo) && updateDeb(resetTo as IFormValues);
+    show && !isEmpty(setTo) && updateDeb(setTo as Record<string, any>);
+    !show && !isEmpty(resetTo) && updateDeb(resetTo as Record<string, any>);
     return () => {
       updateDeb.cancel();
     };

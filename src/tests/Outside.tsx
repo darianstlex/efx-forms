@@ -2,9 +2,9 @@ import React from 'react';
 import { useUnit } from 'effector-react';
 
 import type { IRFormProps } from '../index';
-import { Form, Field, useFormInstance } from '../index';
+import { Form, useFormInstance } from '../index';
 import { required } from '../validators';
-import { Input } from './components/Input';
+import { TextField } from './components/Input';
 import { Button } from './components/Button';
 import { UseFormStore } from './components/Hooks';
 
@@ -14,12 +14,10 @@ export const Outside = (props: Partial<IRFormProps>) => {
   return (
     <>
       <Form name="formOutside" onSubmit={props?.onSubmit} {...props}>
-        <Field
+        <TextField
           data-test="user.name"
           name="user.name"
-          Field={Input}
           label="Name"
-          type="text"
           validators={[required()]}
         />
         <UseFormStore title="active" store="$active" />
@@ -29,13 +27,11 @@ export const Outside = (props: Partial<IRFormProps>) => {
         <Button secondary data-test="reset" onClick={() => reset()}>Reset</Button>
       </Form>
       <div style={{ width: 400, margin: '0 auto' }}>
-        <Field
+        <TextField
           formName="formOutside"
           data-test="user.password"
           name="user.password"
-          Field={Input}
           label="Password"
-          type="text"
           validators={[required()]}
         />
       </div>

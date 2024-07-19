@@ -2,11 +2,11 @@ import React from 'react';
 import { useUnit } from 'effector-react';
 
 import type { IRFormProps } from '../index';
-import { Form, Field, useFormInstance } from '../index';
+import { Form, useFormInstance } from '../index';
 import { required, email } from '../validators';
-import { Input } from './components/Input';
+import { TextField } from './components/Input';
 import { Button } from './components/Button';
-import { Checkbox } from './components/Checkbox';
+import { CheckboxField } from './components/Checkbox';
 import { UseFormStore } from './components/Hooks';
 import { IfFieldValue } from '../IfFieldValue';
 
@@ -15,39 +15,32 @@ export const Active = (props: Partial<IRFormProps>) => {
   const [reset] = useUnit([form.reset]);
   return (
     <Form name="formTwo" {...props}>
-      <Field
+      <TextField
         data-test="user.name"
         name="user.name"
-        Field={Input}
         label="Name"
-        type="text"
         initialValue="Initial User"
         validators={[required()]}
       />
-      <Field
+      <CheckboxField
         data-test="user.hasEmail"
         initialValue={true}
         name="user.hasEmail"
-        Field={Checkbox}
         label="Has Email"
       />
       <IfFieldValue field="user.hasEmail" check={(hasEmail) => !!hasEmail}>
-        <Field
+        <TextField
           validateOnChange
           data-test="user.email"
           name="user.email"
-          Field={Input}
           label="Email"
-          type="text"
           validators={[required(), email()]}
         />
       </IfFieldValue>
-      <Field
+      <TextField
         data-test="user.password"
         name="user.password"
-        Field={Input}
         label="Password"
-        type="text"
         validators={[required()]}
       />
       <UseFormStore title="active" store="$active" />

@@ -13,24 +13,29 @@ export type TFormStoreKey = TFilteredKeyOf<IForm, Store<any>>;
 export type TFormStore = TFilteredType<IForm, Store<any>>;
 export type TFormStoreValue = TExtractStoreTypes<TFormStore>;
 
+export interface ISubmitArgs {
+  cb?: (values: Record<string, any>) => Promise<Record<string, string | null> | void> | void;
+  skipClientValidation?: boolean;
+}
+
+export interface IFormOnSubmitArgs extends ISubmitArgs {
+  values: Record<string, any>;
+  errors: Record<string, string | null>;
+  valid: boolean;
+}
+
+export interface ISubmitResponseSuccess {
+  values?: Record<string, any>;
+}
+
+export interface ISubmitResponseError {
+  errors?: Record<string, string | null>;
+  remoteErrors?: Record<string, string | null>;
+}
+
 export type IValidationParams = {
   name?: string;
 } | undefined;
-
-export interface INameValue {
-  name: string;
-  value: any;
-}
-
-export interface INameBoolean {
-  name: string;
-  value: any;
-}
-
-export interface INameErrors {
-  name: string;
-  errors: string[] | null;
-}
 
 export interface IFieldConfig {
   name: string;
@@ -40,26 +45,6 @@ export interface IFieldConfig {
   validators?: ReturnType<TFieldValidator>[];
   validateOnBlur?: boolean;
   validateOnChange?: boolean;
-}
-
-export interface ISubmitArgs {
-  cb?: (values: IFormValues) => Promise<IFormErrors | void> | void;
-  skipClientValidation?: boolean;
-}
-
-export interface IFormOnSubmitArgs extends ISubmitArgs {
-  values: IFormValues;
-  errors: IFormErrors;
-  valid: boolean;
-}
-
-export interface ISubmitResponseSuccess {
-  values?: IFormValues;
-}
-
-export interface ISubmitResponseError {
-  errors?: IFormErrors;
-  remoteErrors?: IFormErrors;
 }
 
 export interface IFormConfig {
@@ -78,19 +63,7 @@ export interface IFormConfig {
   /** PROPERTY - onSubmit - submit callback */
   onSubmit?: ISubmitArgs['cb'];
   /** PROPERTY - onSubmit - submit callback */
-  validators?: IFormValidators;
-}
-
-export interface IFormErrors {
-  [name: string]: string | null;
-}
-
-export interface IFormValues {
-  [name: string]: any;
-}
-
-export interface IFormValidators {
-  [name: string]: ReturnType<TFieldValidator>[];
+  validators?: Record<string, ReturnType<TFieldValidator>[]>;
 }
 
 export interface IForm {
@@ -125,7 +98,7 @@ export interface IForm {
   /** EVENT - Form erase - reset form and delete all assigned form data */
   erase: EventCallable<void>;
   /** EVENT - Set form config */
-  setActive: EventCallable<INameBoolean>;
+  setActive: EventCallable<{ name: string, value: any }>;
   /**
    * EFFECT - Form submit - callback will be called with form values if form is valid
    * or if callback returns promise reject with errors, will highlight them in the form
@@ -134,9 +107,9 @@ export interface IForm {
   /** EVENT - Form update fields values */
   setValues: EventCallable<Record<string, any>>;
   /** EVENT - Form onChange event */
-  onChange: EventCallable<INameValue>;
+  onChange: EventCallable<{ name: string, value: any }>;
   /** EVENT - Form onBlur event */
-  onBlur: EventCallable<INameValue>;
+  onBlur: EventCallable<{ name: string, value: any }>;
   /** EVENT - Form validate trigger */
   validate: EventCallable<IValidationParams>;
   /** PROP - Form config */
@@ -163,6 +136,16 @@ export interface IRFormProps extends Omit<IFormConfig, 'formValidations'> {
   validators?: IFormConfig['validators'];
   /** PROPERTY - keepOnUnmount - keep form data on form unmount */
   keepOnUnmount?: IFormConfig['keepOnUnmount'];
+  [any: string]: any;
+}
+
+export interface IFieldProps {
+  error: string | null;
+  errors: string[];
+  name: string;
+  value: any;
+  onChange: (value: any) => void;
+  onBlur: (value: any) => void;
   [any: string]: any;
 }
 
@@ -193,15 +176,15 @@ export interface IRIfFormValuesProps {
   /** PROPERTY - form name to check against */
   form?: string;
   /** METHOD - check - accepts form values and return boolean, if true render children */
-  check: (values: IFormValues, activeValues: IFormValues) => boolean;
+  check: (values: Record<string, any>, activeValues: Record<string, any>) => boolean;
   /** PROPERTY - setTo set fields on show */
-  setTo?: IFormValues;
+  setTo?: Record<string, any>;
   /** PROPERTY - setTo set fields on hide */
-  resetTo?: IFormValues;
+  resetTo?: Record<string, any>;
   /** PROPERTY - form update debounce - 0 */
   updateDebounce?: number;
   /** METHOD - render - accepts form values and return react element */
-  render?: (values: IFormValues) => ReactElement;
+  render?: (values: Record<string, any>) => ReactElement;
 }
 
 export interface IRIfFieldValueProps {

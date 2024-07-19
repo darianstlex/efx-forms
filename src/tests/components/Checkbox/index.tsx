@@ -1,17 +1,15 @@
 import React from 'react';
 
 import './index.css';
+import {IFieldProps, IRFieldProps} from '../../../types';
+import { Field } from '../../../FieldComponent';
 
-interface CheckboxProps {
-  id: string;
-  name: string;
+interface InputProps {
+  id?: string;
   label: string;
-  error: string;
-  value: boolean;
-  onChange: (checked: boolean) => void;
 }
 
-export const Checkbox = ({ id, label, error, value, onChange, name, ...rest }: CheckboxProps) => (
+export const Checkbox = ({ id, label, error, value, onChange, name, ...rest }: InputProps & IFieldProps) => (
   <div className="checkbox-wrapper">
     <div className="checkbox-field">
       <label htmlFor={id || name} className="checkbox-label">{label}</label>
@@ -26,4 +24,8 @@ export const Checkbox = ({ id, label, error, value, onChange, name, ...rest }: C
     </div>
     {error && <span className="checkbox-error">{error}</span>}
   </div>
+);
+
+export const CheckboxField = ({ name, ...rest }: Omit<IRFieldProps, 'Field'> & InputProps) => (
+  <Field name={name} Field={Checkbox} {...rest} />
 );

@@ -2,8 +2,8 @@ import React from 'react';
 import { useUnit } from 'effector-react';
 
 import type { IFormConfig, IFieldConfig } from '../index';
-import { Field, useFormInstance } from '../index';
-import { Input } from './components/Input';
+import { useFormInstance } from '../index';
+import { TextField } from './components/Input';
 import { Button } from './components/Button';
 import { UseFormStore } from './components/Hooks';
 
@@ -18,14 +18,12 @@ export const FieldUpdate = ({ fieldConfig, setConfig }: Props) => {
 
   return (
     <div style={{ margin: '20px auto', width: 400 }}>
-      <Field
+      <TextField
         {...fieldConfig}
         formName="formFieldUpdate"
         data-test="user.name"
         name="user.name"
-        Field={Input}
         label="Name"
-        type="text"
       />
       <UseFormStore formName="formFieldUpdate" title="values" store="$values"/>
       <UseFormStore formName="formFieldUpdate" title="touches" store="$touches"/>
