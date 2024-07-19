@@ -107,8 +107,8 @@ test('Form update should update data correctly', async ({ mount }) => {
 
   // Check updated values
   await expect(values).toContainText(`
-    "user.name": "Initial User",
-    "user.password": "pass1"
+    "user.name": "Second User",
+    "user.password": "pass2"
   `);
 
   // edit fields

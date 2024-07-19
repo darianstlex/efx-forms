@@ -50,7 +50,7 @@ export const SampleUpdate = () => {
           initialValue={0}
         />
       </div>
-      <Form name="formSampleUpdate">
+      <Form name="formSampleUpdate" initialValues={{ one: 0, two: 0, three: 0 }}>
         <NumberField
           data-test="two"
           name="two"

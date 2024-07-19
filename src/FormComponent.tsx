@@ -7,6 +7,7 @@ import { FORM_CONFIG } from './constants';
 import { getForm } from './forms';
 import type { IForm, IRFormProps } from './types';
 import { FormProvider } from './context';
+import isEmpty from 'lodash/isEmpty';
 
 /**
  * Efx Form component
@@ -35,8 +36,11 @@ export const Form = ({
     return getForm({ name, ...config });
   }, [name]);
 
-  const [formSubmit, formReset] = useUnit([form.submit, form.reset]);
+  const [formSubmit, formReset, setUntouched] = useUnit([form.submit, form.reset, form.setUntouched]);
 
+  /**
+   * Set config on config props changes
+   */
   useEffect(() => {
     const config = pickBy({
       keepOnUnmount,
@@ -49,11 +53,21 @@ export const Form = ({
     form.setConfig({ name, ...config });
   }, [keepOnUnmount, skipClientValidation, initialValues, validateOnBlur, validateOnChange, validators, name, form.setConfig]);
 
+  /**
+   * Reset form on unmount if enabled
+   */
   useEffect(() => {
     return () => {
       !keepOnUnmount && formReset();
     };
   }, [formReset, keepOnUnmount]);
+
+  /**
+   * Set initial values if fields are untouched
+   */
+  useEffect(() => {
+    !isEmpty(initialValues) && setUntouched(initialValues);
+  }, [initialValues, setUntouched]);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();

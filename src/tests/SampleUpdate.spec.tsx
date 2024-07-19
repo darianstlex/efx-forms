@@ -10,11 +10,15 @@ test('Sample logic should work', async ({ mount }) => {
   const three = component.locator(sel.three);
   const values = component.locator(sel.values);
 
+  await expect(one).toHaveValue('0');
+  await expect(two).toHaveValue('0');
+  await expect(three).toHaveValue('0');
+
 
   await one.fill('10');
   await expect(one).toHaveValue('10');
   await expect(two).toHaveValue('20');
-  await expect(three).toHaveValue('');
+  await expect(three).toHaveValue('0');
 
   await two.fill('5');
   await expect(one).toHaveValue('10');

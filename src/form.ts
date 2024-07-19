@@ -43,6 +43,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const setError = dm.event<{ name: string, errors: string[] | null }>('set-error');
   const setErrors = dm.event<Record<string, string[] | null>>('set-errors');
   const setValues = dm.event<Record<string, any>>('set-values');
+  const setUntouched = dm.event<Record<string, any>>('set-untouched');
   const onChange = dm.event<{ name: string, value: any }>('on-change');
   const onBlur = dm.event<{ name: string, value: any }>('on-blur');
   const reset = dm.event<string | void>('reset');
@@ -268,6 +269,16 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   });
 
   /**
+   * Set non touched values
+   */
+  sample({
+    clock: setUntouched,
+    source: { touches: $touches },
+    fn: ({ touches }, values) => pickBy(values, (_, key) => !touches[key]),
+    target: setValues,
+  });
+
+  /**
    * Reset errors on change if validateOnChange is disabled
    */
   sample({
@@ -287,17 +298,6 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   });
 
   /**
-   * Erase form configs
-   */
-  sample({
-    clock: erase,
-    fn: () => {
-      data.config = { ...FORM_CONFIG };
-      data.configs = {};
-    },
-  });
-
-  /**
    * Set submit remote validation errors
    */
   sample({
@@ -310,6 +310,17 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
       }), {});
     },
     target: setErrors,
+  });
+
+  /**
+   * Erase form configs
+   */
+  sample({
+    clock: erase,
+    fn: () => {
+      data.config = { ...FORM_CONFIG };
+      data.configs = {};
+    },
   });
 
   return {
@@ -332,6 +343,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     reset,
     setActive,
     setValues,
+    setUntouched,
     submit,
     validate,
     get config() {

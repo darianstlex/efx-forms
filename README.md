@@ -302,8 +302,10 @@ interface FormInstance {
    * or if callback returns promise reject with errors, will highlight them in the form
    */
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
-  /** EVENT - Form update fields values */
+  /** EVENT - Form update field values */
   setValues: EventCallable<Record<string, any>>;
+  /** EVENT - Form update untouched field values */
+  setUntouched: EventCallable<Record<string, any>>;
   /** EVENT - Form onChange event */
   onChange: EventCallable<{ name: string; value: any; }>;
   /** EVENT - Form onBlur event */
