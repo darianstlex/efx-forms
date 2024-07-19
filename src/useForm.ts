@@ -22,6 +22,8 @@ export const useForm = (name?: string) => {
       reset: form.reset,
       setActive: form.setActive,
       setValues: form.setValues,
+      setTouchedValues: form.setTouchedValues,
+      setUntouchedValues: form.setUntouchedValues,
       update: form.onChange,
       submitting: form.$submitting,
       submit: form.submit,

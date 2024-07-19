@@ -304,8 +304,10 @@ interface FormInstance {
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
   /** EVENT - Form update field values */
   setValues: EventCallable<Record<string, any>>;
+  /** EVENT - Form update touched field values */
+  setTouchedValues: EventCallable<Record<string, any>>;
   /** EVENT - Form update untouched field values */
-  setUntouched: EventCallable<Record<string, any>>;
+  setUntouchedValues: EventCallable<Record<string, any>>;
   /** EVENT - Form onChange event */
   onChange: EventCallable<{ name: string; value: any; }>;
   /** EVENT - Form onBlur event */

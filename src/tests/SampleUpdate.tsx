@@ -47,7 +47,6 @@ export const SampleUpdate = () => {
           data-test="one"
           name="one"
           label="One"
-          initialValue={0}
         />
       </div>
       <Form name="formSampleUpdate" initialValues={{ one: 0, two: 0, three: 0 }}>
@@ -55,13 +54,11 @@ export const SampleUpdate = () => {
           data-test="two"
           name="two"
           label="Two"
-          initialValue={0}
         />
         <NumberField
           data-test="three"
           name="three"
           label="Three"
-          initialValue={0}
         />
         <UseFormStore title="values" store="$values"/>
       </Form>

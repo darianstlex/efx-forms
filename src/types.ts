@@ -106,8 +106,10 @@ export interface IForm {
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
   /** EVENT - Form update fields values */
   setValues: EventCallable<Record<string, any>>;
+  /** EVENT - Form update touched fields values */
+  setTouchedValues: EventCallable<Record<string, any>>;
   /** EVENT - Form update untouched fields values */
-  setUntouched: EventCallable<Record<string, any>>;
+  setUntouchedValues: EventCallable<Record<string, any>>;
   /** EVENT - Form onChange event */
   onChange: EventCallable<{ name: string, value: any }>;
   /** EVENT - Form onBlur event */

@@ -36,7 +36,7 @@ export const Form = ({
     return getForm({ name, ...config });
   }, [name]);
 
-  const [formSubmit, formReset, setUntouched] = useUnit([form.submit, form.reset, form.setUntouched]);
+  const [formSubmit, formReset, setUntouchedValues] = useUnit([form.submit, form.reset, form.setUntouchedValues]);
 
   /**
    * Set config on config props changes
@@ -66,8 +66,8 @@ export const Form = ({
    * Set initial values if fields are untouched
    */
   useEffect(() => {
-    !isEmpty(initialValues) && setUntouched(initialValues);
-  }, [initialValues, setUntouched]);
+    !isEmpty(initialValues) && setUntouchedValues(initialValues);
+  }, [initialValues, setUntouchedValues]);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
