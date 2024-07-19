@@ -24,10 +24,12 @@ import { required, email } from 'efx-forms/validators';
 const Input = ({ id, label, error, errors, value, ...props }) => (
   <div>
     <label htmlFor={id}>{label}</label>
-    <input id={id} value={value || ''} {...props} />
+    <input id={id} value={value || ''} type="text" {...props} />
     <span>{error}</span>
   </div>
 )
+
+const TextField = (props) => <Field Field={Input} {...props} />
 
 const validators = {
   name: [required()],
@@ -39,15 +41,12 @@ const Page = ({ name }) => {
   }
   return (
     <Form name="user-form" onSubmit={submit} validators={validators}>
-      <Field
+      <TextField
         name="name"
-        Field={Input}
         label="Name"
-        type="text"
       />
-      <Field
+      <TextField
         name="email"
-        Field={Input}
         label="Email"
         type="email"
         validators={[
@@ -88,7 +87,7 @@ interface Form {
    * @example
    * { 'user.name': 'John', 'user.age': '20' }
    */
-  onSubmit?: (values: IFormValues) => void | Promise<IFormErrors>;
+  onSubmit?: (values: Record<string, any>) => void | Promise<Record<string, any>>;
   // If set, submit will skip client form validation
   // Default: false
   skipClientValidation?: boolean;
@@ -106,7 +105,7 @@ interface Form {
   // Validators config per field - field validators are in priority
   validators?: {
     fieldName: [
-      (value: TFieldValue, values: IFormValues) => string | false,
+      (value: any, values: Record<string, any>) => string | false,
     ]
   };
 }
@@ -119,14 +118,14 @@ interface Field {
   name: string,
   // Field initial value - used on initial load and reset
   // default = ''
-  initialValue?: TFieldValue;
+  initialValue?: any;
   // Transform value before set to store
-  parse?: (value: any) => TFieldValue;
+  parse?: (value: any) => any;
   // Format value before displaying
-  format?: (value: TFieldValue) => any;
+  format?: (value: any) => any;
   // Validators array - applied on validation
   validators?: [
-    (value: TFieldValue, values: IFormValues) => string | false,
+    (value: any, values: Record<string, any>) => string | false,
   ];
   // Set validation behaviour onBlur, overrides form value
   // Default: true
@@ -135,7 +134,7 @@ interface Field {
   // Default: false
   validateOnChange?: boolean;
   // Field component - component to be used as form field
-  Field: ReactComponent;
+  Field: ReactComponent<any>;
   // Form name - if field belongs to a different form or used outside
   // of the form context
   formName?: string;
@@ -152,17 +151,17 @@ interface IfFormValues {
   form?: string;
   // Condition check - accepts form values and return boolean,
   // if true render children
-  check: (values: IFormValues, activeValues: IFormValues) => boolean;
+  check: (values: Record<string, any>, activeValues: Record<string, any>) => boolean;
   // Set fields values on show - { fieldName: 'value' }
-  setTo?: IFormValues;
+  setTo?: Record<string, any>;
   // Set fields values on hide - { fieldName: 'value' }
-  resetTo?: IFormValues;
+  resetTo?: Record<string, any>;
   // Debounce for fields update
   // Default: 0
   updateDebounce?: number;
   // Render prop - accepts form values and return react element
   // if defined will be used instead of children
-  render?: (values: IFormValues) => ReactElement;
+  render?: (values: Record<string, any>) => ReactElement;
 }
 ```
 
@@ -297,7 +296,7 @@ interface FormInstance {
   /** EVENT - Form erase - reset form and delete all assigned form data */
   erase: EventCallable<void>;
   /** EVENT - Set form config */
-  setActive: EventCallable<INameBoolean>;
+  setActive: EventCallable<{ name: string; value: boolean; }>;
   /**
    * EFFECT - Form submit - callback will be called with form values if form is valid
    * or if callback returns promise reject with errors, will highlight them in the form
@@ -306,9 +305,9 @@ interface FormInstance {
   /** EVENT - Form update fields values */
   setValues: EventCallable<Record<string, any>>;
   /** EVENT - Form onChange event */
-  onChange: EventCallable<INameValue>;
+  onChange: EventCallable<{ name: string; value: any; }>;
   /** EVENT - Form onBlur event */
-  onBlur: EventCallable<INameValue>;
+  onBlur: EventCallable<{ name: string; value: any; }>;
   /** EVENT - Form validate trigger */
   validate: EventCallable<IValidationParams>;
   /** PROP - Form config */
