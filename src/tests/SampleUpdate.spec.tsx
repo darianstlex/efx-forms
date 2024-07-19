@@ -4,9 +4,6 @@ import { SampleUpdate } from './SampleUpdate';
 import { sel } from './selectors';
 
 test('Sample logic should work', async ({ mount }) => {
-  const data = {
-    submit: {},
-  };
   const component = await mount(<SampleUpdate />);
   const one = component.locator(sel.one);
   const two = component.locator(sel.two);
