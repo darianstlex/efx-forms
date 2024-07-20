@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { InputHTMLAttributes } from 'react';
 
 import './index.css';
 import { Field } from '../../../FieldComponent';
 import { IFieldProps, IRFieldProps } from '../../../types';
 
-interface InputProps {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   id?: string;
   label: string;
+  name: string;
 }
 
 export const Input = ({ id, label, error, onChange, name,  ...rest }: InputProps & IFieldProps) => (
@@ -15,7 +16,7 @@ export const Input = ({ id, label, error, onChange, name,  ...rest }: InputProps
     <input
       name={name}
       id={id || name}
-      className="input-input"
+      className="input-field"
       type="text"
       onChange={(e) => onChange(e.target.value)}
       {...rest}

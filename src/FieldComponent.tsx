@@ -59,7 +59,7 @@ export const Field = ({
   useEffect(() => {
     const reinitDisabled = disableFieldReinit !== undefined ? disableFieldReinit : form.config.disableFieldsReinit;
     const fieldInitialValue = initialValue !== undefined ? initialValue : form.config.initialValues?.[name];
-    !reinitDisabled && fieldInitialValue && setUntouchedValues({ [name]: fieldInitialValue });
+    !reinitDisabled && fieldInitialValue !== undefined && setUntouchedValues({ [name]: fieldInitialValue });
   }, [initialValue, name, disableFieldReinit, setUntouchedValues]);
 
   const formatValue = form.configs?.[name]?.format || FIELD_CONFIG.format!;

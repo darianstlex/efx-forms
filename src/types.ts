@@ -90,6 +90,8 @@ export interface IForm {
   name: string;
   /** $$STORE - Form active fields - all fields statuses - flat */
   $active: Store<Record<string, boolean>>;
+  /** $$STORE - Form active only fields - all fields statuses - flat */
+  $activeOnly: Store<Record<string, true>>;
   /** $$STORE - Form active values - all active / visible fields values - flat */
   $activeValues: Store<Record<string, any>>;
   /** $$STORE - Form values - all fields values - flat */

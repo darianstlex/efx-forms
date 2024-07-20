@@ -32,7 +32,9 @@ export const DirtyTouchErrors = (props: Partial<IRFormProps>) => {
         name="user.password"
         label="Password"
         validators={[required({ msg: 'Required!'})]}
+        initialValue={null}
       />
+      <UseFormStore title="activeValues" store="$activeValues" />
       <UseFormStore title="touched" store="$touched" />
       <UseFormStore title="dirty" store="$dirty" />
       <UseFormStore title="touches" store="$touches" />

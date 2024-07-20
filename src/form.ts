@@ -1,4 +1,4 @@
-import { attach, combine, sample } from 'effector';
+import {attach, combine, sample, Store} from 'effector';
 import type { Effect } from 'effector';
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
@@ -73,12 +73,17 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     .reset(erase);
 
   /**
+   * Active only fields
+   */
+  const $activeOnly = $active.map((active) => pickBy(active, Boolean)) as Store<Record<string, true>>;
+
+  /**
    * Fields status store - keeps active fields values
    */
   const $activeValues = combine(
-    $active,
+    $activeOnly,
     $values,
-    (active, values) => pickBy(values, (_, name) => active[name]),
+    (active, values) => reduce(active, (acc, _ , field) => ({ ...acc, [field]: values[field] }), {} as Record<string, any>),
   );
 
   /**
@@ -217,7 +222,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
       filter: ({ skipClientValidation }) => !skipClientValidation,
       fn: () => ({}) as IValidationParams,
     })],
-    source: { values: $values, active: $active },
+    source: { values: $values, active: $activeOnly },
     filter: (_, source) => !source?.name,
     fn: ({ values, active }) => {
       return reduce(active, (acc, _, field) => {
@@ -344,6 +349,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     domain: dm,
     name: formConfig.name,
     $active,
+    $activeOnly,
     $activeValues,
     $error,
     $errors,

@@ -28,6 +28,7 @@ test('Set/Reset/Update logic should work', async ({ mount }) => {
   const dirties = component.locator(sel.dirties);
   const error = component.locator(sel.error);
   const errors = component.locator(sel.errors);
+  const activeValues = component.locator(sel.activeValues);
 
   // Check initial values
   await expect(userName).toHaveValue('Initial User');
@@ -132,4 +133,9 @@ test('Set/Reset/Update logic should work', async ({ mount }) => {
   await expect(dirties).toContainText('{}');
   await expect(error).toContainText('{}');
   await expect(errors).toContainText('{}');
+  await expect(activeValues).toContainText(`
+    "user.name": "Initial User",
+    "user.email": "initial@email",
+    "user.password": "null"
+  `);
 });

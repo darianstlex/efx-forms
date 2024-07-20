@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { InputHTMLAttributes } from 'react';
 
 import './index.css';
-import {IFieldProps, IRFieldProps} from '../../../types';
+import { IFieldProps, IRFieldProps } from '../../../types';
 import { Field } from '../../../FieldComponent';
 
-interface InputProps {
+interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   id?: string;
   label: string;
+  name: string;
 }
 
 export const Checkbox = ({ id, label, error, value, onChange, name, ...rest }: InputProps & IFieldProps) => (
@@ -16,7 +17,7 @@ export const Checkbox = ({ id, label, error, value, onChange, name, ...rest }: I
       <input
         id={id || name}
         type="checkbox"
-        className="input"
+        className="checkbox-input"
         checked={value}
         onChange={(e) => onChange(e.target.checked)}
         {...rest}

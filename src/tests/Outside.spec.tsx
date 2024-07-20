@@ -54,5 +54,8 @@ test('Field outside form should work', async ({ mount }) => {
     "user.password": true
   `);
 
-  await expect(values).toContainText('{}');
+  await expect(values).toContainText(`
+    "user.name": "undefined",
+    "user.password": "undefined"
+  `);
 });

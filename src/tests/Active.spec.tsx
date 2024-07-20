@@ -13,6 +13,8 @@ test('Active fields logic should work', async ({ mount }) => {
   const error = component.locator(sel.error);
   const activeValues = component.locator(sel.activeValues);
 
+  const submit = component.locator(sel.submit);
+
   // all fields should be active
   await expect(active).toContainText(`
     "user.name": true,
@@ -42,6 +44,7 @@ test('Active fields logic should work', async ({ mount }) => {
   await expect(activeValues).toContainText(`
     "user.name": "Initial User",
     "user.hasEmail": true,
+    "user.password": "undefined",
     "user.email": "test@email"
   `);
   await expect(error).toContainText(`
@@ -71,4 +74,11 @@ test('Active fields logic should work', async ({ mount }) => {
   `);
   // email error should be reset on field deactivation
   await expect(error).toContainText('{}');
+
+  // submit to check validation errors
+  await submit.click();
+  // email should not be in the list as its inactive
+  await expect(error).toContainText(`
+    "user.password": "This field is required"
+  `);
 });
