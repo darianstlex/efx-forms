@@ -9,6 +9,7 @@ export const FORM_CONFIG: IFormConfig = {
   skipClientValidation: false,
   validateOnBlur: true,
   validateOnChange: false,
+  disableFieldsReinit: false,
   validators: {},
 };
 
@@ -16,10 +17,6 @@ export const FIELD_CONFIG: IFieldConfig = {
   name: 'default',
   parse: (value) => value,
   format: (value) => value,
-  validators: undefined,
-  initialValue: undefined,
-  validateOnBlur: true,
-  validateOnChange: false,
 };
 
 export const ARR_0 = Object.freeze([]);

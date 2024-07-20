@@ -38,13 +38,25 @@ export type IValidationParams = {
 } | undefined;
 
 export interface IFieldConfig {
+  /** PROPERTY - name */
   name: string;
+  /** PROPERTY - initial value */
   initialValue?: any;
+  /** METHOD - parse value before store */
   parse?: (value: any) => any;
+  /** METHOD - format value before display */
   format?: (value: any) => any;
+  /** PROPERTY - field validators object */
   validators?: ReturnType<TFieldValidator>[];
+  /** PROPERTY - validateOnBlur - will trigger validation on blur */
   validateOnBlur?: boolean;
+  /** PROPERTY - validateOnChange - will trigger validation on change */
   validateOnChange?: boolean;
+  /**
+   * PROPERTY - disableFieldReinit - if true will skip field update on initialValue changes
+   * if field is not touched
+   */
+  disableFieldReinit?: boolean;
 }
 
 export interface IFormConfig {
@@ -60,9 +72,14 @@ export interface IFormConfig {
   keepOnUnmount?: boolean;
   /** PROPERTY - skipClientValidation - if true will skip validation on submit */
   skipClientValidation?: boolean;
+  /**
+   * PROPERTY - disableFieldsReinit - if true will skip fields update on initialValue changes
+   * if field is not touched
+   */
+  disableFieldsReinit?: boolean;
   /** PROPERTY - onSubmit - submit callback */
   onSubmit?: ISubmitArgs['cb'];
-  /** PROPERTY - onSubmit - submit callback */
+  /** PROPERTY - field validators object */
   validators?: Record<string, ReturnType<TFieldValidator>[]>;
 }
 
@@ -97,13 +114,13 @@ export interface IForm {
   reset: EventCallable<string | void>;
   /** EVENT - Form erase - reset form and delete all assigned form data */
   erase: EventCallable<void>;
-  /** EVENT - Set form config */
-  setActive: EventCallable<{ name: string, value: any }>;
   /**
    * EFFECT - Form submit - callback will be called with form values if form is valid
    * or if callback returns promise reject with errors, will highlight them in the form
    */
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
+  /** EVENT - Set form config */
+  setActive: EventCallable<{ name: string, value: any }>;
   /** EVENT - Form update fields values */
   setValues: EventCallable<Record<string, any>>;
   /** EVENT - Form update touched fields values */
@@ -130,7 +147,7 @@ export interface IForms {
   [name: string]: IForm;
 }
 
-export interface IRFormProps extends Omit<IFormConfig, 'formValidations'> {
+export interface IRFormProps extends IFormConfig {
   children?: ReactNode;
   /** METHOD - submit - will trigger submit based on remoteValidation property */
   onSubmit?: IFormConfig['onSubmit'];
@@ -144,11 +161,17 @@ export interface IRFormProps extends Omit<IFormConfig, 'formValidations'> {
 }
 
 export interface IFieldProps {
+  /** PROPERTY - field error */
   error: string | null;
+  /** PROPERTY - field errors list */
   errors: string[];
+  /** PROPERTY - field name */
   name: string;
+  /** PROPERTY - field value */
   value: any;
+  /** METHOD - send field value on change */
   onChange: (value: any) => void;
+  /** METHOD - send field value on blur */
   onBlur: (value: any) => void;
   [any: string]: any;
 }
@@ -168,6 +191,8 @@ export interface IRFieldProps {
   validateOnBlur?: IFieldConfig['validateOnBlur'];
   /** PROPERTY - validateOnChange - will trigger validation on change */
   validateOnChange?: IFieldConfig['validateOnChange'];
+  /** PROPERTY - disableFieldReinit - disable reinit on initialValue change */
+  disableFieldReinit?: IFieldConfig['disableFieldReinit'];
   /** PROPERTY - component - to be rendered */
   Field: ComponentType<any>;
   /** PROPERTY - to assign field to the specific form if outside of form context */

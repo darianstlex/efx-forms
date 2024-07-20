@@ -17,6 +17,7 @@ export const Field = ({
   validateOnChange,
   validators,
   validateOnBlur,
+  disableFieldReinit,
   parse,
   format,
   ...rest
@@ -26,18 +27,27 @@ export const Field = ({
   const value = useStoreMap(form.$values, (it) => it[name]);
   const error = useStoreMap(form.$error, (it) => it[name] || null);
   const errors = useStoreMap(form.$errors, (it) => it[name] || ARR_0 as unknown as string[]);
-  const touched = useStoreMap(form.$touches, (it) => it[name]);
 
-  const [setActive, onBlur, onChange, setValues] = useUnit([
-    form.setActive, form.onBlur, form.onChange, form.setValues,
+  const [setActive, onBlur, onChange, setUntouchedValues] = useUnit([
+    form.setActive, form.onBlur, form.onChange, form.setUntouchedValues,
   ]);
 
   useEffect(() => {
     const config = pickBy({
-      parse, format, validators, initialValue, validateOnBlur, validateOnChange,
+      parse, format, validators, initialValue, validateOnBlur, validateOnChange, disableFieldReinit,
     }, (val) => val !== undefined);
     form.setFieldConfig({ name, ...config });
-  }, [form.setFieldConfig, format, initialValue, name, parse, validateOnBlur, validateOnChange, validators]);
+  }, [
+    form.setFieldConfig,
+    disableFieldReinit,
+    validateOnChange,
+    validateOnBlur,
+    initialValue,
+    validators,
+    format,
+    parse,
+    name,
+  ]);
 
   useEffect(() => {
     setActive({ name, value: true });
@@ -47,9 +57,10 @@ export const Field = ({
   }, [name, setActive]);
 
   useEffect(() => {
+    const reinitDisabled = disableFieldReinit !== undefined ? disableFieldReinit : form.config.disableFieldsReinit;
     const fieldInitialValue = initialValue !== undefined ? initialValue : form.config.initialValues?.[name];
-    fieldInitialValue && !touched && setValues({ [name]: fieldInitialValue });
-  }, [initialValue, name, setValues]);
+    !reinitDisabled && fieldInitialValue && setUntouchedValues({ [name]: fieldInitialValue });
+  }, [initialValue, name, disableFieldReinit, setUntouchedValues]);
 
   const formatValue = form.configs?.[name]?.format || FIELD_CONFIG.format!;
 

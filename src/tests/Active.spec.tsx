@@ -10,6 +10,7 @@ test('Active fields logic should work', async ({ mount }) => {
 
   const values = component.locator(sel.values);
   const active = component.locator(sel.active);
+  const error = component.locator(sel.error);
   const activeValues = component.locator(sel.activeValues);
 
   // all fields should be active
@@ -43,6 +44,9 @@ test('Active fields logic should work', async ({ mount }) => {
     "user.hasEmail": true,
     "user.email": "test@email"
   `);
+  await expect(error).toContainText(`
+    "user.email": "Must be a valid email"
+  `);
 
   // hide email
   await userHasEmail.click();
@@ -65,4 +69,6 @@ test('Active fields logic should work', async ({ mount }) => {
     "user.name": "Initial User",
     "user.hasEmail": false
   `);
+  // email error should be reset on field deactivation
+  await expect(error).toContainText('{}');
 });

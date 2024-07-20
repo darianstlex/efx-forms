@@ -1,13 +1,13 @@
 import React, { useEffect, useMemo } from 'react';
 import type { FormEvent } from 'react';
 import { useUnit } from 'effector-react';
+import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
 
 import { FORM_CONFIG } from './constants';
 import { getForm } from './forms';
 import type { IForm, IRFormProps } from './types';
 import { FormProvider } from './context';
-import isEmpty from 'lodash/isEmpty';
 
 /**
  * Efx Form component
@@ -22,6 +22,7 @@ export const Form = ({
   validateOnBlur,
   validateOnChange,
   validators,
+  disableFieldsReinit,
   ...props
 }: IRFormProps) => {
   const form: IForm = useMemo(() => {
@@ -32,6 +33,7 @@ export const Form = ({
       validateOnBlur,
       validateOnChange,
       validators,
+      disableFieldsReinit,
     }, (val) => val !== undefined);
     return getForm({ name, ...config });
   }, [name]);
@@ -43,15 +45,26 @@ export const Form = ({
    */
   useEffect(() => {
     const config = pickBy({
-      keepOnUnmount,
-      skipClientValidation,
+      validators,
       initialValues,
+      keepOnUnmount,
       validateOnBlur,
       validateOnChange,
-      validators,
+      disableFieldsReinit,
+      skipClientValidation,
     }, (val) => val !== undefined);
     form.setConfig({ name, ...config });
-  }, [keepOnUnmount, skipClientValidation, initialValues, validateOnBlur, validateOnChange, validators, name, form.setConfig]);
+  }, [
+    skipClientValidation,
+    disableFieldsReinit,
+    validateOnChange,
+    validateOnBlur,
+    initialValues,
+    keepOnUnmount,
+    validators,
+    name,
+    form.setConfig,
+  ]);
 
   /**
    * Reset form on unmount if enabled
@@ -66,8 +79,8 @@ export const Form = ({
    * Set initial values if fields are untouched
    */
   useEffect(() => {
-    !isEmpty(initialValues) && setUntouchedValues(initialValues);
-  }, [initialValues, setUntouchedValues]);
+    !disableFieldsReinit && !isEmpty(initialValues) && setUntouchedValues(initialValues);
+  }, [initialValues, setUntouchedValues, disableFieldsReinit]);
 
   const submit = (event: FormEvent) => {
     event.preventDefault();

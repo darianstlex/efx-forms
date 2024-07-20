@@ -2,6 +2,7 @@ import { attach, combine, sample } from 'effector';
 import type { Effect } from 'effector';
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
+import reduce from 'lodash/reduce';
 
 import { domain, hasTruthy } from './utils';
 
@@ -52,7 +53,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const validate = dm.event<IValidationParams>('validate');
 
   /**
-   * Fields status store - keeps fields activity / visibility status
+   * Fields status store - keeps fields active / mounted status
    */
   const $active = dm.store<Record<string, boolean>>({}, { name: '$active'})
     .on(setActive, (
@@ -96,9 +97,9 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Errors store - keeps all fields validation errors
    */
   const $error = $errors.map((errors) => {
-    return Object.keys(errors).reduce((acc, key) => ({
+    return reduce(errors, (acc, _, field) => ({
       ...acc,
-      [key]: errors?.[key]?.[0] || null,
+      [field]: errors?.[field]?.[0] || null,
     }), {});
   });
 
@@ -125,7 +126,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Dirties store - keeps all active fields dirty state
    */
   const $dirties = $activeValues.map((values) => {
-    const dirties = Object.keys(values).reduce((acc, field: string) => {
+    const dirties = reduce(values, (acc, _, field: string) => {
       const initialValue = getFieldInitVal(field);
       acc[field] = values[field] !== initialValue;
       return acc;
@@ -137,24 +138,6 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Calculates form dirty state
    */
   const $dirty = $dirties.map((state) => !isEmpty(state) ? hasTruthy(state) : false);
-
-  /**
-   * Reset form value/values to the initial value
-   */
-  sample({
-    clock: reset,
-    source: { values: $values },
-    fn: ({ values }, field) => {
-      return field ? {
-        ...values,
-        [field]: getFieldInitVal(field),
-      } : Object.keys(values).reduce((acc, key) => ({
-        ...acc,
-        [key]: getFieldInitVal(key),
-      }), {});
-    },
-    target: $values,
-  });
 
   /**
    * Form submit effect.
@@ -211,6 +194,19 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     name: `@fx-forms/${formConfig.name}/attach-submit`,
   });
 
+  /**
+   * Reset form value/values to the initial state
+   */
+  sample({
+    clock: reset,
+    source: { values: $values },
+    fn: ({ values }, field) => field
+      ? { ...values, [field]: getFieldInitVal(field) }
+      : reduce(values, (acc, _, name) => ({
+        ...acc, [name]: getFieldInitVal(name),
+      }), {}),
+    target: $values,
+  });
 
   /**
    * Form validation logic
@@ -224,13 +220,23 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     source: { values: $values, active: $active },
     filter: (_, source) => !source?.name,
     fn: ({ values, active }) => {
-      return Object.keys(active).reduce((acc, field) => {
+      return reduce(active, (acc, _, field) => {
         const validators: ReturnType<TFieldValidator>[] = getFieldProp(field, 'validators') || [];
         const errors = validators?.map?.((vd) => vd(values[field], values))?.filter(Boolean) as string[];
         return { ...acc, [field]: errors?.length ? errors : null };
       }, {});
     },
     target: setErrors,
+  });
+
+  /**
+   * Reset field error on deactivation
+   */
+  sample({
+    clock: setActive,
+    filter: ({ value }) => !value,
+    fn: ({ name }) => ({ name, errors: null }),
+    target: setError,
   });
 
   /**
@@ -304,7 +310,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: setValues,
-    fn: (values) => Object.keys(values).reduce((acc, field) => ({ ...acc, [field]: null }), {}),
+    fn: (values) => reduce(values, (acc, _, field) => ({ ...acc, [field]: null }), {}),
     target: setErrors,
   });
 
@@ -315,7 +321,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     clock: submit.failData,
     filter: (it) => !!it.remoteErrors,
     fn: ({ remoteErrors }) => {
-      return Object.keys(remoteErrors!).reduce((acc, key) => ({
+      return reduce(remoteErrors, (acc, _, key) => ({
         ...acc,
         [key]: [remoteErrors?.[key]].filter(Boolean),
       }), {});

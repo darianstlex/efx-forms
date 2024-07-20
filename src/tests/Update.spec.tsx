@@ -35,6 +35,7 @@ test('Form update should update data correctly', async ({ mount }) => {
   await config.click();
   // check form config
   expect(data.config).toEqual({
+    disableFieldsReinit: false,
     initialValues: {
       'user.name': 'Initial User',
       'user.password': 'pass1',
@@ -84,6 +85,7 @@ test('Form update should update data correctly', async ({ mount }) => {
   await config.click();
   // check form config
   expect(data.config).toEqual({
+    disableFieldsReinit: false,
     initialValues: {
       'user.name': 'Second User',
       'user.password': 'pass2',
@@ -131,6 +133,7 @@ test('Form update should update data correctly', async ({ mount }) => {
 
   await config.click();
   expect(data.config).toEqual({
+    disableFieldsReinit: false,
     initialValues: {
       'user.name': 'Third User',
       'user.password': 'pass3',

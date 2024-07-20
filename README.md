@@ -102,6 +102,8 @@ interface Form {
   // Set fields validation behavior onChange
   // Default: false
   validateOnChange?: boolean;
+  // Disable reinit on initialValue change
+  disableFieldsReinit?: boolean;
   // Validators config per field - field validators are in priority
   validators?: {
     fieldName: [
@@ -133,6 +135,8 @@ interface Field {
   // Set validation behaviour onChange, overrides form value
   // Default: false
   validateOnChange?: boolean;
+  // Disable reinit on initialValue change
+  disableFieldReinit?: boolean;
   // Field component - component to be used as form field
   Field: ReactComponent<any>;
   // Form name - if field belongs to a different form or used outside

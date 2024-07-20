@@ -46,6 +46,7 @@ export const Active = (props: Partial<IRFormProps>) => {
       <UseFormStore title="active" store="$active" />
       <UseFormStore title="activeValues" store="$activeValues" />
       <UseFormStore title="values" store="$values" />
+      <UseFormStore title="error" store="$error" />
       <Button data-test="submit" type="submit">Submit</Button>
       <span style={{ display: 'inline-block', width: 20 }} />
       <Button secondary data-test="reset" onClick={() => reset()}>Reset</Button>
