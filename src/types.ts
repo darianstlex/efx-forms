@@ -1,7 +1,8 @@
 import type { Domain, Effect, EventCallable, Store } from 'effector';
 import type { ComponentType, ReactElement, ReactNode } from 'react';
 
-export type TFieldValidator = (data?: { value?: any, regexp?: RegExp, label?: string; msg?: string }) => (value: any, values?: Record<string, any>) => string | false;
+export type TFieldValidator = (data?: { value?: any, regexp?: RegExp, label?: string; msg?: string })
+  => (value: any, values?: Record<string, any>) => string | false;
 
 type TFiltered<T, TK> = Pick<T, { [K in keyof T]: T[K] extends TK ? K : never }[keyof T]>;
 type TFilteredKeyOf<T, TK> = keyof TFiltered<T, TK>;

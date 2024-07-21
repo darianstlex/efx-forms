@@ -1,9 +1,10 @@
+import React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
 import { FieldUpdate } from './FieldUpdate';
 import { sel } from './selectors';
 
-test('Field update should behave correctly', async ({ mount }) => {
+test('Field Update', async ({ mount }) => {
   const data = {
     config: {},
     configs: {},

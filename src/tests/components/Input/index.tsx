@@ -1,4 +1,5 @@
-import React, { InputHTMLAttributes } from 'react';
+import React from 'react';
+import type { InputHTMLAttributes } from 'react';
 
 import './index.css';
 import { Field } from '../../../FieldComponent';

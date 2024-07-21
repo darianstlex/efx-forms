@@ -1,4 +1,5 @@
-import React, { InputHTMLAttributes } from 'react';
+import React from 'react';
+import type { InputHTMLAttributes } from 'react';
 
 import './index.css';
 import { IFieldProps, IRFieldProps } from '../../../types';

@@ -1,9 +1,10 @@
+import React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
 import { DirtyTouchErrors } from './DirtyTouchErrors';
 import { sel } from './selectors';
 
-test('Set/Reset/Update logic should work', async ({ mount }) => {
+test('Dirty/Touch/Errors', async ({ mount }) => {
   const data = {
     submit: {},
   };

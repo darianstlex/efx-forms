@@ -1,5 +1,5 @@
-import { attach, combine, sample, Store } from 'effector';
 import type { Effect } from 'effector';
+import { attach, combine, sample, Store } from 'effector';
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
 import reduce from 'lodash/reduce';
@@ -18,7 +18,7 @@ import {
   TFieldValidator,
 } from './types';
 
-import { FORM_CONFIG, FIELD_CONFIG } from './constants';
+import { FIELD_CONFIG, FORM_CONFIG } from './constants';
 
 export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const data = {
@@ -27,7 +27,6 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   } as { config: IFormConfig, configs: Record<string, IFieldConfig> };
 
   const getFieldConfigProp = (name: string, prop: string) => {
-    // @ts-ignore
     return data.configs?.[name]?.[prop] !== undefined ? data.configs[name][prop] : data.config[prop];
   };
 
@@ -54,7 +53,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Fields status store - keeps fields active / mounted status
    */
-  const $active = dm.store<Record<string, boolean>>({}, { name: '$active'})
+  const $active = dm.store<Record<string, boolean>>({}, { name: '$active' })
     .on(setActive, (
       state,
       { name, value }) => Object.assign({}, state, { [name]: value }),
@@ -63,7 +62,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Values store - fields values
    */
-  const $values = dm.store<Record<string, any>>({}, { name: '$values'})
+  const $values = dm.store<Record<string, any>>({}, { name: '$values' })
     .on(setValues, (state, values) => Object.assign({}, state, values))
     .on(onChange, (state, { name, value }) => {
       const parse = data.configs[name]?.parse || FIELD_CONFIG.parse!;
@@ -84,7 +83,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     $values,
     (active, values) => reduce(
       active,
-      (acc, _ , field) => {
+      (acc, _, field) => {
         acc[field] = values[field];
         return acc;
       },
@@ -95,7 +94,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Validations store - keeps all fields validation errors
    */
-  const $errors = dm.store<Record<string, string[] | null>>({}, { name: '$errors'})
+  const $errors = dm.store<Record<string, string[] | null>>({}, { name: '$errors' })
     .on(setError, (
       state,
       { name, errors }) => pickBy(Object.assign({}, state, { [name]: errors }), (error) => !!error),
@@ -122,7 +121,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Touches store - keeps all fields touch state
    */
-  const $touches = dm.store<Record<string, boolean>>({}, { name: '$touches'})
+  const $touches = dm.store<Record<string, boolean>>({}, { name: '$touches' })
     .on(onChange, (
       state,
       { name }) => Object.assign({}, state, { [name]: true }),
@@ -198,7 +197,9 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
       values,
       errors,
       valid,
-      skipClientValidation: Object.hasOwn(params, 'skipClientValidation') ? params.skipClientValidation : data.config.skipClientValidation,
+      skipClientValidation: Object.hasOwn(params, 'skipClientValidation')
+        ? params.skipClientValidation
+        : data.config.skipClientValidation,
     }),
     effect: onSubmit,
     name: `@fx-forms/${formConfig.name}/attach-submit`,
@@ -260,7 +261,8 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     filter: (_, source) => !!source?.name,
     fn: ({ values }, source) => {
       const validators: ReturnType<TFieldValidator>[] = getFieldConfigProp(source?.name as string, 'validators') || [];
-      const errors = validators.map?.((vd) => vd(values[source?.name as string], values))?.filter?.(Boolean) as string[];
+      const errors = validators
+        .map?.((vd) => vd(values[source?.name as string], values))?.filter?.(Boolean) as string[];
       return { name: source?.name as string, errors: errors?.length ? errors : null };
     },
     target: setError,

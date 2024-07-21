@@ -5,7 +5,10 @@ import { useProvidedScope } from 'effector-react';
 import { useFormInstance } from './useFormInstance';
 import type { TFormStoreKey } from './types';
 
-type TFieldStore = Extract<TFormStoreKey, '$active' | '$activeOnly' | '$activeValues' | '$values' | '$errors' | '$error' | '$touches' | '$dirties'>
+type TFieldStore = Extract<
+  TFormStoreKey,
+  '$active' | '$activeOnly' | '$activeValues' | '$values' | '$errors' | '$error' | '$touches' | '$dirties'
+>
 
 interface UseFieldStoreProps {
   store: TFieldStore;

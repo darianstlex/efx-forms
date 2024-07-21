@@ -4,6 +4,7 @@
   "plugins": ["@typescript-eslint"],
   "extends": [
     "eslint:recommended",
+    "plugin:react/recommended",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
@@ -12,6 +13,9 @@
     "arrow-parens": ["error", "always"],
     "comma-dangle": ["error", "always-multiline"],
     "semi": ["error", "always"],
-    "quotes": ["error", "single"]
+    "quotes": ["error", "single"],
+    "no-console": "error",
+    "object-curly-spacing": ["error", "always"],
+    "max-len": ["error", { "code": 120 }]
   }
 }

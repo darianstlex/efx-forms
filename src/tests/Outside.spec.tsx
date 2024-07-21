@@ -1,9 +1,10 @@
+import React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
 import { Outside } from './Outside';
 import { sel } from './selectors';
 
-test('Field outside form should work', async ({ mount }) => {
+test('Field Outside Form', async ({ mount }) => {
   const data = {
     submit: {},
   };

@@ -16,6 +16,7 @@ export const Update = (props: Props) => {
   const form = useFormInstance('formUpdate');
   const [reset] = useUnit([form.reset]);
   const submit = async (values: Record<string, any>) => {
+    console.log(values); // eslint-disable-line
     return Promise.reject({
       'user.name': 'This user is taken',
     });

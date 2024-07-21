@@ -1,9 +1,10 @@
+import React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
 import { SampleUpdate } from './SampleUpdate';
 import { sel } from './selectors';
 
-test('Sample logic should work', async ({ mount }) => {
+test('Sample Update', async ({ mount }) => {
   const component = await mount(<SampleUpdate />);
   const one = component.locator(sel.one);
   const two = component.locator(sel.two);

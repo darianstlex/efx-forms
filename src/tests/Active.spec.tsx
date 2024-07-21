@@ -1,9 +1,10 @@
+import React from 'react';
 import { test, expect } from '@playwright/experimental-ct-react';
 
 import { Active } from './Active';
 import { sel } from './selectors';
 
-test('Active fields logic should work', async ({ mount }) => {
+test('Active Fields', async ({ mount }) => {
   const component = await mount(<Active validateOnChange />);
   const userEmail = component.locator(sel.userEmail);
   const userHasEmail = component.locator(sel.userHasEmail);
