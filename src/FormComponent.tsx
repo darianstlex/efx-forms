@@ -63,7 +63,7 @@ export const Form = ({
     keepOnUnmount,
     validators,
     name,
-    form.setConfig,
+    form,
   ]);
 
   /**

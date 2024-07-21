@@ -17,6 +17,10 @@ export const FIELD_CONFIG: IFieldConfig = {
   name: 'default',
   parse: (value) => value,
   format: (value) => value,
+  validators: undefined,
+  initialValue: undefined,
+  validateOnBlur: true,
+  validateOnChange: false,
 };
 
 export const ARR_0 = Object.freeze([]);

@@ -31,8 +31,8 @@ test('Sample logic should work', async ({ mount }) => {
   await expect(three).toHaveValue('60');
 
   await expect(values).toContainText(`
-    "one": 20,
     "two": 5,
-    "three": 60
+    "three": 60,
+    "one": 20
   `);
 });

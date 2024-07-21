@@ -7,10 +7,10 @@ import { useFormInstance } from './useFormInstance';
  */
 export const useFormData = (name?: string) => {
   const form = useFormInstance(name);
-
   return useUnit({
     active: form.$active,
     activeValues: form.$activeValues,
+    activeOnly: form.$activeOnly,
     dirties: form.$dirties,
     dirty: form.$dirty,
     error: form.$error,

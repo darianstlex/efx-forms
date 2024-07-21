@@ -20,7 +20,7 @@ export const useField = (name: string, formName?: string) => {
     validate: () => validate({ name }),
     setActive: (value: boolean) => setActive({ name, value }),
     setValue: (value: any) => setValue({ name, value }),
-    update: (value: any) => onChange({ name, value }),
+    change: (value: any) => onChange({ name, value }),
     setConfig: form.setFieldConfig,
     config: form.configs[name],
   };
