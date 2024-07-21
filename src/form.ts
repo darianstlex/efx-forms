@@ -41,9 +41,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const dm = domain.domain(formConfig.name);
 
   const setActive = dm.event<{ name: string; value: boolean }>('set-active');
-  const setError = dm.event<{ name: string; errors: string[] | null }>(
-    'set-error',
-  );
+  const setError = dm.event<{ name: string; errors: string[] | null }>('set-error');
   const setErrors = dm.event<Record<string, string[] | null>>('set-errors');
   const setValues = dm.event<Record<string, any>>('set-values');
   const setTouchedValues = dm.event<Record<string, any>>('set-touched');
