@@ -3,7 +3,7 @@ import type { ReactNode } from 'react';
 
 import './index.css';
 
-interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement>{
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
   secondary?: boolean;
 }

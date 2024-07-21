@@ -19,7 +19,7 @@ test('Form Update', async ({ mount }) => {
         data.config = config;
         data.configs = configs;
       }}
-    />
+    />,
   );
 
   const userName = component.locator(sel.userName);
@@ -79,7 +79,7 @@ test('Form Update', async ({ mount }) => {
       }}
       validateOnBlur={false}
       validateOnChange={true}
-    />
+    />,
   );
 
   // send config
@@ -129,7 +129,7 @@ test('Form Update', async ({ mount }) => {
         data.config = config;
         data.configs = configs;
       }}
-    />
+    />,
   );
 
   await config.click();

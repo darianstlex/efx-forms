@@ -1,6 +1,18 @@
 import { test, expect } from '@playwright/experimental-ct-react';
 
-import { email, length, lessThan, matches, max, min, moreThan, negative, number, positive, required } from '../validators';
+import {
+  email,
+  length,
+  lessThan,
+  matches,
+  max,
+  min,
+  moreThan,
+  negative,
+  number,
+  positive,
+  required,
+} from '../validators';
 
 test.describe('Validators', async () => {
   test.describe('required', async () => {

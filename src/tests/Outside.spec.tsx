@@ -9,7 +9,11 @@ test('Field Outside Form', async ({ mount }) => {
     submit: {},
   };
   const component = await mount(
-    <Outside onSubmit={(values: any) => { data.submit = values; }} />
+    <Outside
+      onSubmit={(values: any) => {
+        data.submit = values;
+      }}
+    />,
   );
   const userName = component.locator(sel.userName);
   const userPassword = component.locator(sel.userPassword);
@@ -39,7 +43,6 @@ test('Field Outside Form', async ({ mount }) => {
     "user.name": "Test User",
     "user.password": "pass"
   `);
-
 
   // submit
   await submit.click();

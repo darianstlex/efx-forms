@@ -18,7 +18,7 @@ test('Field Update', async ({ mount }) => {
         data.config = config;
         data.configs = configs;
       }}
-    />
+    />,
   );
 
   const userName = component.locator(sel.userName);
@@ -51,7 +51,7 @@ test('Field Update', async ({ mount }) => {
         data.config = config;
         data.configs = configs;
       }}
-    />
+    />,
   );
 
   // values should change after update
@@ -79,7 +79,7 @@ test('Field Update', async ({ mount }) => {
         data.config = config;
         data.configs = configs;
       }}
-    />
+    />,
   );
 
   // values should not change if field is touched

@@ -15,7 +15,6 @@ test('Sample Update', async ({ mount }) => {
   await expect(two).toHaveValue('0');
   await expect(three).toHaveValue('0');
 
-
   await one.fill('10');
   await expect(one).toHaveValue('10');
   await expect(two).toHaveValue('20');

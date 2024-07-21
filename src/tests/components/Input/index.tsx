@@ -3,7 +3,7 @@ import type { InputHTMLAttributes } from 'react';
 
 import './index.css';
 import { Field } from '../../../FieldComponent';
-import { IFieldProps, IRFieldProps } from '../../../types';
+import type { IFieldProps, IRFieldProps } from '../../../types';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   id?: string;
@@ -11,7 +11,14 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
 }
 
-export const Input = ({ id, label, error, onChange, name,  ...rest }: InputProps & IFieldProps) => (
+export const Input = ({
+  id,
+  label,
+  error,
+  onChange,
+  name,
+  ...rest
+}: InputProps & IFieldProps) => (
   <div className="input-wrapper">
     <label htmlFor={id || name}>{label}</label>
     <input
@@ -22,15 +29,25 @@ export const Input = ({ id, label, error, onChange, name,  ...rest }: InputProps
       onChange={(e) => onChange(e.target.value)}
       {...rest}
     />
-    {error && <span data-test={`${name}-error`} className="input-error">{error}</span>}
+    {error && (
+      <span data-test={`${name}-error`} className="input-error">
+        {error}
+      </span>
+    )}
   </div>
 );
 
-export const TextField = ({ name, ...rest }: Omit<IRFieldProps, 'Field'> & InputProps) => (
+export const TextField = ({
+  name,
+  ...rest
+}: Omit<IRFieldProps, 'Field'> & InputProps) => (
   <Field name={name} Field={Input} {...rest} />
 );
 
-export const NumberField = ({ name, ...rest }: Omit<IRFieldProps, 'Field'> & InputProps) => (
+export const NumberField = ({
+  name,
+  ...rest
+}: Omit<IRFieldProps, 'Field'> & InputProps) => (
   <Field
     name={name}
     Field={Input}

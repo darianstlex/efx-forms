@@ -22,9 +22,13 @@ export const Outside = (props: Partial<IRFormProps>) => {
         />
         <UseFormStore title="active" store="$active" />
         <UseFormStore title="values" store="$values" />
-        <Button data-test="submit" type="submit">Submit</Button>
+        <Button data-test="submit" type="submit">
+          Submit
+        </Button>
         <span style={{ display: 'inline-block', width: 20 }} />
-        <Button secondary data-test="reset" onClick={() => reset()}>Reset</Button>
+        <Button secondary data-test="reset" onClick={() => reset()}>
+          Reset
+        </Button>
       </Form>
       <div style={{ width: 400, margin: '0 auto' }}>
         <TextField

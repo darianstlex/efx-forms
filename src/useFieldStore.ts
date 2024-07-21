@@ -7,8 +7,15 @@ import type { TFormStoreKey } from './types';
 
 type TFieldStore = Extract<
   TFormStoreKey,
-  '$active' | '$activeOnly' | '$activeValues' | '$values' | '$errors' | '$error' | '$touches' | '$dirties'
->
+  | '$active'
+  | '$activeOnly'
+  | '$activeValues'
+  | '$values'
+  | '$errors'
+  | '$error'
+  | '$touches'
+  | '$dirties'
+>;
 
 interface UseFieldStoreProps {
   store: TFieldStore;

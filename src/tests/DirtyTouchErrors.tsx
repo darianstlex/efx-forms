@@ -31,7 +31,7 @@ export const DirtyTouchErrors = (props: Partial<IRFormProps>) => {
         data-test="user.password"
         name="user.password"
         label="Password"
-        validators={[required({ msg: 'Required!'})]}
+        validators={[required({ msg: 'Required!' })]}
         initialValue={null}
       />
       <UseFormStore title="activeValues" store="$activeValues" />
@@ -41,9 +41,13 @@ export const DirtyTouchErrors = (props: Partial<IRFormProps>) => {
       <UseFormStore title="dirties" store="$dirties" />
       <UseFormStore title="errors" store="$errors" />
       <UseFormStore title="error" store="$error" />
-      <Button data-test="submit" type="submit">Submit</Button>
+      <Button data-test="submit" type="submit">
+        Submit
+      </Button>
       <span style={{ display: 'inline-block', width: 20 }} />
-      <Button secondary data-test="reset" onClick={() => reset()}>Reset</Button>
+      <Button secondary data-test="reset" onClick={() => reset()}>
+        Reset
+      </Button>
     </Form>
   );
 };

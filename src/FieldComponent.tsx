@@ -5,33 +5,42 @@ import pickBy from 'lodash/pickBy';
 
 import { ARR_0, FIELD_CONFIG } from './constants';
 import { useFormInstance } from './useFormInstance';
-import { IRFieldProps } from './types';
+import type { IRFieldProps } from './types';
 
 export const InternalField = ({
   Field,
   name,
   formName,
   ...rest
-}: { name: string; formName?: string; Field: ComponentType<any>; }) => {
+}: {
+  name: string;
+  formName?: string;
+  Field: ComponentType<any>;
+}) => {
   const form = useFormInstance(formName);
   const [onBlur, onChange] = useUnit([form.onBlur, form.onChange]);
 
   const value = useStoreMap(form.$values, (it) => it[name]);
   const error = useStoreMap(form.$error, (it) => it[name] || null);
-  const errors = useStoreMap(form.$errors, (it) => it[name] || ARR_0 as unknown as string[]);
+  const errors = useStoreMap(
+    form.$errors,
+    (it) => it[name] || (ARR_0 as unknown as string[]),
+  );
 
   const formatValue = form.configs?.[name]?.format || FIELD_CONFIG.format!;
 
   return (
-    <Field {...{
-      error,
-      errors,
-      name,
-      value: formatValue(value),
-      onChange: (value: any) => onChange({ name, value }),
-      onBlur: (value: any) => onBlur({ name, value }),
-      ...rest,
-    }} />
+    <Field
+      {...{
+        error,
+        errors,
+        name,
+        value: formatValue(value),
+        onChange: (value: any) => onChange({ name, value }),
+        onBlur: (value: any) => onBlur({ name, value }),
+        ...rest,
+      }}
+    />
   );
 };
 
@@ -53,12 +62,24 @@ export const Field = ({
 }: IRFieldProps) => {
   const form = useFormInstance(formName);
 
-  const [setActive, setUntouchedValues] = useUnit([form.setActive, form.setUntouchedValues]);
+  const [setActive, setUntouchedValues] = useUnit([
+    form.setActive,
+    form.setUntouchedValues,
+  ]);
 
   useEffect(() => {
-    const config = pickBy({
-      parse, format, validators, initialValue, validateOnBlur, validateOnChange, disableFieldReinit,
-    }, (val) => val !== undefined);
+    const config = pickBy(
+      {
+        parse,
+        format,
+        validators,
+        initialValue,
+        validateOnBlur,
+        validateOnChange,
+        disableFieldReinit,
+      },
+      (val) => val !== undefined,
+    );
     form.setFieldConfig({ name, ...config });
   }, [
     form,
@@ -79,14 +100,22 @@ export const Field = ({
     };
   }, [name, setActive]);
 
-  const fieldInitialValue = initialValue !== undefined ? initialValue : form.config.initialValues?.[name];
-  const reinitDisabled = disableFieldReinit !== undefined ? disableFieldReinit : form.config.disableFieldsReinit;
+  const fieldInitialValue =
+    initialValue !== undefined
+      ? initialValue
+      : form.config.initialValues?.[name];
+  const reinitDisabled =
+    disableFieldReinit !== undefined
+      ? disableFieldReinit
+      : form.config.disableFieldsReinit;
 
   useEffect(() => {
-    !reinitDisabled && fieldInitialValue !== undefined && setUntouchedValues({ [name]: fieldInitialValue });
+    !reinitDisabled &&
+      fieldInitialValue !== undefined &&
+      setUntouchedValues({ [name]: fieldInitialValue });
   }, [reinitDisabled, name, fieldInitialValue, setUntouchedValues]);
 
-  return (<InternalField {...{ name, formName, Field, ...rest }} />);
+  return <InternalField {...{ name, formName, Field, ...rest }} />;
 };
 
 Field.displayName = 'Field';

@@ -17,7 +17,7 @@ export const IfFieldValue = ({
   const form = useFormInstance(formName);
   const value = useStoreMap(form.$values, (it) => it[field]);
   const show = check(value);
-  const output = () => render ? render(value) : children;
+  const output = () => (render ? render(value) : children);
 
   return (show ? output() : null) as ReactElement;
 };

@@ -10,12 +10,15 @@
   ],
   "rules": {
     "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/consistent-type-imports": "error",
     "arrow-parens": ["error", "always"],
     "comma-dangle": ["error", "always-multiline"],
     "semi": ["error", "always"],
     "quotes": ["error", "single"],
     "no-console": "error",
-    "object-curly-spacing": ["error", "always"],
+    "object-curly-newline": [
+      "error", { "consistent": true }
+    ],
     "max-len": ["error", { "code": 120 }]
   }
 }

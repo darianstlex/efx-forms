@@ -1,10 +1,17 @@
 import type { Domain, Effect, EventCallable, Store } from 'effector';
 import type { ComponentType, ReactElement, ReactNode } from 'react';
 
-export type TFieldValidator = (data?: { value?: any, regexp?: RegExp, label?: string; msg?: string })
-  => (value: any, values?: Record<string, any>) => string | false;
+export type TFieldValidator = (data?: {
+  value?: any;
+  regexp?: RegExp;
+  label?: string;
+  msg?: string;
+}) => (value: any, values?: Record<string, any>) => string | false;
 
-type TFiltered<T, TK> = Pick<T, { [K in keyof T]: T[K] extends TK ? K : never }[keyof T]>;
+type TFiltered<T, TK> = Pick<
+  T,
+  { [K in keyof T]: T[K] extends TK ? K : never }[keyof T]
+>;
 type TFilteredKeyOf<T, TK> = keyof TFiltered<T, TK>;
 type TFilteredType<T, TK> = Required<T>[TFilteredKeyOf<T, TK>];
 type TExtractStoreTypes<P> = P extends Store<infer T> ? T : never;
@@ -15,7 +22,9 @@ export type TFormStore = TFilteredType<IForm, Store<any>>;
 export type TFormStoreValue = TExtractStoreTypes<TFormStore>;
 
 export interface ISubmitArgs {
-  cb?: (values: Record<string, any>) => Promise<Record<string, string | null> | void> | void;
+  cb?: (
+    values: Record<string, any>,
+  ) => Promise<Record<string, string | null> | void> | void;
   skipClientValidation?: boolean;
 }
 
@@ -34,9 +43,11 @@ export interface ISubmitResponseError {
   remoteErrors?: Record<string, string | null>;
 }
 
-export type IValidationParams = {
-  name?: string;
-} | undefined;
+export type IValidationParams =
+  | {
+      name?: string;
+    }
+  | undefined;
 
 export interface IFieldConfig {
   /** PROPERTY - name */
@@ -64,7 +75,7 @@ export interface IFormConfig {
   /** PROPERTY - name */
   name: string;
   /** PROPERTY - initial values - flat */
-  initialValues?: Record<string, any>,
+  initialValues?: Record<string, any>;
   /** PROPERTY - validateOnBlur - will trigger validation on blur */
   validateOnBlur?: boolean;
   /** PROPERTY - validateOnChange - will trigger validation on change */
@@ -123,7 +134,7 @@ export interface IForm {
    */
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
   /** EVENT - Set form config */
-  setActive: EventCallable<{ name: string, value: any }>;
+  setActive: EventCallable<{ name: string; value: any }>;
   /** EVENT - Form update fields values */
   setValues: EventCallable<Record<string, any>>;
   /** EVENT - Form update touched fields values */
@@ -131,9 +142,9 @@ export interface IForm {
   /** EVENT - Form update untouched fields values */
   setUntouchedValues: EventCallable<Record<string, any>>;
   /** EVENT - Form onChange event */
-  onChange: EventCallable<{ name: string, value: any }>;
+  onChange: EventCallable<{ name: string; value: any }>;
   /** EVENT - Form onBlur event */
-  onBlur: EventCallable<{ name: string, value: any }>;
+  onBlur: EventCallable<{ name: string; value: any }>;
   /** EVENT - Form validate trigger */
   validate: EventCallable<IValidationParams>;
   /** PROP - Form config */
@@ -208,7 +219,10 @@ export interface IRIfFormValuesProps {
   /** PROPERTY - form name to check against */
   form?: string;
   /** METHOD - check - accepts form values and return boolean, if true render children */
-  check: (values: Record<string, any>, activeValues: Record<string, any>) => boolean;
+  check: (
+    values: Record<string, any>,
+    activeValues: Record<string, any>,
+  ) => boolean;
   /** PROPERTY - setTo set fields on show */
   setTo?: Record<string, any>;
   /** PROPERTY - setTo set fields on hide */

@@ -16,11 +16,8 @@ export const truthyFy = (values = {}): TObject => pickBy(values, Boolean);
 /**
  * Transform flat to structured object
  */
-export const shapeFy = (values = {}): TObject => reduce(
-  values,
-  (acc, val, key) => set(acc, key, val),
-  {},
-);
+export const shapeFy = (values = {}): TObject =>
+  reduce(values, (acc, val, key) => set(acc, key, val), {});
 
 /**
  * Return store with truthy values only
@@ -35,4 +32,5 @@ export const shapeFyStore = ($store: Store<TObject>) => $store.map(shapeFy);
 /**
  * Check if object have truthy value
  */
-export const hasTruthy = (obj: Record<string, any>) => Object.values(obj).some(Boolean);
+export const hasTruthy = (obj: Record<string, any>) =>
+  Object.values(obj).some(Boolean);

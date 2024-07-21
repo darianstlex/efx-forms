@@ -8,7 +8,11 @@ import { useFormInstance } from './useFormInstance';
 export const useField = (name: string, formName?: string) => {
   const form = useFormInstance(formName);
   const [reset, validate, setActive, setValue, onChange] = useUnit([
-    form.reset, form.validate, form.setActive, form.setValues, form.onChange,
+    form.reset,
+    form.validate,
+    form.setActive,
+    form.setValues,
+    form.onChange,
   ]);
   return {
     value: useStoreMap(form.$values, (it) => it[name]),

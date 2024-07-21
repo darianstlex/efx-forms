@@ -10,5 +10,5 @@ import { useFormInstance } from './useFormInstance';
  */
 export const useFormStore = (store: TFormStoreKey, formName?: string): any => {
   const form = useFormInstance(formName);
-  return useUnit(form?.[store] as Store<any> || $null);
+  return useUnit((form?.[store] as Store<any>) || $null);
 };

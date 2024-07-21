@@ -11,13 +11,13 @@ import isEmpty from 'lodash/isEmpty';
  * Conditional rendering based on form values
  */
 export const IfFormValues = ({
-   children,
-   check,
-   form,
-   setTo,
-   resetTo,
-   render,
-   updateDebounce = 0,
+  children,
+  check,
+  form,
+  setTo,
+  resetTo,
+  render,
+  updateDebounce = 0,
 }: IRIfFormValuesProps) => {
   const formInst = useFormInstance(form);
   const [values, activeValues, setValues] = useUnit([
@@ -36,7 +36,7 @@ export const IfFormValues = ({
     };
   }, [resetTo, setTo, show, updateDeb]);
 
-  const output = () => render ? render(values) : children;
+  const output = () => (render ? render(values) : children);
 
   return (show ? output() : null) as ReactElement;
 };

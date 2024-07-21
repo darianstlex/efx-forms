@@ -9,7 +9,10 @@ import { UseFormStore } from './components/Hooks';
 
 interface Props {
   fieldConfig: Omit<IFieldConfig, 'name'>;
-  setConfig?: (data: { config: IFormConfig; configs: Record<string, IFieldConfig> }) => void;
+  setConfig?: (data: {
+    config: IFormConfig;
+    configs: Record<string, IFieldConfig>;
+  }) => void;
 }
 
 export const FieldUpdate = ({ fieldConfig, setConfig }: Props) => {
@@ -25,13 +28,21 @@ export const FieldUpdate = ({ fieldConfig, setConfig }: Props) => {
         name="user.name"
         label="Name"
       />
-      <UseFormStore formName="formFieldUpdate" title="values" store="$values"/>
-      <UseFormStore formName="formFieldUpdate" title="touches" store="$touches"/>
-      <Button data-test="reset" onClick={() => reset()}>Reset</Button>
-      <span style={{ display: 'inline-block', width: 20 }}/>
+      <UseFormStore formName="formFieldUpdate" title="values" store="$values" />
+      <UseFormStore
+        formName="formFieldUpdate"
+        title="touches"
+        store="$touches"
+      />
+      <Button data-test="reset" onClick={() => reset()}>
+        Reset
+      </Button>
+      <span style={{ display: 'inline-block', width: 20 }} />
       <Button
         data-test="config"
-        onClick={() => setConfig?.({ config: form.config, configs: form.configs })}
+        onClick={() =>
+          setConfig?.({ config: form.config, configs: form.configs })
+        }
       >
         Config
       </Button>

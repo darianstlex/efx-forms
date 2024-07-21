@@ -2,7 +2,7 @@ import React from 'react';
 import type { InputHTMLAttributes } from 'react';
 
 import './index.css';
-import { IFieldProps, IRFieldProps } from '../../../types';
+import type { IFieldProps, IRFieldProps } from '../../../types';
 import { Field } from '../../../FieldComponent';
 
 interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
@@ -11,10 +11,20 @@ interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
   name: string;
 }
 
-export const Checkbox = ({ id, label, error, value, onChange, name, ...rest }: InputProps & IFieldProps) => (
+export const Checkbox = ({
+  id,
+  label,
+  error,
+  value,
+  onChange,
+  name,
+  ...rest
+}: InputProps & IFieldProps) => (
   <div className="checkbox-wrapper">
     <div className="checkbox-field">
-      <label htmlFor={id || name} className="checkbox-label">{label}</label>
+      <label htmlFor={id || name} className="checkbox-label">
+        {label}
+      </label>
       <input
         id={id || name}
         type="checkbox"
@@ -28,6 +38,9 @@ export const Checkbox = ({ id, label, error, value, onChange, name, ...rest }: I
   </div>
 );
 
-export const CheckboxField = ({ name, ...rest }: Omit<IRFieldProps, 'Field'> & InputProps) => (
+export const CheckboxField = ({
+  name,
+  ...rest
+}: Omit<IRFieldProps, 'Field'> & InputProps) => (
   <Field name={name} Field={Checkbox} {...rest} />
 );

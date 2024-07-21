@@ -41,7 +41,7 @@ sample({
 export const SampleUpdate = () => {
   return (
     <>
-      <div style={{width: 400, margin: '20px auto'}}>
+      <div style={{ width: 400, margin: '20px auto' }}>
         <NumberField
           formName="formSampleUpdate"
           data-test="one"
@@ -49,18 +49,13 @@ export const SampleUpdate = () => {
           label="One"
         />
       </div>
-      <Form name="formSampleUpdate" initialValues={{ one: 0, two: 0, three: 0 }}>
-        <NumberField
-          data-test="two"
-          name="two"
-          label="Two"
-        />
-        <NumberField
-          data-test="three"
-          name="three"
-          label="Three"
-        />
-        <UseFormStore title="values" store="$values"/>
+      <Form
+        name="formSampleUpdate"
+        initialValues={{ one: 0, two: 0, three: 0 }}
+      >
+        <NumberField data-test="two" name="two" label="Two" />
+        <NumberField data-test="three" name="three" label="Three" />
+        <UseFormStore title="values" store="$values" />
       </Form>
     </>
   );

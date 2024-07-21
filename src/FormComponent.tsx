@@ -26,33 +26,43 @@ export const Form = ({
   ...props
 }: IRFormProps) => {
   const form: IForm = useMemo(() => {
-    const config = pickBy({
-      keepOnUnmount,
-      skipClientValidation,
-      initialValues,
-      validateOnBlur,
-      validateOnChange,
-      validators,
-      disableFieldsReinit,
-    }, (val) => val !== undefined);
+    const config = pickBy(
+      {
+        keepOnUnmount,
+        skipClientValidation,
+        initialValues,
+        validateOnBlur,
+        validateOnChange,
+        validators,
+        disableFieldsReinit,
+      },
+      (val) => val !== undefined,
+    );
     return getForm({ name, ...config });
   }, [name]);
 
-  const [formSubmit, formReset, setUntouchedValues] = useUnit([form.submit, form.reset, form.setUntouchedValues]);
+  const [formSubmit, formReset, setUntouchedValues] = useUnit([
+    form.submit,
+    form.reset,
+    form.setUntouchedValues,
+  ]);
 
   /**
    * Set config on config props changes
    */
   useEffect(() => {
-    const config = pickBy({
-      validators,
-      initialValues,
-      keepOnUnmount,
-      validateOnBlur,
-      validateOnChange,
-      disableFieldsReinit,
-      skipClientValidation,
-    }, (val) => val !== undefined);
+    const config = pickBy(
+      {
+        validators,
+        initialValues,
+        keepOnUnmount,
+        validateOnBlur,
+        validateOnChange,
+        disableFieldsReinit,
+        skipClientValidation,
+      },
+      (val) => val !== undefined,
+    );
     form.setConfig({ name, ...config });
   }, [
     skipClientValidation,
@@ -79,7 +89,9 @@ export const Form = ({
    * Set initial values if fields are untouched
    */
   useEffect(() => {
-    !disableFieldsReinit && !isEmpty(initialValues) && setUntouchedValues(initialValues);
+    !disableFieldsReinit &&
+      !isEmpty(initialValues) &&
+      setUntouchedValues(initialValues);
   }, [initialValues, setUntouchedValues, disableFieldsReinit]);
 
   const submit = (event: FormEvent) => {
@@ -89,7 +101,9 @@ export const Form = ({
 
   return (
     <FormProvider name={name}>
-      <form onSubmit={submit} {...props}>{children}</form>
+      <form onSubmit={submit} {...props}>
+        {children}
+      </form>
     </FormProvider>
   );
 };

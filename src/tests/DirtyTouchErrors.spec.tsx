@@ -10,9 +10,11 @@ test('Dirty/Touch/Errors', async ({ mount }) => {
   };
   const component = await mount(
     <DirtyTouchErrors
-      onSubmit={(values) => { data.submit = values; }}
+      onSubmit={(values) => {
+        data.submit = values;
+      }}
       initialValues={{ 'user.email': 'initial@email' }}
-    />
+    />,
   );
   const userName = component.locator(sel.userName);
   const userNameError = component.locator(sel.userNameError);

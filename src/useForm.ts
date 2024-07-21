@@ -7,7 +7,6 @@ import { useFormInstance } from './useFormInstance';
  */
 export const useForm = (name?: string) => {
   const form = useFormInstance(name);
-
   return Object.assign(
     {},
     useUnit({
@@ -35,6 +34,6 @@ export const useForm = (name?: string) => {
     {
       setConfig: form.setConfig,
       setFieldConfig: form.setFieldConfig,
-    }
+    },
   );
 };
