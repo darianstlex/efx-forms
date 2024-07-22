@@ -10,8 +10,8 @@
     "publish-beta": "npm run build && npm publish --tag beta ./lib",
     "publish-dryrun": "npm run build && npm publish --dry-run ./lib",
     "lint": "eslint . --ext .ts --ext .tsx",
-    "test-ct": "playwright test -c playwright-ct.config.ts",
-    "test-ct-ui": "playwright test -c playwright-ct.config.ts --ui"
+    "test": "playwright test -c playwright-ct.config.ts",
+    "test:open": "playwright test -c playwright-ct.config.ts --ui"
   },
   "repository": {
     "type": "git",
