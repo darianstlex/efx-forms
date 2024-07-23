@@ -378,7 +378,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
       return reduce(
         remoteErrors,
         (acc, _, key) => {
-          acc[key] = [remoteErrors?.[key] as string].filter(Boolean);
+          acc[key] = remoteErrors?.[key] ? [remoteErrors?.[key]] : null;
           return acc;
         },
         {} as Record<string, string[] | null>,
