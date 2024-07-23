@@ -48,7 +48,6 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const setUntouchedValues = dm.event<Record<string, any>>('set-untouched');
   const onChange = dm.event<{ name: string; value: any }>('on-change');
   const onBlur = dm.event<{ name: string; value: any }>('on-blur');
-  const submitDone = dm.event<void>('submit-done');
   const reset = dm.event<string | void>('reset');
   const erase = dm.event<void>('erase');
   const validate = dm.event<IValidationParams>('validate');
@@ -131,45 +130,6 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   );
 
   /**
-   * Touches store - keeps all fields touch state
-   */
-  const $touches = dm
-    .store<Record<string, boolean>>({}, { name: '$touches' })
-    .on(onChange, (state, { name }) =>
-      state[name] ? state : Object.assign({}, state, { [name]: true }),
-    )
-    .reset(erase, reset, submitDone);
-
-  /**
-   * Calculates form touched state
-   */
-  const $touched = $touches.map((state) =>
-    !isEmpty(state) ? hasTruthy(state) : false,
-  );
-
-  /**
-   * Dirties store - keeps all active fields dirty state
-   */
-  const $dirties = $activeValues.map((values) => {
-    const dirties = reduce(
-      values,
-      (acc, _, field: string) => {
-        acc[field] = values[field] !== getFieldInitVal(field);
-        return acc;
-      },
-      {} as Record<string, boolean>,
-    );
-    return pickBy(dirties, (dirty) => dirty);
-  });
-
-  /**
-   * Calculates form dirty state
-   */
-  const $dirty = $dirties.map((state) =>
-    !isEmpty(state) ? hasTruthy(state) : false,
-  );
-
-  /**
    * Form submit effect.
    * If callback is promise and returns errors object, will be highlighted in the
    * corresponded fields: { fieldName: 'Name already exist' }.
@@ -216,6 +176,45 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     effect: onSubmit,
     name: `@fx-forms/${formConfig.name}/attach-submit`,
   });
+
+  /**
+   * Touches store - keeps all fields touch state
+   */
+  const $touches = dm
+    .store<Record<string, boolean>>({}, { name: '$touches' })
+    .on(onChange, (state, { name }) =>
+      state[name] ? state : Object.assign({}, state, { [name]: true }),
+    )
+    .reset(erase, reset, submit.done);
+
+  /**
+   * Calculates form touched state
+   */
+  const $touched = $touches.map((state) =>
+    !isEmpty(state) ? hasTruthy(state) : false,
+  );
+
+  /**
+   * Dirties store - keeps all active fields dirty state
+   */
+  const $dirties = $activeValues.map((values) => {
+    const dirties = reduce(
+      values,
+      (acc, _, field: string) => {
+        acc[field] = values[field] !== getFieldInitVal(field);
+        return acc;
+      },
+      {} as Record<string, boolean>,
+    );
+    return pickBy(dirties, (dirty) => dirty);
+  });
+
+  /**
+   * Calculates form dirty state
+   */
+  const $dirty = $dirties.map((state) =>
+    !isEmpty(state) ? hasTruthy(state) : false,
+  );
 
   /**
    * Reset form value/values to the initial state
@@ -386,14 +385,6 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
       );
     },
     target: setErrors,
-  });
-
-  /**
-   * Pass submit done event
-   */
-  sample({
-    clock: submit.done,
-    target: submitDone,
   });
 
   /**
