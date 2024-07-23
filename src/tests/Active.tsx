@@ -7,10 +7,15 @@ import { required, email } from '../validators';
 import { TextField } from './components/Input';
 import { Button } from './components/Button';
 import { CheckboxField } from './components/Checkbox';
-import { UseFormStore } from './components/Hooks';
+import type { SendFormDataProps } from './components/Hooks';
+import { SendFormData, UseFormStore } from './components/Hooks';
 import { IfFieldValue } from '../IfFieldValue';
 
-export const Active = (props: Partial<IRFormProps>) => {
+interface Props extends Partial<IRFormProps> {
+  setFormData: SendFormDataProps['onSend'];
+}
+
+export const Active = ({ setFormData, ...props }: Props) => {
   const form = useFormInstance('formTwo');
   const [reset] = useUnit([form.reset]);
   return (
@@ -43,17 +48,19 @@ export const Active = (props: Partial<IRFormProps>) => {
         label="Password"
         validators={[required()]}
       />
-      <UseFormStore title="active" store="$active" />
-      <UseFormStore title="activeValues" store="$activeValues" />
-      <UseFormStore title="values" store="$values" />
-      <UseFormStore title="error" store="$error" />
+      <UseFormStore title="active" store="$active"/>
+      <UseFormStore title="activeValues" store="$activeValues"/>
+      <UseFormStore title="values" store="$values"/>
+      <UseFormStore title="error" store="$error"/>
       <Button data-test="submit" type="submit">
         Submit
       </Button>
-      <span style={{ display: 'inline-block', width: 20 }} />
+      <span style={{ display: 'inline-block', width: 20 }}/>
       <Button secondary data-test="reset" onClick={() => reset()}>
         Reset
       </Button>
+      <span style={{ display: 'inline-block', width: 20 }}/>
+      <SendFormData onSend={setFormData}/>
     </Form>
   );
 };

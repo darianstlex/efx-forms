@@ -14,6 +14,7 @@ export const sel = {
   submit: '[data-test="submit"]',
   reset: '[data-test="reset"]',
   config: '[data-test="config"]',
+  sendData: '[data-test="send-form-data"]',
   action: '[data-test="action"]',
 
   isTouched: '[data-test="touched-result"]',

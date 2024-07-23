@@ -6,9 +6,14 @@ import { Form, useFormInstance } from '../index';
 import { required, email } from '../validators';
 import { TextField } from './components/Input';
 import { Button } from './components/Button';
-import { UseFormStore } from './components/Hooks';
+import type { SendFormDataProps } from './components/Hooks';
+import { SendFormData, UseFormStore } from './components/Hooks';
 
-export const DirtyTouchErrors = (props: Partial<IRFormProps>) => {
+interface Props extends Partial<IRFormProps> {
+  setFormData: SendFormDataProps['onSend'];
+}
+
+export const DirtyTouchErrors = ({ setFormData, ...props }: Props) => {
   const form = useFormInstance('formOne');
   const [reset] = useUnit([form.reset]);
   return (
@@ -48,6 +53,8 @@ export const DirtyTouchErrors = (props: Partial<IRFormProps>) => {
       <Button secondary data-test="reset" onClick={() => reset()}>
         Reset
       </Button>
+      <span style={{ display: 'inline-block', width: 20 }} />
+      <SendFormData onSend={setFormData} />
     </Form>
   );
 };

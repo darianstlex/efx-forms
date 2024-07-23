@@ -3,42 +3,49 @@ import { test, expect } from '@playwright/experimental-ct-react';
 
 import { FieldUpdate } from './FieldUpdate';
 import { sel } from './selectors';
+import type { OnSendParams } from './components/Hooks';
 
 test('Field Update', async ({ mount }) => {
   const data = {
     config: {},
     configs: {},
-  };
+    form: {},
+  } as OnSendParams;
+
+  /**
+   * STEP_1: Render form
+   */
   const component = await mount(
     <FieldUpdate
       fieldConfig={{
         initialValue: 'Initial User',
       }}
-      setConfig={({ config, configs }) => {
-        data.config = config;
-        data.configs = configs;
-      }}
+      setFormData={(formData) => Object.assign(data, formData)}
     />,
   );
 
   const userName = component.locator(sel.userName);
-  const config = component.locator(sel.config);
+  const sendData = component.locator(sel.sendData);
 
-  const values = component.locator(sel.values);
-  const touches = component.locator(sel.touches);
+  /**
+   * Check if form data is correct
+   */
+  await sendData.click();
 
   // initial values should be ok
   await expect(userName).toHaveValue('Initial User');
-  await expect(values).toContainText(`
-    "user.name": "Initial User"
-  `);
-  await expect(touches).toContainText('{}');
-  await config.click();
+  expect(data.form.values).toEqual({
+    'user.name': 'Initial User',
+  });
+  expect(data.form.touches).toEqual({});
   expect(data.configs['user.name']).toEqual({
     initialValue: 'Initial User',
     name: 'user.name',
   });
 
+  /**
+   * STEP_2: Update form config
+   */
   await component.update(
     <FieldUpdate
       fieldConfig={{
@@ -47,20 +54,20 @@ test('Field Update', async ({ mount }) => {
         validateOnChange: true,
         validators: [],
       }}
-      setConfig={({ config, configs }) => {
-        data.config = config;
-        data.configs = configs;
-      }}
+      setFormData={(formData) => Object.assign(data, formData)}
     />,
   );
+  await sendData.click();
 
+  /**
+   * Check if form config has been updated
+   */
   // values should change after update
   await expect(userName).toHaveValue('First User');
-  await expect(values).toContainText(`
-    "user.name": "First User"
-  `);
-  await expect(touches).toContainText('{}');
-  await config.click();
+  expect(data.form.values).toEqual({
+    'user.name': 'First User',
+  });
+  expect(data.form.touches).toEqual({});
   expect(data.configs['user.name']).toEqual({
     name: 'user.name',
     initialValue: 'First User',
@@ -69,30 +76,33 @@ test('Field Update', async ({ mount }) => {
     validators: [],
   });
 
+  /**
+   * STEP_2: Update field value and config
+   */
   await userName.fill('Edit User');
   await component.update(
     <FieldUpdate
       fieldConfig={{
         initialValue: 'Second User',
       }}
-      setConfig={({ config, configs }) => {
-        data.config = config;
-        data.configs = configs;
-      }}
+      setFormData={(formData) => Object.assign(data, formData)}
     />,
   );
+  await sendData.click();
 
+  /**
+   * Check if field config/value are updated correctly
+   */
   // values should not change if field is touched
-  await expect(touches).toContainText(`
-    "user.name": true
-  `);
-  await config.click();
+  expect(data.form.touches).toEqual({
+    'user.name': true,
+  });
   expect(data.configs['user.name']).toEqual({
     name: 'user.name',
     initialValue: 'Second User',
   });
   await expect(userName).toHaveValue('Edit User');
-  await expect(values).toContainText(`
-    "user.name": "Edit User"
-  `);
+  expect(data.form.values).toEqual({
+    'user.name': 'Edit User',
+  });
 });

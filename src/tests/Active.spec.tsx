@@ -3,83 +3,94 @@ import { test, expect } from '@playwright/experimental-ct-react';
 
 import { Active } from './Active';
 import { sel } from './selectors';
+import type { OnSendParams } from './components/Hooks';
 
 test('Active Fields', async ({ mount }) => {
-  const component = await mount(<Active validateOnChange />);
+  const data = {
+    config: {},
+    configs: {},
+    form: {},
+  } as OnSendParams;
+
+  const component = await mount(
+    <Active validateOnChange setFormData={(formData) => Object.assign(data, formData)} />
+  );
   const userEmail = component.locator(sel.userEmail);
   const userHasEmail = component.locator(sel.userHasEmail);
 
-  const values = component.locator(sel.values);
-  const active = component.locator(sel.active);
-  const error = component.locator(sel.error);
-  const activeValues = component.locator(sel.activeValues);
-
   const submit = component.locator(sel.submit);
+  const sendData = component.locator(sel.sendData);
+
+  await sendData.click();
 
   // all fields should be active
-  await expect(active).toContainText(`
-    "user.name": true,
-    "user.hasEmail": true,
-    "user.password": true,
-    "user.email": true
-  `);
+  expect(data.form.active).toEqual({
+    'user.name': true,
+    'user.hasEmail': true,
+    'user.password': true,
+    'user.email': true,
+  });
   // only fields with value should be in the values store
-  await expect(values).toContainText(`
-    "user.name": "Initial User",
-    "user.hasEmail": true
-  `);
+  expect(data.form.values).toEqual({
+    'user.name': 'Initial User',
+    'user.hasEmail': true,
+  });
   // only active fields with value should be in the values store
-  await expect(activeValues).toContainText(`
-    "user.name": "Initial User",
-    "user.hasEmail": true
-  `);
+  expect(data.form.activeValues).toEqual({
+    'user.name': 'Initial User',
+    'user.hasEmail': true,
+  });
+
   // change email
   await userEmail.fill('test@email');
+  await sendData.click();
   // email should appear in the values store
-  await expect(values).toContainText(`
-    "user.name": "Initial User",
-    "user.hasEmail": true,
-    "user.email": "test@email"
-  `);
+  expect(data.form.values).toEqual({
+    'user.name': 'Initial User',
+    'user.hasEmail': true,
+    'user.email': 'test@email',
+  });
   // email should appear in the activeValues store
-  await expect(activeValues).toContainText(`
-    "user.name": "Initial User",
-    "user.hasEmail": true,
-    "user.password": "undefined",
-    "user.email": "test@email"
-  `);
-  await expect(error).toContainText(`
-    "user.email": "Must be a valid email"
-  `);
+  expect(data.form.activeValues).toEqual({
+    'user.name': 'Initial User',
+    'user.hasEmail': true,
+    'user.password': undefined,
+    'user.email': 'test@email',
+  });
+  expect(data.form.error).toEqual({
+    'user.email': 'Must be a valid email',
+  });
 
   // hide email
   await userHasEmail.click();
+  await sendData.click();
   await expect(userEmail).not.toBeAttached();
   // email should be not active
-  await expect(active).toContainText(`
-    "user.name": true,
-    "user.hasEmail": true,
-    "user.password": true,
-    "user.email": false
-  `);
+  expect(data.form.active).toEqual({
+    'user.name': true,
+    'user.hasEmail': true,
+    'user.password': true,
+    'user.email': false,
+  });
   // email value should be in the values store
-  await expect(values).toContainText(`
-    "user.name": "Initial User",
-    "user.hasEmail": false,
-    "user.email": "test@email"
-  `);
+  expect(data.form.values).toEqual({
+    'user.name': 'Initial User',
+    'user.hasEmail': false,
+    'user.email': 'test@email',
+  });
   // email value should not be in the activeValues store
-  await expect(activeValues).toContainText(`
-    "user.name": "Initial User",
-    "user.hasEmail": false
-  `);
+  expect(data.form.activeValues).toEqual({
+    'user.name': 'Initial User',
+    'user.hasEmail': false,
+  });
   // email error should be reset on field deactivation
-  await expect(error).toContainText('{}');
+  expect(data.form.error).toEqual({});
 
   // submit to check validation errors
   await submit.click();
+  await sendData.click();
   // email should not be in the list as its inactive
-  await expect(error).toContainText(`
-    "user.password": "This field is required"
-  `);
+  expect(data.form.error).toEqual({
+    'user.password': 'This field is required',
+  });
 });

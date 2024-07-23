@@ -3,22 +3,25 @@ import { test, expect } from '@playwright/experimental-ct-react';
 
 import { Update } from './Update';
 import { sel } from './selectors';
+import type { OnSendParams } from './components/Hooks';
 
 test('Form Update', async ({ mount }) => {
   const data = {
     config: {},
     configs: {},
-  };
+    form: {},
+  } as OnSendParams;
+
+  /**
+   * STEP_1: Render form with initial values
+   */
   const component = await mount(
     <Update
       initialValues={{
         'user.name': 'Initial User',
         'user.password': 'pass1',
       }}
-      setConfig={({ config, configs }) => {
-        data.config = config;
-        data.configs = configs;
-      }}
+      setFormData={(formData) => Object.assign(data, formData)}
     />,
   );
 
@@ -27,13 +30,13 @@ test('Form Update', async ({ mount }) => {
   const userPassword = component.locator(sel.userPassword);
   const submit = component.locator(sel.submit);
   const reset = component.locator(sel.reset);
-  const config = component.locator(sel.config);
+  const sendData = component.locator(sel.sendData);
 
-  const values = component.locator(sel.values);
-  const touches = component.locator(sel.touches);
-
-  // send config
-  await config.click();
+  /**
+   * Check initial values / data
+   */
+  // send test data
+  await sendData.click();
   // check form config
   expect(data.config).toEqual({
     disableFieldsReinit: false,
@@ -56,14 +59,17 @@ test('Form Update', async ({ mount }) => {
     validators: [null],
   });
 
-  await expect(touches).toContainText('{}');
+  expect(data.form.touches).toEqual({});
 
   // check initial values
-  await expect(values).toContainText(`
-    "user.name": "Initial User",
-    "user.password": "pass1"
-  `);
+  expect(data.form.values).toEqual({
+    'user.name': 'Initial User',
+    'user.password': 'pass1',
+  });
 
+  /**
+   * STEP_2: Update form initial values
+   */
   // update form props
   await component.update(
     <Update
@@ -73,17 +79,17 @@ test('Form Update', async ({ mount }) => {
         'user.name': 'Second User',
         'user.password': 'pass2',
       }}
-      setConfig={({ config, configs }) => {
-        data.config = config;
-        data.configs = configs;
-      }}
+      setFormData={(formData) => Object.assign(data, formData)}
       validateOnBlur={false}
       validateOnChange={true}
     />,
   );
 
-  // send config
-  await config.click();
+  /**
+   * Check updated values
+   */
+  // send form data
+  await sendData.click();
   // check form config
   expect(data.config).toEqual({
     disableFieldsReinit: false,
@@ -106,14 +112,17 @@ test('Form Update', async ({ mount }) => {
     validators: [null],
   });
 
-  await expect(touches).toContainText('{}');
+  expect(data.form.touches).toEqual({});
 
-  // Check updated values
-  await expect(values).toContainText(`
-    "user.name": "Second User",
-    "user.password": "pass2"
-  `);
+  // check updated values
+  expect(data.form.values).toEqual({
+    'user.name': 'Second User',
+    'user.password': 'pass2',
+  });
 
+  /**
+   * STEP_3: Update fields data and form initial values
+   */
   // edit fields
   await userName.fill('Edit User');
   await userPassword.fill('editPass');
@@ -125,14 +134,16 @@ test('Form Update', async ({ mount }) => {
         'user.name': 'Third User',
         'user.password': 'pass3',
       }}
-      setConfig={({ config, configs }) => {
-        data.config = config;
-        data.configs = configs;
-      }}
+      setFormData={(formData) => Object.assign(data, formData)}
     />,
   );
 
-  await config.click();
+  await sendData.click();
+
+  /**
+   * Check if config has been updated and touched field values
+   * should not be reset
+   */
   expect(data.config).toEqual({
     disableFieldsReinit: false,
     initialValues: {
@@ -147,6 +158,7 @@ test('Form Update', async ({ mount }) => {
     validateOnChange: false,
     validators: {},
   });
+
   // check field config
   expect(data.configs['user.name']).toEqual({
     name: 'user.name',
@@ -154,25 +166,39 @@ test('Form Update', async ({ mount }) => {
     validators: [null],
   });
 
-  await expect(touches).toContainText(`
-    "user.name": true,
-    "user.password": true
-  `);
+  expect(data.form.touches).toEqual({
+    'user.name': true,
+    'user.password': true,
+  });
 
   // values should not change as fields are touched
-  await expect(values).toContainText(`
-    "user.name": "Edit User",
-    "user.password": "editPass"
-  `);
+  expect(data.form.values).toEqual({
+    'user.name': 'Edit User',
+    'user.password': 'editPass',
+  });
 
+  /**
+   * STEP_4: Reset form data
+   */
   await reset.click();
+  await sendData.click();
+
+  /**
+   * Check if values has been reset correctly
+   */
   // values should reset to tha latest updated initial values
-  await expect(values).toContainText(`
-    "user.name": "Third User",
-    "user.password": "pass3"
-  `);
-  await expect(touches).toContainText('{}');
+  expect(data.form.values).toEqual({
+    'user.name': 'Third User',
+    'user.password': 'pass3',
+  });
+
+  expect(data.form.touches).toEqual({});
 
   await submit.click();
+  await sendData.click();
   await expect(userNameError).toContainText('This user is taken');
+
+  expect(data.form.error).toEqual({
+    'user.name': 'This user is taken',
+  });
 });

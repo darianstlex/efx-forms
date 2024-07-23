@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { getForm } from '../index';
+import { getForm, type IRFormProps } from '../index';
 import { Form } from '../index';
 import { NumberField } from './components/Input';
 import { sample } from 'effector';
-import { UseFormStore } from './components/Hooks';
+import type { SendFormDataProps } from './components/Hooks';
+import { SendFormData, UseFormStore } from './components/Hooks';
 
 const form = getForm({ name: 'formSampleUpdate' });
 
@@ -38,7 +39,11 @@ sample({
   target: form.setValues,
 });
 
-export const SampleUpdate = () => {
+interface Props extends Partial<IRFormProps> {
+  setFormData: SendFormDataProps['onSend'];
+}
+
+export const SampleUpdate = ({ setFormData, ...props }: Props) => {
   return (
     <>
       <div style={{ width: 400, margin: '20px auto' }}>
@@ -52,10 +57,12 @@ export const SampleUpdate = () => {
       <Form
         name="formSampleUpdate"
         initialValues={{ one: 0, two: 0, three: 0 }}
+        {...props}
       >
-        <NumberField data-test="two" name="two" label="Two" />
-        <NumberField data-test="three" name="three" label="Three" />
-        <UseFormStore title="values" store="$values" />
+        <NumberField data-test="two" name="two" label="Two"/>
+        <NumberField data-test="three" name="three" label="Three"/>
+        <UseFormStore title="values" store="$values"/>
+        <SendFormData onSend={setFormData}/>
       </Form>
     </>
   );

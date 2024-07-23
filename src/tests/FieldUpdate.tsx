@@ -1,21 +1,19 @@
 import React from 'react';
 import { useUnit } from 'effector-react';
 
-import type { IFormConfig, IFieldConfig } from '../index';
+import type { IFieldConfig } from '../index';
 import { useFormInstance } from '../index';
 import { TextField } from './components/Input';
 import { Button } from './components/Button';
-import { UseFormStore } from './components/Hooks';
+import type { SendFormDataProps } from './components/Hooks';
+import { SendFormData, UseFormStore } from './components/Hooks';
 
 interface Props {
   fieldConfig: Omit<IFieldConfig, 'name'>;
-  setConfig?: (data: {
-    config: IFormConfig;
-    configs: Record<string, IFieldConfig>;
-  }) => void;
+  setFormData: SendFormDataProps['onSend'];
 }
 
-export const FieldUpdate = ({ fieldConfig, setConfig }: Props) => {
+export const FieldUpdate = ({ fieldConfig, setFormData }: Props) => {
   const form = useFormInstance('formFieldUpdate');
   const [reset] = useUnit([form.reset]);
 
@@ -28,7 +26,7 @@ export const FieldUpdate = ({ fieldConfig, setConfig }: Props) => {
         name="user.name"
         label="Name"
       />
-      <UseFormStore formName="formFieldUpdate" title="values" store="$values" />
+      <UseFormStore formName="formFieldUpdate" title="values" store="$values"/>
       <UseFormStore
         formName="formFieldUpdate"
         title="touches"
@@ -37,15 +35,8 @@ export const FieldUpdate = ({ fieldConfig, setConfig }: Props) => {
       <Button data-test="reset" onClick={() => reset()}>
         Reset
       </Button>
-      <span style={{ display: 'inline-block', width: 20 }} />
-      <Button
-        data-test="config"
-        onClick={() =>
-          setConfig?.({ config: form.config, configs: form.configs })
-        }
-      >
-        Config
-      </Button>
+      <span style={{ display: 'inline-block', width: 20 }}/>
+      <SendFormData name="formFieldUpdate" onSend={setFormData}/>
     </div>
   );
 };

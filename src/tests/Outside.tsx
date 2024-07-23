@@ -6,9 +6,14 @@ import { Form, useFormInstance } from '../index';
 import { required } from '../validators';
 import { TextField } from './components/Input';
 import { Button } from './components/Button';
-import { UseFormStore } from './components/Hooks';
+import type { SendFormDataProps } from './components/Hooks';
+import { SendFormData, UseFormStore } from './components/Hooks';
 
-export const Outside = (props: Partial<IRFormProps>) => {
+interface Props extends Partial<IRFormProps> {
+  setFormData: SendFormDataProps['onSend'];
+}
+
+export const Outside = ({ setFormData, ...props }: Props) => {
   const form = useFormInstance('formOutside');
   const [reset] = useUnit([form.reset]);
   return (
@@ -20,15 +25,17 @@ export const Outside = (props: Partial<IRFormProps>) => {
           label="Name"
           validators={[required()]}
         />
-        <UseFormStore title="active" store="$active" />
-        <UseFormStore title="values" store="$values" />
+        <UseFormStore title="active" store="$active"/>
+        <UseFormStore title="values" store="$values"/>
         <Button data-test="submit" type="submit">
           Submit
         </Button>
-        <span style={{ display: 'inline-block', width: 20 }} />
+        <span style={{ display: 'inline-block', width: 20 }}/>
         <Button secondary data-test="reset" onClick={() => reset()}>
           Reset
         </Button>
+        <span style={{ display: 'inline-block', width: 20 }}/>
+        <SendFormData onSend={setFormData} />
       </Form>
       <div style={{ width: 400, margin: '0 auto' }}>
         <TextField

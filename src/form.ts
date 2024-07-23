@@ -48,6 +48,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const setUntouchedValues = dm.event<Record<string, any>>('set-untouched');
   const onChange = dm.event<{ name: string; value: any }>('on-change');
   const onBlur = dm.event<{ name: string; value: any }>('on-blur');
+  const submitDone = dm.event<void>('submit-done');
   const reset = dm.event<string | void>('reset');
   const erase = dm.event<void>('erase');
   const validate = dm.event<IValidationParams>('validate');
@@ -135,9 +136,9 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const $touches = dm
     .store<Record<string, boolean>>({}, { name: '$touches' })
     .on(onChange, (state, { name }) =>
-      Object.assign({}, state, { [name]: true }),
+      state[name] ? state : Object.assign({}, state, { [name]: true }),
     )
-    .reset(erase, reset);
+    .reset(erase, reset, submitDone);
 
   /**
    * Calculates form touched state
@@ -385,6 +386,14 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
       );
     },
     target: setErrors,
+  });
+
+  /**
+   * Pass submit done event
+   */
+  sample({
+    clock: submit.done,
+    target: submitDone,
   });
 
   /**
