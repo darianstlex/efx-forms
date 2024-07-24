@@ -52,6 +52,7 @@ export const SampleUpdate = ({ setFormData, ...props }: Props) => {
           data-test="one"
           name="one"
           label="One"
+          initialValue={55}
         />
       </div>
       <Form
@@ -59,7 +60,7 @@ export const SampleUpdate = ({ setFormData, ...props }: Props) => {
         initialValues={{ one: 0, two: 0, three: 0 }}
         {...props}
       >
-        <NumberField data-test="two" name="two" label="Two"/>
+        <NumberField data-test="two" name="two" label="Two" />
         <NumberField data-test="three" name="three" label="Three"/>
         <UseFormStore title="values" store="$values"/>
         <SendFormData onSend={setFormData}/>

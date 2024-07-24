@@ -1,8 +1,7 @@
 import type { ReactElement } from 'react';
-import { useStoreMap } from 'effector-react';
 
-import { useFormInstance } from './useFormInstance';
 import type { IRIfFieldValueProps } from './types';
+import { useFieldStore } from './useFieldStore';
 
 /**
  * Conditional rendering based on field value
@@ -14,8 +13,7 @@ export const IfFieldValue = ({
   formName,
   render,
 }: IRIfFieldValueProps) => {
-  const form = useFormInstance(formName);
-  const value = useStoreMap(form.$values, (it) => it[field]);
+  const value = useFieldStore({ store: '$values', formName, name: field });
   const show = check(value);
   const output = () => (render ? render(value) : children);
 

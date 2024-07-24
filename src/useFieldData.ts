@@ -1,17 +1,14 @@
-import { useStoreMap } from 'effector-react';
-
-import { useFormInstance } from './useFormInstance';
+import { useFieldStore } from './useFieldStore';
 
 /**
  * Return field data belongs to the current or provided form
  */
 export const useFieldData = (name: string, formName?: string) => {
-  const form = useFormInstance(formName);
   return {
-    value: useStoreMap(form.$values, (it) => it[name]),
-    active: useStoreMap(form.$active, (it) => it[name]),
-    dirty: useStoreMap(form.$dirties, (it) => it[name]),
-    error: useStoreMap(form.$error, (it) => it[name]),
-    errors: useStoreMap(form.$errors, (it) => it[name]),
+    value: useFieldStore({ store: '$values', formName, name }),
+    active: useFieldStore({ store: '$active', formName, name }),
+    dirty: useFieldStore({ store: '$dirties', formName, name }),
+    error: useFieldStore({ store: '$error', formName, name }),
+    errors: useFieldStore({ store: '$errors', formName, name }),
   };
 };

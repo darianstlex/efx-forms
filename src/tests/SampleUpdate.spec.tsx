@@ -26,7 +26,7 @@ test('Sample Update', async ({ mount }) => {
   /**
    * Check if values are correct after initial render
    */
-  await expect(one).toHaveValue('0');
+  await expect(one).toHaveValue('55');
   await expect(two).toHaveValue('0');
   await expect(three).toHaveValue('0');
 
