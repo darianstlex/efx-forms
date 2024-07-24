@@ -299,6 +299,8 @@ interface FormInstance {
   $dirties: Store<Record<string, boolean>>;
   /** EVENT - Form reset - resets form to initial values */
   reset: EventCallable<string | void>;
+  /** EVENT - Reset untouched fields to initial values */
+  resetUntouched: EventCallable<string[]>;
   /** EVENT - Form erase - reset form and delete all assigned form data */
   erase: EventCallable<void>;
   /** EVENT - Set form config */
