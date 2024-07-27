@@ -83,6 +83,10 @@ test('Active Fields', async ({ mount }) => {
     'user.name': 'Initial User',
     'user.hasEmail': false,
   });
+  expect(data.form.touches).toEqual({
+    'user.email': false,
+    'user.hasEmail': true,
+  });
   // email error should be reset on field deactivation
   expect(data.form.error).toEqual({});
 
