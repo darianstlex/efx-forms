@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { createWatch } from 'effector';
 import { useProvidedScope } from 'effector-react';
 
@@ -32,21 +32,27 @@ export const useFieldStore = ({
 }: UseFieldStoreProps) => {
   const scope = useProvidedScope();
   const form = useFormInstance(formName);
-  const [value, setValue] = useState();
+  const [value, setValue] = useState(defaultValue);
+
+  const updateValue = useCallback((values?: Record<string, any>) => {
+    const newValue = values?.[name] !== undefined ? values[name] : defaultValue;
+    newValue !== value && setValue(newValue);
+  }, [defaultValue, name, value]);
 
   useEffect(() => {
+    updateValue(scope?.getState(form[store]));
     const unwatch = createWatch({
       unit: form[store],
       scope: scope || undefined,
       fn: (values) => {
-        setValue(values?.[name]);
+        updateValue(values);
       },
     });
 
     return () => {
       unwatch();
     };
-  }, [store, name, form, scope]);
+  }, [form, scope, store, updateValue]);
 
-  return value ?? defaultValue;
+  return value;
 };

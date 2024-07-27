@@ -8,8 +8,8 @@ import { useFieldStore } from './useFieldStore';
  */
 export const useField = (name: string, formName?: string) => {
   const form = useFormInstance(formName);
-  const [reset, validate, setActive, setValue, onChange] = useUnit([
-    form.reset,
+  const [resetField, validate, setActive, setValue, onChange] = useUnit([
+    form.resetField,
     form.validate,
     form.setActive,
     form.setValues,
@@ -21,7 +21,7 @@ export const useField = (name: string, formName?: string) => {
     dirty: useFieldStore({ store: '$dirties', formName, name }),
     error: useFieldStore({ store: '$error', formName, name }),
     errors: useFieldStore({ store: '$errors', formName, name }),
-    reset: () => reset(name),
+    reset: () => resetField(name),
     validate: () => validate({ name }),
     setActive: (value: boolean) => setActive({ name, value }),
     setValue: (value: any) => setValue({ name, value }),

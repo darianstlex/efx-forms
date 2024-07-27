@@ -125,7 +125,9 @@ export interface IForm {
   /** $$STORE - Form dirties - all fields dirty state - flat */
   $dirties: Store<Record<string, boolean>>;
   /** EVENT - Form reset - resets form to initial values */
-  reset: EventCallable<string | void>;
+  reset: EventCallable<void>;
+  /** EVENT - Field reset - resets field to initial value */
+  resetField: EventCallable<string>;
   /** EVENT - Reset untouched fields to initial values */
   resetUntouched: EventCallable<string[]>;
   /** EVENT - Form erase - reset form and delete all assigned form data */
