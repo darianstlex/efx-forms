@@ -1,8 +1,7 @@
 import React from 'react';
-import { useUnit } from 'effector-react';
 
 import type { IFieldConfig } from '../index';
-import { useFormInstance } from '../index';
+import { useFormMethods } from '../useFormMethods';
 import { TextField } from './components/Input';
 import { Button } from './components/Button';
 import type { SendFormDataProps } from './components/Hooks';
@@ -14,8 +13,7 @@ interface Props {
 }
 
 export const FieldUpdate = ({ fieldConfig, setFormData }: Props) => {
-  const form = useFormInstance('formFieldUpdate');
-  const [reset] = useUnit([form.reset]);
+  const { reset } = useFormMethods('formFieldUpdate');
 
   return (
     <div style={{ margin: '20px auto', width: 400 }}>

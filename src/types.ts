@@ -8,13 +8,13 @@ export type TFieldValidator = (data?: {
   msg?: string;
 }) => (value: any, values?: Record<string, any>) => string | false;
 
-type TFiltered<T, TK> = Pick<
+export type TFiltered<T, TK> = Pick<
   T,
   { [K in keyof T]: T[K] extends TK ? K : never }[keyof T]
 >;
-type TFilteredKeyOf<T, TK> = keyof TFiltered<T, TK>;
-type TFilteredType<T, TK> = Required<T>[TFilteredKeyOf<T, TK>];
-type TExtractStoreTypes<P> = P extends Store<infer T> ? T : never;
+export type TFilteredKeyOf<T, TK> = keyof TFiltered<T, TK>;
+export type TFilteredType<T, TK> = Required<T>[TFilteredKeyOf<T, TK>];
+export type TExtractStoreTypes<P> = P extends Store<infer T> ? T : never;
 
 export type TFormStores = TFiltered<IForm, Store<any>>;
 export type TFormStoreKey = TFilteredKeyOf<IForm, Store<any>>;
@@ -141,10 +141,6 @@ export interface IForm {
   setActive: EventCallable<{ name: string; value: any }>;
   /** EVENT - Form update fields values */
   setValues: EventCallable<Record<string, any>>;
-  /** EVENT - Form update touched fields values */
-  setTouchedValues: EventCallable<Record<string, any>>;
-  /** EVENT - Form update untouched fields values */
-  setUntouchedValues: EventCallable<Record<string, any>>;
   /** EVENT - Form onChange event */
   onChange: EventCallable<{ name: string; value: any }>;
   /** EVENT - Form onBlur event */
@@ -251,14 +247,14 @@ export interface IRIfFieldValueProps {
 
 export interface IRFormDataProviderProps {
   /** render function - args are subscribed stores in array */
-  children: (values: any) => ReactNode;
+  children: (values: any) => ReactElement;
   /** PROPERTY - form name to get data from */
   name?: string;
 }
 
 export interface IRFieldDataProviderProps {
   /** render function - args are the form data */
-  children: (values: any) => ReactNode;
+  children: (values: any) => ReactElement;
   /** PROPERTY - field name to get data from */
   name: string;
   /** PROPERTY - form name to get data from */

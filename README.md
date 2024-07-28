@@ -297,41 +297,37 @@ interface FormInstance {
   $dirty: Store<boolean>;
   /** $$STORE - Form dirties - all fields dirty state - flat */
   $dirties: Store<Record<string, boolean>>;
+  /** PROP - Form config */
+  config: IFormConfig;
+  /** PROP - Form config */
+  configs: Record<string, IFieldConfig>;
+  /** EVENT - Form erase - reset form and delete all assigned form data */
+  erase: EventCallable<void>;
+  /** EVENT - Form onChange event */
+  onChange: EventCallable<{ name: string; value: any; }>;
+  /** EVENT - Form onBlur event */
+  onBlur: EventCallable<{ name: string; value: any; }>;
   /** EVENT - Form reset - resets form to initial values */
   reset: EventCallable<void>;
   /** EVENT - Field reset - resets field to initial value */
   resetField: EventCallable<string>;
   /** EVENT - Reset untouched fields to initial values */
   resetUntouched: EventCallable<string[]>;
-  /** EVENT - Form erase - reset form and delete all assigned form data */
-  erase: EventCallable<void>;
   /** EVENT - Set form config */
   setActive: EventCallable<{ name: string; value: boolean; }>;
+  /** METHOD - Set form config */
+  setConfig: (cfg: IFormConfig) => void;
+  /** METHOD - Set field config */
+  setFieldConfig: (cfg: IFieldConfig) => void;
+  /** EVENT - Form update field values */
+  setValues: EventCallable<Record<string, any>>;
   /**
    * EFFECT - Form submit - callback will be called with form values if form is valid
    * or if callback returns promise reject with errors, will highlight them in the form
    */
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
-  /** EVENT - Form update field values */
-  setValues: EventCallable<Record<string, any>>;
-  /** EVENT - Form update touched field values */
-  setTouchedValues: EventCallable<Record<string, any>>;
-  /** EVENT - Form update untouched field values */
-  setUntouchedValues: EventCallable<Record<string, any>>;
-  /** EVENT - Form onChange event */
-  onChange: EventCallable<{ name: string; value: any; }>;
-  /** EVENT - Form onBlur event */
-  onBlur: EventCallable<{ name: string; value: any; }>;
   /** EVENT - Form validate trigger */
   validate: EventCallable<IValidationParams>;
-  /** PROP - Form config */
-  config: IFormConfig;
-  /** METHOD - Set form config */
-  setConfig: (cfg: IFormConfig) => void;
-  /** PROP - Form config */
-  configs: Record<string, IFieldConfig>;
-  /** METHOD - Set field config */
-  setFieldConfig: (cfg: IFieldConfig) => void;
 }
 ```
 
@@ -343,6 +339,7 @@ import { useFormData } from 'efx-forms/useFormData';
 import { useFormValues } from 'efx-forms/useFormValues';
 import { useFormStore } from 'efx-forms/useFormStore';
 import { useFormStores } from 'efx-forms/useFormStores';
+import { useFormMethods } from 'efx-forms/useFormMethods';
 import { useField } from 'efx-forms/useField';
 import { useFieldData } from 'efx-forms/useFieldData';
 
@@ -402,6 +399,15 @@ const [errors, values] = useFormStores(['$errors', '$values']);
  * @type (formName?: string) => IFormValues
  */
 const formValues = useFormValues();
+
+/**
+ * Hook - return form (from context) methods or from provided form.
+ * Form name is needed when hook is used outside of the form context
+ * or refers to another form.
+ * @type (formName?: string) => ReturnType<typeof useFormMethods>
+ */
+const formMethods = useFormMethods();
+
 
 /**
  * Hook - return field by name

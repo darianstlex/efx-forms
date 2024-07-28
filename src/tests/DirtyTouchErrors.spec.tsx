@@ -82,7 +82,9 @@ test('Dirty/Touch/Errors', async ({ mount }) => {
   await sendData.click();
 
   await expect(userNameError).not.toBeAttached();
-  expect(data.form.error).toEqual({});
+  expect(data.form.error).toEqual({
+    'user.name': null,
+  });
   expect(data.form.dirties).toEqual({});
   expect(data.form.touches).toEqual({
     'user.name': true,
@@ -107,12 +109,14 @@ test('Dirty/Touch/Errors', async ({ mount }) => {
 
   expect(data.form.error).toEqual({
     'user.email': 'This field is required',
+    'user.name': null,
   });
   expect(data.form.errors).toEqual({
     'user.email': [
       'This field is required',
       'Must be a valid email',
     ],
+    'user.name': null,
   });
 
   await userEmail.fill('test@email');
@@ -120,13 +124,17 @@ test('Dirty/Touch/Errors', async ({ mount }) => {
 
   expect(data.form.error).toEqual({
     'user.email': 'Must be a valid email',
+    'user.name': null,
   });
 
   await userEmail.fill('test@email.com');
   await sendData.click();
 
   await expect(userEmailError).not.toBeAttached();
-  expect(data.form.error).toEqual({});
+  expect(data.form.error).toEqual({
+    'user.email': null,
+    'user.name': null,
+  });
 
   // password
   await submit.click();
@@ -137,9 +145,13 @@ test('Dirty/Touch/Errors', async ({ mount }) => {
   await expect(userPasswordError).toContainText('Required!');
 
   expect(data.form.error).toEqual({
+    'user.email': null,
+    'user.name': null,
     'user.password': 'Required!',
   });
   expect(data.form.errors).toEqual({
+    'user.email': null,
+    'user.name': null,
     'user.password': [
       'Required!',
     ],

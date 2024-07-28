@@ -1,8 +1,7 @@
 import React from 'react';
-import { useUnit } from 'effector-react';
-
 import type { IRFormProps } from '../index';
-import { Form, useFormInstance } from '../index';
+import { Form } from '../index';
+import { useFormMethods } from '../useFormMethods';
 import { required, email } from '../validators';
 import { TextField } from './components/Input';
 import { Button } from './components/Button';
@@ -16,8 +15,7 @@ interface Props extends Partial<IRFormProps> {
 }
 
 export const Active = ({ setFormData, ...props }: Props) => {
-  const form = useFormInstance('formTwo');
-  const [reset] = useUnit([form.reset]);
+  const { reset } = useFormMethods('formTwo');
   return (
     <Form name="formTwo" {...props}>
       <TextField

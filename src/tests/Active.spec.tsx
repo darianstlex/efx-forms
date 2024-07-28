@@ -88,13 +88,19 @@ test('Active Fields', async ({ mount }) => {
     'user.hasEmail': true,
   });
   // email error should be reset on field deactivation
-  expect(data.form.error).toEqual({});
+  expect(data.form.error).toEqual({
+    'user.email': null,
+    'user.hasEmail': null,
+  });
 
   // submit to check validation errors
   await submit.click();
   await sendData.click();
   // email should not be in the list as its inactive
   expect(data.form.error).toEqual({
+    'user.email': null,
+    'user.hasEmail': null,
+    'user.name': null,
     'user.password': 'This field is required',
   });
 });

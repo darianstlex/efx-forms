@@ -1,8 +1,8 @@
 import React from 'react';
-import { useUnit } from 'effector-react';
 
 import type { IRFormProps } from '../index';
-import { Form, useFormInstance } from '../index';
+import { Form } from '../index';
+import { useFormMethods } from '../useFormMethods';
 import { required } from '../validators';
 import { TextField } from './components/Input';
 import { Button } from './components/Button';
@@ -14,8 +14,7 @@ interface Props extends Partial<IRFormProps> {
 }
 
 export const Update = ({ setFormData, ...props }: Props) => {
-  const form = useFormInstance('formUpdate');
-  const [reset] = useUnit([form.reset]);
+  const { reset } = useFormMethods('formUpdate');
   const submit = async (values: Record<string, any>) => {
     console.log(values); // eslint-disable-line
     return Promise.reject({

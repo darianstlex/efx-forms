@@ -200,5 +200,6 @@ test('Form Update', async ({ mount }) => {
 
   expect(data.form.error).toEqual({
     'user.name': 'This user is taken',
+    'user.password': null,
   });
 });
