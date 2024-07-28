@@ -1,9 +1,9 @@
 import { useCallback, useEffect, useState } from 'react';
-import { createWatch } from 'effector';
+import { createWatch, type UnitValue } from 'effector';
 import { useProvidedScope } from 'effector-react';
 
 import { useFormInstance } from './useFormInstance';
-import type { TFormStoreKey } from './types';
+import type { IForm, TFormStoreKey } from './types';
 
 type TFieldStore = Extract<
   TFormStoreKey,
@@ -24,12 +24,12 @@ interface UseFieldStoreProps {
   defaultValue?: any;
 }
 
-export const useFieldStore = ({
+export const useFieldStore = <T extends UseFieldStoreProps>({
   store,
   name,
   formName,
   defaultValue,
-}: UseFieldStoreProps) => {
+}: T) => {
   const scope = useProvidedScope();
   const form = useFormInstance(formName);
   const [value, setValue] = useState(defaultValue);
@@ -54,5 +54,5 @@ export const useFieldStore = ({
     };
   }, [form, scope, store, updateValue]);
 
-  return value;
+  return value as UnitValue<IForm[T['store']]>[string];
 };

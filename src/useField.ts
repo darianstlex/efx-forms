@@ -3,27 +3,11 @@ import { useCallback } from 'react';
 
 import { useFormInstance } from './useFormInstance';
 import { useFieldStore } from './useFieldStore';
-import type { IFieldConfig } from './types';
-
-interface Result {
-  value: any;
-  active: boolean;
-  dirty: boolean;
-  error: string | null;
-  errors: string[] | null;
-  config: IFieldConfig;
-  reset: () => void;
-  validate: () => void;
-  setActive: (value: boolean) => void;
-  setValue: (value: any) => void;
-  change: (value: any) => void;
-  setConfig: (cfg: IFieldConfig) => void;
-}
 
 /**
  * Return field data/controls belongs to the current or provided form
  */
-export const useField = (name: string, formName?: string): Result => {
+export const useField = (name: string, formName?: string) => {
   const form = useFormInstance(formName);
   const [resetField, validate, setActive, setValue, onChange] = useUnit([
     form.resetField,
