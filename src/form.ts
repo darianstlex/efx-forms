@@ -299,7 +299,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
       const validators: ReturnType<TFieldValidator>[] =
         getFieldConfigProp(source?.name as string, 'validators') || [];
       const errors = validators
-        .map?.((vd) => vd(values[source?.name as string], values))
+        ?.map?.((vd) => vd(values[source?.name as string], values))
         ?.filter?.(Boolean) as string[];
       return {
         name: source?.name as string,

@@ -65,8 +65,8 @@ export interface IFieldConfig {
   /** PROPERTY - validateOnChange - will trigger validation on change */
   validateOnChange?: boolean;
   /**
-   * PROPERTY - disableFieldReinit - if true will skip field update on initialValue changes
-   * if field is not touched
+   * PROPERTY - disableFieldReinit - if true will skip field update
+   * on initialValue changes if field is not touched
    */
   disableFieldReinit?: boolean;
 }
@@ -85,8 +85,8 @@ export interface IFormConfig {
   /** PROPERTY - skipClientValidation - if true will skip validation on submit */
   skipClientValidation?: boolean;
   /**
-   * PROPERTY - disableFieldsReinit - if true will skip fields update on initialValue changes
-   * if field is not touched
+   * PROPERTY - disableFieldsReinit - if true will skip fields update
+   * on initialValue changes if field is not touched
    */
   disableFieldsReinit?: boolean;
   /** PROPERTY - onSubmit - submit callback */
