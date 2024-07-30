@@ -342,6 +342,7 @@ import { useFormStores } from 'efx-forms/useFormStores';
 import { useFormMethods } from 'efx-forms/useFormMethods';
 import { useField } from 'efx-forms/useField';
 import { useFieldData } from 'efx-forms/useFieldData';
+import { useFieldStore } from 'efx-forms/useFieldStore';
 
 /**
  * Return form by name
@@ -424,6 +425,24 @@ const field = useField('field-one');
  * @type (name: string, formName?: string) => ReturnType<typeof useFieldData>
  */
 const fieldData = useFieldData('field-one');
+
+/**
+ * Hook - return field store value
+ * Form name is needed when hook is used outside of form context
+ * or refers to another form.
+ * @type (data: {
+ *   store: string;
+ *   name: string;
+ *   formName?: string;
+ *   defaultValue?: any;
+ * }) => ReturnType<typeof useFieldStore>
+ */
+const fieldActive = useFieldStore({
+  store: '$active',
+  name: 'user.name',
+  formName: 'login',
+  defaultValue: '',
+});
 ```
 
 # Utils
