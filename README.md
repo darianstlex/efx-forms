@@ -52,7 +52,11 @@ const Page = () => {
         ]}
       />
       {[0, 1, 2].map((idx) => (
-        <TextField key={idx} name={`address[${idx}]`} label={`Address ${idx + 1}`} />
+        <TextField
+          key={idx}
+          name={`address[${idx}]`}
+          label={`Address ${idx + 1}`}
+        />
       ))}
       <FormDataProvider>
         {({ values }) => (
