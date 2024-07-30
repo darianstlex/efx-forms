@@ -52,10 +52,10 @@ const Page = () => {
         ]}
       />
       {[0, 1, 2].map((idx) => (
-        <TextField name={`address[${idx}]`} label={`Address ${idx + 1}`} />
+        <TextField key={idx} name={`address[${idx}]`} label={`Address ${idx + 1}`} />
       ))}
       <FormDataProvider>
-        {({ values }) =>(
+        {({ values }) => (
           <div>
             <pre>JSON.stringify(values)</pre>
             <pre>JSON.stringify(shapeFy(values))</pre>
