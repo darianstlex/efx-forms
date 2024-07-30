@@ -1,14 +1,16 @@
-import { useFieldStore } from './useFieldStore';
+import { useFormInstance } from './useFormInstance';
+import { useStoreProp } from './useStoreProp';
 
 /**
  * Return field data belongs to the current or provided form
  */
 export const useFieldData = (name: string, formName?: string) => {
+  const form = useFormInstance(formName);
   return {
-    value: useFieldStore({ store: '$values', formName, name }),
-    active: useFieldStore({ store: '$active', formName, name, defaultValue: false }),
-    dirty: useFieldStore({ store: '$dirties', formName, name, defaultValue: false }),
-    error: useFieldStore({ store: '$error', formName, name, defaultValue: null }),
-    errors: useFieldStore({ store: '$errors', formName, name, defaultValue: null }),
+    value: useStoreProp(form.$values, name),
+    active: useStoreProp(form.$active, name, true),
+    dirty: useStoreProp(form.$dirties, name, false),
+    error: useStoreProp(form.$error, name, null),
+    errors: useStoreProp(form.$errors, name, null),
   };
 };

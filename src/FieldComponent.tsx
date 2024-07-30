@@ -6,14 +6,9 @@ import pickBy from 'lodash/pickBy';
 import { FIELD_CONFIG } from './constants';
 import { useFormInstance } from './useFormInstance';
 import type { IRFieldProps } from './types';
-import { useFieldStore } from './useFieldStore';
+import { useStoreProp } from './useStoreProp';
 
-const InternalFieldInst = ({
-  Field,
-  name,
-  formName,
-  ...rest
-}: {
+const InternalFieldInst = ({ Field, name, formName, ...rest }: {
   name: string;
   formName?: string;
   Field: ComponentType<any>;
@@ -21,9 +16,9 @@ const InternalFieldInst = ({
   const form = useFormInstance(formName);
   const [onFieldBlur, onFieldChange] = useUnit([form.onBlur, form.onChange]);
 
-  const fieldValue = useFieldStore({ store: '$values', formName, name });
-  const error = useFieldStore({ store: '$error', formName, name, defaultValue: null });
-  const errors = useFieldStore({ store: '$errors', formName, name, defaultValue: null });
+  const fieldValue = useStoreProp(form.$values, name);
+  const error = useStoreProp(form.$error, name, null);
+  const errors = useStoreProp(form.$errors, name, null);
 
   const onChange = useCallback((value: any) => {
     onFieldChange({ name, value });

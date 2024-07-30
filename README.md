@@ -343,6 +343,8 @@ import { useFormMethods } from 'efx-forms/useFormMethods';
 import { useField } from 'efx-forms/useField';
 import { useFieldData } from 'efx-forms/useFieldData';
 import { useFieldStore } from 'efx-forms/useFieldStore';
+import { useStoreProp } from 'efx-forms/useStoreProp';
+import { useStorePropFn } from 'efx-forms/useStorePropFn';
 
 /**
  * Return form by name
@@ -443,6 +445,26 @@ const fieldActive = useFieldStore({
   formName: 'login',
   defaultValue: '',
 });
+
+/**
+ * Hook - return store value
+ * @type (
+ *   store: Store,
+ *   prop: string,
+ *   defaultValue?: any,
+ * ) => ReturnType<typeof useStoreProp>
+ */
+const storePropValue = useStoreProp(form.$values, 'user.name', '');
+
+/**
+ * Hook - return store value
+ * @type (
+ *   store: Store,
+ *   getter: (value: any) => any,
+ *   defaultValue?: any,
+ * ) => ReturnType<typeof useStoreProp>
+ */
+const storePropFnValue = useStorePropFn(form.$values, (val) => val.name, '');
 ```
 
 # Utils

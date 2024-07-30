@@ -2,12 +2,11 @@ import { useUnit } from 'effector-react';
 import { useCallback } from 'react';
 
 import { useFormInstance } from './useFormInstance';
-import { useStoreProp } from './useStoreProp';
 
 /**
- * Return field data/controls belongs to the current or provided form
+ * Return field controls belongs to the current or provided form
  */
-export const useField = (name: string, formName?: string) => {
+export const useFieldMethods = (name: string, formName?: string) => {
   const form = useFormInstance(formName);
   const [resetField, validate, setActive, setValue, onChange] = useUnit([
     form.resetField,
@@ -17,11 +16,6 @@ export const useField = (name: string, formName?: string) => {
     form.onChange,
   ]);
   return {
-    value: useStoreProp(form.$values, name),
-    active: useStoreProp(form.$active, name, true),
-    dirty: useStoreProp(form.$dirties, name, false),
-    error: useStoreProp(form.$error, name, null),
-    errors: useStoreProp(form.$errors, name, null),
     reset: useCallback(() => resetField(name), [name, resetField]),
     validate: useCallback(() => validate({ name }), [name, validate]),
     setActive: useCallback((value: boolean) => setActive({ name, value }), [name, setActive]),

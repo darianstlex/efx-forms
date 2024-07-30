@@ -10,12 +10,7 @@ export const useFormName = () => {
   return useContext(FormNameContext);
 };
 
-export const FormProvider = ({
-  name,
-  children,
-}: {
+export const FormProvider = ({ name, children }: {
   name: string;
   children: React.ReactNode;
-}) => (
-  <FormNameContext.Provider value={name}>{children}</FormNameContext.Provider>
-);
+}) => (<FormNameContext.Provider value={name}>{children}</FormNameContext.Provider>);

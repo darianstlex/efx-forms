@@ -137,7 +137,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     const activeErrors = reduce(errors, (acc, error, name) => {
       error && active[name] && (acc[name] = error);
       return acc;
-    }, {});
+    }, {} as Record<string, string | null>);
     return !isEmpty(activeErrors) ? !hasTruthy(activeErrors) : true;
   }));
 
@@ -212,7 +212,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     const activeTouches = reduce(touches, (acc, touch, name) => {
       touch && active[name] && (acc[name] = touch);
       return acc;
-    }, {});
+    }, {} as Record<string, boolean>);
     return !isEmpty(activeTouches) ? hasTruthy(activeTouches) : false;
   }));
 
@@ -235,7 +235,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     const activeDirties = reduce(dirties, (acc, dirty, name) => {
       dirty && active[name] && (acc[name] = dirty);
       return acc;
-    }, {});
+    }, {} as Record<string, boolean>);
     return !isEmpty(activeDirties) ? hasTruthy(activeDirties) : false;
   }));
 
