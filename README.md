@@ -35,36 +35,55 @@ const validators = {
   name: [required()],
 }
 
-const Page = ({ name }) => {
+const Page = () => {
   const submit = (values) => {
     console.log(values);
   }
   return (
     <Form name="user-form" onSubmit={submit} validators={validators}>
-      <TextField
-        name="name"
-        label="Name"
-      />
+      <TextField name="name" label="Name" />
       <TextField
         name="email"
         label="Email"
         type="email"
         validators={[
-          required({ msg: `Hey ${name} email is required` }),
+          required({ msg: `Hey, email is required` }),
           email(),
         ]}
       />
+      {[0, 1, 2].map((idx) => (
+        <TextField name={`address[${idx}]`} label={`Address ${idx + 1}`} />
+      ))}
       <FormDataProvider>
-        {({ values, errors }) =>(
+        {({ values }) =>(
           <div>
             <pre>JSON.stringify(values)</pre>
-            <pre>JSON.stringify(errors)</pre>
+            <pre>JSON.stringify(shapeFy(values))</pre>
           </div>
         )}
       </FormDataProvider>
       <button type="submit">Submit</button>
     </Form>
   )
+}
+```
+```ts
+// Form values
+values = {
+  'name': 'John',
+  'email': 'john@test.com',
+  'address[0]': 'First Line',
+  'address[1]': 'Second Line',
+  'address[2]': 'Postcode',
+}
+valuesShape = {
+  'name': 'John',
+  'email': 'john@test.com',
+  'address': [
+    'First Line',
+    'Second Line',
+    'Postcode',
+  ]
 }
 ```
 
