@@ -27,11 +27,11 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   } as { config: IFormConfig; configs: Record<string, IFieldConfig> };
 
   const getFieldConfigProp = (name: string, prop: string) => {
-    return data.configs?.[name]?.[prop] !== undefined ? data.configs[name][prop] : data.config[prop];
+    return prop in (data.configs?.[name] || {}) ? data.configs[name][prop] : data.config[prop];
   };
 
   const getFieldInitVal = (name: string) => {
-    return data.configs?.[name]?.initialValue !== undefined
+    return 'initialValue' in (data.configs?.[name] || {})
       ? data.configs[name].initialValue
       : data.config?.initialValues?.[name];
   };
