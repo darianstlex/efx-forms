@@ -85,7 +85,9 @@ test('Dirty/Touch/Errors', async ({ mount }) => {
   expect(data.form.error).toEqual({
     'user.name': null,
   });
-  expect(data.form.dirties).toEqual({});
+  expect(data.form.dirties).toEqual({
+    'user.name': false,
+  });
   expect(data.form.touches).toEqual({
     'user.name': true,
   });
@@ -103,6 +105,7 @@ test('Dirty/Touch/Errors', async ({ mount }) => {
   });
   expect(data.form.dirties).toEqual({
     'user.email': true,
+    'user.name': false,
   });
 
   await expect(userEmailError).toContainText('This field is required');

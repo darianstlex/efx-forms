@@ -24,6 +24,12 @@ export const Outside = ({ setFormData, ...props }: Props) => {
           label="Name"
           validators={[required()]}
         />
+        <TextField
+          data-test="user.password"
+          name="user.password"
+          label="Password"
+          validators={[required()]}
+        />
         <UseFormStore title="active" store="$active"/>
         <UseFormStore title="values" store="$values"/>
         <Button data-test="submit" type="submit">
@@ -39,9 +45,9 @@ export const Outside = ({ setFormData, ...props }: Props) => {
       <div style={{ width: 400, margin: '0 auto' }}>
         <TextField
           formName="formOutside"
-          data-test="user.password"
+          data-test="user.password-outside"
           name="user.password"
-          label="Password"
+          label="Password Outside"
           validators={[required()]}
         />
       </div>

@@ -17,6 +17,7 @@ export const Input = ({
   error,
   onChange,
   name,
+  value,
   ...rest
 }: InputProps & IFieldProps) => (
   <div className="input-wrapper">
@@ -27,6 +28,7 @@ export const Input = ({
       className="input-field"
       type="text"
       onChange={(e) => onChange(e.target.value)}
+      value={value || ''}
       {...rest}
     />
     {error && (

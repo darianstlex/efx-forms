@@ -16,6 +16,7 @@ import type {
   ISubmitResponseSuccess,
   IValidationParams,
   TFieldValidator,
+  TCommonConfigKeys,
 } from './types';
 
 import { FIELD_CONFIG, FORM_CONFIG } from './constants';
@@ -23,10 +24,10 @@ import { FIELD_CONFIG, FORM_CONFIG } from './constants';
 export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const data = {
     config: Object.assign({}, FORM_CONFIG, formConfig),
-    configs: {},
+    configs: {} as Record<string, IFieldConfig>,
   } as { config: IFormConfig; configs: Record<string, IFieldConfig> };
 
-  const getFieldConfigProp = (name: string, prop: string) => {
+  const getFieldConfigProp = (name: string, prop: TCommonConfigKeys) => {
     return prop in (data.configs?.[name] || {}) ? data.configs[name][prop] : data.config[prop];
   };
 
@@ -34,6 +35,12 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     return 'initialValue' in (data.configs?.[name] || {})
       ? data.configs[name].initialValue
       : data.config?.initialValues?.[name];
+  };
+
+  const getFieldValidators = (name: string) => {
+    return 'validators' in (data.configs?.[name] || {})
+      ? data.configs[name].validators
+      : data.config?.validators?.[name];
   };
 
   const dm = domain.domain(formConfig.name);
@@ -219,14 +226,13 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   /**
    * Dirties store - keeps all fields dirty state
    */
-  const $dirties = $values.map((values) => {
-    const dirties = reduce(
-      values,
-      (acc, _, field: string) => Object.assign(acc, { [field]: values[field] !== getFieldInitVal(field) }),
-      {} as Record<string, boolean>,
-    );
-    return pickBy(dirties, (dirty) => dirty);
-  });
+  const $dirties = dm
+    .store<Record<string, boolean>>({}, { name: '$dirties' })
+    .on(onChange, (state, { name, value }) => {
+      const dirty = value !== getFieldInitVal(name);
+      return state[name] === dirty ? state : Object.assign({}, state, { [name]: dirty });
+    })
+    .reset(erase, reset, submit.done);
 
   /**
    * Calculates form dirty state
@@ -276,7 +282,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
         active,
         (acc, _, field) => {
           const validators: ReturnType<TFieldValidator>[] =
-            getFieldConfigProp(field, 'validators') || [];
+            getFieldValidators(field) || [];
           const errors = validators
             ?.map?.((vd) => vd(values[field], values))
             ?.filter(Boolean) as string[];
@@ -297,7 +303,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     filter: (_, source) => !!source?.name,
     fn: ({ values }, source) => {
       const validators: ReturnType<TFieldValidator>[] =
-        getFieldConfigProp(source?.name as string, 'validators') || [];
+        getFieldValidators(source?.name as string) || [];
       const errors = validators
         ?.map?.((vd) => vd(values[source?.name as string], values))
         ?.filter?.(Boolean) as string[];
@@ -316,7 +322,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     clock: onBlur,
     source: { touches: $touches, active: $active },
     filter: ({ touches }, { name }) =>
-      touches[name] && getFieldConfigProp(name, 'validateOnBlur'),
+      touches[name] && !!getFieldConfigProp(name, 'validateOnBlur'),
     fn: (_, { name }) => ({ name }),
     target: validate,
   });
@@ -326,7 +332,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: onChange,
-    filter: ({ name }) => getFieldConfigProp(name, 'validateOnChange'),
+    filter: ({ name }) => !!getFieldConfigProp(name, 'validateOnChange'),
     fn: ({ name }) => ({ name }),
     target: validate,
   });

@@ -4,6 +4,7 @@ import { test, expect } from '@playwright/experimental-ct-react';
 import { Outside } from './Outside';
 import { sel } from './selectors';
 import type { OnSendParams } from './components/Hooks';
+import { FieldUpdate } from './FieldUpdate';
 
 test('Field Outside Form', async ({ mount }) => {
   const data = {
@@ -26,6 +27,7 @@ test('Field Outside Form', async ({ mount }) => {
   );
   const userName = component.locator(sel.userName);
   const userPassword = component.locator(sel.userPassword);
+  const userPasswordOutside = component.locator(sel.userPasswordOutside);
   const submit = component.locator(sel.submit);
   const reset = component.locator(sel.reset);
   const sendData = component.locator(sel.sendData);
@@ -47,7 +49,7 @@ test('Field Outside Form', async ({ mount }) => {
    */
   // edit fields
   await userName.fill('Test User');
-  await userPassword.fill('pass');
+  await userPasswordOutside.fill('pass');
 
   /**
    * Expect form data to be correct
@@ -64,15 +66,39 @@ test('Field Outside Form', async ({ mount }) => {
     'user.password': 'pass',
   });
 
+  await expect(userPassword).toHaveValue('pass');
+
   /**
    * STEP_3: Submit form and check submitted values
    */
   // submit
   await submit.click();
+  await sendData.click();
+  await component.update(
+    <Outside
+      onSubmit={(values: any) => {
+        data.submit = values;
+      }}
+      setFormData={(formData) => Object.assign(data, formData)}
+      initialValues={data.form.activeValues}
+    />,
+  );
+  await sendData.click();
   expect(data.submit).toEqual({
     'user.name': 'Test User',
     'user.password': 'pass',
   });
+
+  expect(data.form.values).toEqual({
+    'user.name': 'Test User',
+    'user.password': 'pass',
+  });
+  expect(data.form.touches).toEqual({});
+  expect(data.config.initialValues).toEqual({
+    'user.name': 'Test User',
+    'user.password': 'pass',
+  });
+  expect(data.form.dirties).toEqual({});
 
   /**
    * STEP_4: Reset form and check form values
@@ -81,13 +107,17 @@ test('Field Outside Form', async ({ mount }) => {
   await reset.click();
   await sendData.click();
 
+  await expect(userName).toHaveValue('Test User');
+  await expect(userPassword).toHaveValue('pass');
+  await expect(userPasswordOutside).toHaveValue('pass');
+
   expect(data.form.active).toEqual({
     'user.name': true,
     'user.password': true,
   });
 
   expect(data.form.values).toEqual({
-    'user.name': undefined,
-    'user.password': undefined,
+    'user.name': 'Test User',
+    'user.password': 'pass',
   });
 });

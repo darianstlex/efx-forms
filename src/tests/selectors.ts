@@ -6,6 +6,7 @@ export const sel = {
   userHasEmail: '[data-test="user.hasEmail"]',
   userPassword: '[data-test="user.password"]',
   userPasswordError: '[data-test="user.password-error"]',
+  userPasswordOutside: '[data-test="user.password-outside"]',
 
   one: '[data-test="one"]',
   two: '[data-test="two"]',

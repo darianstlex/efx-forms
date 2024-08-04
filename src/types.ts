@@ -95,6 +95,8 @@ export interface IFormConfig {
   validators?: Record<string, ReturnType<TFieldValidator>[]>;
 }
 
+export type TCommonConfigKeys = 'validateOnBlur' | 'validateOnChange'
+
 export interface IForm {
   /** PROPERTY - Form name */
   domain: Domain;
