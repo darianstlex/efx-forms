@@ -148,6 +148,8 @@ interface Field {
   parse?: (value: any) => any;
   // Format value before displaying
   format?: (value: any) => any;
+  // Passive field does not update its active state and config
+  passive?: boolean;
   // Validators array - applied on validation
   validators?: [
     (value: any, values: Record<string, any>) => string | false,

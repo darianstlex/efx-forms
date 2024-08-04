@@ -4,7 +4,6 @@ import { test, expect } from '@playwright/experimental-ct-react';
 import { Outside } from './Outside';
 import { sel } from './selectors';
 import type { OnSendParams } from './components/Hooks';
-import { FieldUpdate } from './FieldUpdate';
 
 test('Field Outside Form', async ({ mount }) => {
   const data = {

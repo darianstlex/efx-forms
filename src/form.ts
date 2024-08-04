@@ -3,6 +3,7 @@ import { attach, combine, sample } from 'effector';
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';
 import reduce from 'lodash/reduce';
+import get from 'lodash/get';
 
 import { domain, hasTruthy } from './utils';
 
@@ -21,27 +22,23 @@ import type {
 
 import { FIELD_CONFIG, FORM_CONFIG } from './constants';
 
+const getFieldConfigProp = (data: any, name: string, prop: TCommonConfigKeys) => {
+  return get(data, ['configs', name, prop], get(data, ['config', prop]));
+};
+
+const getFieldInitVal = (data: any, name: string) => {
+  return get(data, ['configs', name, 'initialValue'], get(data, ['config', 'initialValues', name]));
+};
+
+const getFieldValidators = (data: any, name: string) => {
+  return get(data, ['configs', name, 'validators'], get(data, ['config', 'validators', name]));
+};
+
 export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const data = {
     config: Object.assign({}, FORM_CONFIG, formConfig),
     configs: {} as Record<string, IFieldConfig>,
   } as { config: IFormConfig; configs: Record<string, IFieldConfig> };
-
-  const getFieldConfigProp = (name: string, prop: TCommonConfigKeys) => {
-    return prop in (data.configs?.[name] || {}) ? data.configs[name][prop] : data.config[prop];
-  };
-
-  const getFieldInitVal = (name: string) => {
-    return 'initialValue' in (data.configs?.[name] || {})
-      ? data.configs[name].initialValue
-      : data.config?.initialValues?.[name];
-  };
-
-  const getFieldValidators = (name: string) => {
-    return 'validators' in (data.configs?.[name] || {})
-      ? data.configs[name].validators
-      : data.config?.validators?.[name];
-  };
 
   const dm = domain.domain(formConfig.name);
 
@@ -80,11 +77,11 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     })
     .on(reset, (state) => reduce(
       state,
-      (acc, _, name) => Object.assign(acc, { [name]: getFieldInitVal(name) }),
+      (acc, _, name) => Object.assign(acc, { [name]: getFieldInitVal(data, name) }),
       {} as Record<string, any>,
     ))
     .on(resetField, (state, field) => {
-      const value = getFieldInitVal(field);
+      const value = getFieldInitVal(data, field);
       return value !== state[field] ? Object.assign({}, state, { [field]: value }) : state;
     })
     .reset(erase);
@@ -229,7 +226,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const $dirties = dm
     .store<Record<string, boolean>>({}, { name: '$dirties' })
     .on(onChange, (state, { name, value }) => {
-      const dirty = value !== getFieldInitVal(name);
+      const dirty = value !== getFieldInitVal(data, name);
       return state[name] === dirty ? state : Object.assign({}, state, { [name]: dirty });
     })
     .reset(erase, reset, submit.done);
@@ -253,8 +250,8 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     source: { values: $values, touches: $touches },
     fn: ({ values, touches }, fields) => {
       const target = reduce(fields, (acc, field) => {
-        const changed = values[field] !== getFieldInitVal(field);
-        !touches[field] && changed && (acc[field] = getFieldInitVal(field));
+        const changed = values[field] !== getFieldInitVal(data, field);
+        !touches[field] && changed && (acc[field] = getFieldInitVal(data, field));
         return acc;
       }, {} as Record<string, any>);
 
@@ -282,7 +279,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
         active,
         (acc, _, field) => {
           const validators: ReturnType<TFieldValidator>[] =
-            getFieldValidators(field) || [];
+            getFieldValidators(data, field) || [];
           const errors = validators
             ?.map?.((vd) => vd(values[field], values))
             ?.filter(Boolean) as string[];
@@ -303,7 +300,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     filter: (_, source) => !!source?.name,
     fn: ({ values }, source) => {
       const validators: ReturnType<TFieldValidator>[] =
-        getFieldValidators(source?.name as string) || [];
+        getFieldValidators(data, source?.name as string) || [];
       const errors = validators
         ?.map?.((vd) => vd(values[source?.name as string], values))
         ?.filter?.(Boolean) as string[];
@@ -322,7 +319,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     clock: onBlur,
     source: { touches: $touches, active: $active },
     filter: ({ touches }, { name }) =>
-      touches[name] && !!getFieldConfigProp(name, 'validateOnBlur'),
+      touches[name] && !!getFieldConfigProp(data, name, 'validateOnBlur'),
     fn: (_, { name }) => ({ name }),
     target: validate,
   });
@@ -332,7 +329,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: onChange,
-    filter: ({ name }) => !!getFieldConfigProp(name, 'validateOnChange'),
+    filter: ({ name }) => !!getFieldConfigProp(data, name, 'validateOnChange'),
     fn: ({ name }) => ({ name }),
     target: validate,
   });
@@ -343,7 +340,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   sample({
     clock: onChange,
     fn: ({ name }) => ({ name, errors: null }),
-    filter: ({ name }) => !getFieldConfigProp(name, 'validateOnChange'),
+    filter: ({ name }) => !getFieldConfigProp(data, name, 'validateOnChange'),
     target: setError,
   });
 

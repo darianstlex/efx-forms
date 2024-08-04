@@ -44,14 +44,15 @@ export const InternalField = memo(InternalFieldInst);
 export const Field = ({
   Field,
   name,
-  formName,
-  initialValue,
-  validateOnChange,
-  validators,
-  validateOnBlur,
-  disableFieldReinit,
   parse,
   format,
+  passive,
+  formName,
+  validators,
+  initialValue,
+  validateOnBlur,
+  validateOnChange,
+  disableFieldReinit,
   ...rest
 }: IRFieldProps) => {
   const form = useFormInstance(formName);
@@ -71,35 +72,34 @@ export const Field = ({
       },
       (val) => val !== undefined,
     );
-    form.setFieldConfig({ name, ...config });
+    !passive && form.setFieldConfig({ name, ...config });
   }, [
-    form,
     disableFieldReinit,
     validateOnChange,
     validateOnBlur,
     initialValue,
     validators,
+    passive,
     format,
     parse,
     name,
+    form,
   ]);
 
   useEffect(() => {
-    setActive({ name, value: true });
+    !passive && setActive({ name, value: true });
     return () => {
-      setActive({ name, value: false });
+      !passive && setActive({ name, value: false });
     };
-  }, [name, setActive]);
+  }, [name, passive, setActive]);
 
   const reinitDisabled =
-    disableFieldReinit !== undefined
+    !passive && disableFieldReinit !== undefined
       ? disableFieldReinit
       : form.config.disableFieldsReinit;
 
   useEffect(() => {
-    !reinitDisabled
-    && initialValue !== undefined
-    && resetUntouched([name]);
+    !reinitDisabled && initialValue !== undefined && resetUntouched([name]);
   }, [reinitDisabled, name, initialValue, resetUntouched]);
 
   return <InternalField {...{ name, formName, Field, ...rest }} />;
