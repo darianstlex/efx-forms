@@ -8,16 +8,17 @@ import get from 'lodash/get';
 import { domain, hasTruthy } from './utils';
 
 import type {
-  IFieldConfig,
   IForm,
-  IFormConfig,
-  IFormOnSubmitArgs,
+  IFormData,
   ISubmitArgs,
+  IFormConfig,
+  IFieldConfig,
+  TFieldValidator,
+  IValidationParams,
+  IFormOnSubmitArgs,
+  TCommonConfigKeys,
   ISubmitResponseError,
   ISubmitResponseSuccess,
-  IValidationParams,
-  TFieldValidator,
-  TCommonConfigKeys, IFormData,
 } from './types';
 
 import { FIELD_CONFIG, FORM_CONFIG } from './constants';
