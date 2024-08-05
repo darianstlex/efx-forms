@@ -17,28 +17,28 @@ import type {
   ISubmitResponseSuccess,
   IValidationParams,
   TFieldValidator,
-  TCommonConfigKeys,
+  TCommonConfigKeys, IFormData,
 } from './types';
 
 import { FIELD_CONFIG, FORM_CONFIG } from './constants';
 
-const getFieldConfigProp = (data: any, name: string, prop: TCommonConfigKeys) => {
+const getFieldConfigProp = (data: IFormData, name: string, prop: TCommonConfigKeys) => {
   return get(data, ['configs', name, prop], get(data, ['config', prop]));
 };
 
-const getFieldInitVal = (data: any, name: string) => {
+const getFieldInitVal = (data: IFormData, name: string) => {
   return get(data, ['configs', name, 'initialValue'], get(data, ['config', 'initialValues', name]));
 };
 
-const getFieldValidators = (data: any, name: string) => {
+const getFieldValidators = (data: IFormData, name: string) => {
   return get(data, ['configs', name, 'validators'], get(data, ['config', 'validators', name]));
 };
 
 export const createFormHandler = (formConfig: IFormConfig): IForm => {
-  const data = {
+  const data: IFormData = {
     config: Object.assign({}, FORM_CONFIG, formConfig),
-    configs: {} as Record<string, IFieldConfig>,
-  } as { config: IFormConfig; configs: Record<string, IFieldConfig> };
+    configs: {} as IFormData['configs'],
+  };
 
   const dm = domain.domain(formConfig.name);
 

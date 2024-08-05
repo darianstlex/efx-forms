@@ -161,6 +161,11 @@ export interface IForm {
   setFieldConfig: (cfg: IFieldConfig) => void;
 }
 
+export interface IFormData {
+  config: IFormConfig;
+  configs: Record<string, IFieldConfig>;
+}
+
 export interface IForms {
   [name: string]: IForm;
 }
