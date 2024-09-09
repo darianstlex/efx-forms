@@ -11,6 +11,7 @@ export const FORM_CONFIG: IFormConfig = {
   validateOnChange: false,
   disableFieldsReinit: false,
   validators: {},
+  serialize: false,
 };
 
 export const FIELD_CONFIG: IFieldConfig = {
@@ -26,4 +27,4 @@ export const FIELD_CONFIG: IFieldConfig = {
 export const ARR_0 = Object.freeze([]);
 export const OBJ_0 = Object.freeze({});
 
-export const $null = domain.store<any>(null, { name: '$null' });
+export const $null = domain.store<any>(null, { name: '$null', sid: '$efx-forms-null' });

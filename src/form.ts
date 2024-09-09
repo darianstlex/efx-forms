@@ -59,7 +59,11 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Fields status store - keeps fields active / mounted status
    */
   const $active = dm
-    .store<Record<string, boolean>>({}, { name: '$active' })
+    .store<Record<string, boolean>>({}, {
+      name: '$active',
+      serialize: formConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${formConfig.name}-$active`,
+    })
     .on(setActive, (state, { name, value }) =>
       state[name] !== value ? Object.assign({}, state, { [name]: value }) : state,
     )
@@ -69,7 +73,11 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Values store - fields values
    */
   const $values = dm
-    .store<Record<string, any>>({}, { name: '$values' })
+    .store<Record<string, any>>({}, {
+      name: '$values',
+      serialize: formConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${formConfig.name}-$values`,
+    })
     .on(setValues, (state, values) => Object.assign({}, state, values))
     .on(onChange, (state, { name, value }) => {
       const parse = data.configs[name]?.parse || FIELD_CONFIG.parse!;
@@ -109,7 +117,11 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Validations store - keeps all fields validation errors
    */
   const $errors = dm
-    .store<Record<string, string[] | null>>({}, { name: '$errors' })
+    .store<Record<string, string[] | null>>({}, {
+      name: '$errors',
+      serialize: formConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${formConfig.name}-$errors`,
+    })
     .on(setError, (state, { name, errors }) =>
       Object.assign({}, state, { [name]: errors }),
     )
@@ -198,7 +210,11 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Touches store - keeps all fields touch state
    */
   const $touches = dm
-    .store<Record<string, boolean>>({}, { name: '$touches' })
+    .store<Record<string, boolean>>({}, {
+      name: '$touches',
+      serialize: formConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${formConfig.name}-$touches`,
+    })
     .on(onChange, (state, { name }) =>
       state[name] ? state : Object.assign({}, state, { [name]: true }),
     )
@@ -225,7 +241,11 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Dirties store - keeps all fields dirty state
    */
   const $dirties = dm
-    .store<Record<string, boolean>>({}, { name: '$dirties' })
+    .store<Record<string, boolean>>({}, {
+      name: '$dirties',
+      serialize: formConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${formConfig.name}-$dirties`,
+    })
     .on(onChange, (state, { name, value }) => {
       const dirty = value !== getFieldInitVal(data, name);
       return state[name] === dirty ? state : Object.assign({}, state, { [name]: dirty });

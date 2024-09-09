@@ -84,6 +84,8 @@ export interface IFormConfig {
   validateOnChange?: boolean;
   /** PROPERTY - keepOnUnmount - keep form data on form unmount */
   keepOnUnmount?: boolean;
+  /** PROPERTY - serialize forms stores, default false */
+  serialize?: boolean;
   /** PROPERTY - skipClientValidation - if true will skip validation on submit */
   skipClientValidation?: boolean;
   /**

@@ -119,6 +119,10 @@ interface Form {
   // Keep form data on unmount
   // Default: false
   keepOnUnmount: boolean;
+  // PROPERTY - serialize - serialize stores
+  // not reactive, initialized only once on form creation
+  // Default: false
+  serialize?: boolean;
   // Set fields validation behavior onBlur
   // Default: true
   validateOnBlur?: boolean;
@@ -501,6 +505,7 @@ import {
   shapeFy,
   truthyFyStore,
   shapeFyStore,
+  flattenObjectKeys,
 } from 'efx-forms/utils';
 
 /**
@@ -528,6 +533,13 @@ const $truthyStore = truthyFyStore($values);
  * @type ($values: Store): Store => $shapedValues
  */
 const $shapedStore = shapeFyStore($values);
+
+/**
+ * Return flatten one level object keys/values
+ * helper for the nested initial values
+ * @type (values: Record<string, any>): Record<string, any> => ({})
+ */
+const initialValues = flattenObjectKeys(values);
 ```
 
 # Validators

@@ -1,6 +1,5 @@
 import type { FormEvent } from 'react';
-import { useEffect } from 'react';
-import React, { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
 import { useUnit } from 'effector-react';
 import pickBy from 'lodash/pickBy';
 import isEmpty from 'lodash/isEmpty';
@@ -24,6 +23,7 @@ export const Form = ({
   validateOnChange,
   validators,
   disableFieldsReinit,
+  serialize,
   ...props
 }: IRFormProps) => {
   const form: IForm = useMemo(() => {
@@ -36,6 +36,7 @@ export const Form = ({
         validateOnChange,
         validators,
         disableFieldsReinit,
+        serialize,
       },
       (val) => val !== undefined,
     );
@@ -54,6 +55,7 @@ export const Form = ({
   useEffect(() => {
     const config = pickBy(
       {
+        serialize,
         validators,
         initialValues,
         keepOnUnmount,
@@ -73,6 +75,7 @@ export const Form = ({
     initialValues,
     keepOnUnmount,
     validators,
+    serialize,
     name,
     form,
   ]);
