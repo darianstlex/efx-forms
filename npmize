@@ -9,6 +9,9 @@ cp package.json lib
 cp README.md lib
 cp LICENSE lib
 
+npx json -f lib/package.json -I -e "delete this.devDependencies"
+npx json -f lib/package.json -I -e "delete this.scripts"
+
 cat >lib/mjs/package.json <<!EOF
 {
     "type": "module"

@@ -41,7 +41,7 @@ export const Form = ({
       (val) => val !== undefined,
     );
     return getForm({ name, ...config });
-  }, [name]); // eslint-disable-line
+  }, [name]);
 
   const [formSubmit, formReset, resetUntouched] = useUnit([
     form.submit,

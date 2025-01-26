@@ -70,11 +70,9 @@ test.describe('Validation', () => {
     const userName = component.locator(sel.userName);
     const userNameError = component.locator(sel.userNameError);
     const userPassword = component.locator(sel.userPassword);
-    const userPasswordOutside = component.locator(sel.userPasswordOutside);
     const userPasswordError = component.locator(sel.userPasswordError);
 
     const submit = component.locator(sel.submit);
-    const reset = component.locator(sel.reset);
     const sendData = component.locator(sel.sendData);
 
     await submit.click();
@@ -121,7 +119,6 @@ test.describe('Validation', () => {
         }}
       />,
     );
-    const userName = component.locator(sel.userName);
     const userNameError = component.locator(sel.userNameError);
 
     const submit = component.locator(sel.submit);

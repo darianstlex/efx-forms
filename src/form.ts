@@ -1,4 +1,4 @@
-import type { Effect , Store } from 'effector';
+import type { Effect, Store } from 'effector';
 import { attach, combine, sample } from 'effector';
 import isEmpty from 'lodash/isEmpty';
 import pickBy from 'lodash/pickBy';

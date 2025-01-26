@@ -15,8 +15,7 @@ interface Props extends Partial<IRFormProps> {
 
 export const Update = ({ setFormData, ...props }: Props) => {
   const { reset } = useFormMethods('formUpdate');
-  const submit = async (values: Record<string, any>) => {
-    console.log(values); // eslint-disable-line
+  const submit = async () => {
     return Promise.reject({
       'user.name': 'This user is taken',
     });

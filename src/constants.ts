@@ -24,7 +24,4 @@ export const FIELD_CONFIG: IFieldConfig = {
   validateOnChange: false,
 };
 
-export const ARR_0 = Object.freeze([]);
-export const OBJ_0 = Object.freeze({});
-
 export const $null = domain.store<any>(null, { name: '$null', sid: '$efx-forms-null' });

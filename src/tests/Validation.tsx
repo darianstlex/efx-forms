@@ -104,7 +104,7 @@ export const FieldOverrideValidation = ({ setFormData, onSubmit }: Props) => {
   );
 };
 
-const SimpleFormOne = ({ onSubmit, msg }) => {
+const SimpleFormOne = ({ onSubmit, msg }: any) => {
   return (
     <Form
       name="simpleForm"
@@ -125,7 +125,7 @@ const SimpleFormOne = ({ onSubmit, msg }) => {
   );
 };
 
-export const FormValidationUpdate = ({ onSubmit }) => {
+export const FormValidationUpdate = ({ onSubmit }: any) => {
   const [msg, setMsg] = useState('Required');
   return (
     <>

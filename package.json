@@ -1,6 +1,6 @@
 {
   "name": "efx-forms",
-  "version": "2.0.27",
+  "version": "2.0.28",
   "description": "Effector JS Forms",
   "main": "index.js",
   "types": "index.d.ts",
@@ -30,25 +30,27 @@
   },
   "homepage": "https://github.com/darianstlex/efx-forms#readme",
   "devDependencies": {
-    "@playwright/experimental-ct-react": "^1.45.1",
-    "@types/lodash": "^4.17",
-    "@types/node": "^20.14.10",
-    "@types/react": "^18.0.0",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
-    "effector": "^23.0.0",
-    "effector-react": "^23.0.0",
-    "eslint": "^8.57.0",
-    "eslint-plugin-react": "^7.35.0",
-    "lodash": "^4.17",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "typescript": "^5.5.4"
+    "@eslint/js": "^9.19.0",
+    "@playwright/experimental-ct-react": "^1.50.0",
+    "@types/lodash": "^4.17.14",
+    "@types/node": "22.10.9",
+    "@types/react": "^19.0.8",
+    "@typescript-eslint/eslint-plugin": "^8.21.0",
+    "@typescript-eslint/parser": "^8.21.0",
+    "effector": "^23.2.3",
+    "effector-react": "^23.3.0",
+    "eslint-plugin-react": "^7.37.4",
+    "globals": "^15.14.0",
+    "lodash": "^4.17.21",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.21.0"
   },
   "peerDependencies": {
-    "effector": "^23.0.0",
-    "effector-react": "^23.0.0",
-    "lodash": "^4.17",
-    "react": "^18.0.0"
+    "effector": ">=23.0.0 <24.0.0",
+    "effector-react": ">=23.0.0 <24.0.0",
+    "lodash": "^4.17.0",
+    "react": ">=16.8.0 <20.0.0"
   }
 }
