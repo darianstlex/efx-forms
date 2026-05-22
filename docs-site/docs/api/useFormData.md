@@ -233,7 +233,7 @@ const UseFormDataExample = () => {
 
 ## Related
 
-- [`useForm`](/docs/api/useForm) - Get form data and methods combined (plain values)
-- [`useFormValues`](/docs/api/useFormValues) - Get values store only
-- [`useFormInstance`](/docs/api/useFormInstance) - Get raw form instance
-- [FormDataProvider](/docs/api/form-data-provider) - Component wrapper using useFormData
+- [`useForm`](./useForm.md) - Get form data and methods combined (plain values)
+- [`useFormValues`](./utilities.md#form-registry) - Get values store only
+- [`useFormInstance`](./utilities.md#form-registry) - Get raw form instance
+- [FormDataProvider](./utilities.md#form-registry) - Component wrapper using useFormData

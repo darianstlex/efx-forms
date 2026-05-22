@@ -1,26 +1,26 @@
 /**
  * efx-forms documentation site custom theme
- * Effector-inspired blue/purple color palette
+ * Heavy metal chrome/gray color palette
  */
 
 :root {
-  /* Primary brand colors - Effector-inspired blue/purple */
-  --ifm-color-primary: #5B8DEF;
-  --ifm-color-primary-dark: #4A7BD9;
-  --ifm-color-primary-darker: #3D6AC4;
-  --ifm-color-primary-darkest: #2F59AF;
-  --ifm-color-primary-light: #6E9EF3;
-  --ifm-color-primary-lighter: #81B0F7;
-  --ifm-color-primary-lightest: #94C1FB;
+  /* Primary - Slate gray / chrome */
+  --ifm-color-primary: #64748B;
+  --ifm-color-primary-dark: #475569;
+  --ifm-color-primary-darker: #334155;
+  --ifm-color-primary-darkest: #1E293B;
+  --ifm-color-primary-light: #94A3B8;
+  --ifm-color-primary-lighter: #CBD5E1;
+  --ifm-color-primary-lightest: #E2E8F0;
 
-  /* Secondary accent - purple tones */
-  --ifm-color-secondary: #8B5CF6;
-  --ifm-color-secondary-dark: #7C3AED;
-  --ifm-color-secondary-darker: #6D28D9;
-  --ifm-color-secondary-darkest: #5B21B6;
-  --ifm-color-secondary-light: #9B7FF7;
-  --ifm-color-secondary-lighter: #AB9FF9;
-  --ifm-color-secondary-lightest: #BBC0FA;
+  /* Secondary - Warm gray accent */
+  --ifm-color-secondary: #78716C;
+  --ifm-color-secondary-dark: #57534E;
+  --ifm-color-secondary-darker: #44403C;
+  --ifm-color-secondary-darkest: #292524;
+  --ifm-color-secondary-light: #A8A29E;
+  --ifm-color-secondary-lighter: #D6D3D1;
+  --ifm-color-secondary-lightest: #E7E5E4;
 
   /* Semantic colors */
   --ifm-color-success: #10B981;
@@ -47,18 +47,37 @@
   --ifm-navbar-link-color: var(--ifm-color-content);
 
   /* Footer */
-  --ifm-footer-background-color: var(--ifm-background-surface-color);
+  --ifm-footer-background-color: #374151;
+  --ifm-footer-color: #F3F4F6;
+  --ifm-footer-link-color: #E2E8F0;
+  --ifm-footer-title-color: #F9FAFB;
+}
+
+.footer {
+  color: #F3F4F6;
+}
+
+.footer__title {
+  color: #F9FAFB !important;
+}
+
+.footer__link-item {
+  color: #E2E8F0 !important;
+}
+
+.footer__copyright {
+  color: #D1D5DB !important;
 }
 
 /* Dark mode overrides */
 [data-theme='dark'] {
-  --ifm-color-primary: #6E9EF3;
-  --ifm-color-primary-dark: #5B8DEF;
-  --ifm-color-primary-darker: #4A7BD9;
-  --ifm-color-primary-darkest: #3D6AC4;
-  --ifm-color-primary-light: #81B0F7;
-  --ifm-color-primary-lighter: #94C1FB;
-  --ifm-color-primary-lightest: #A7D2FF;
+  --ifm-color-primary: #94A3B8;
+  --ifm-color-primary-dark: #64748B;
+  --ifm-color-primary-darker: #475569;
+  --ifm-color-primary-darkest: #334155;
+  --ifm-color-primary-light: #CBD5E1;
+  --ifm-color-primary-lighter: #E2E8F0;
+  --ifm-color-primary-lightest: #F1F5F9;
 
   --ifm-color-content: #F9FAFB;
   --ifm-color-content-secondary: #9CA3AF;

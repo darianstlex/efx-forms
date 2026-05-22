@@ -2,6 +2,8 @@
 
 > Effector JS forms
 
+📚 **Documentation**: https://darianstlex.github.io/efx-forms/
+
 There are some breaking changes starting from v2
 
 ## Installation
@@ -372,8 +374,10 @@ import { useFormMethods } from 'efx-forms/useFormMethods';
 import { useField } from 'efx-forms/useField';
 import { useFieldData } from 'efx-forms/useFieldData';
 import { useFieldStore } from 'efx-forms/useFieldStore';
+import { useFieldMethods } from 'efx-forms/useFieldMethods';
 import { useStoreProp } from 'efx-forms/useStoreProp';
 import { useStorePropFn } from 'efx-forms/useStorePropFn';
+import { useStoreWatch } from 'efx-forms/useStoreWatch';
 
 /**
  * Return form by name
@@ -442,12 +446,25 @@ const formMethods = useFormMethods();
 
 
 /**
- * Hook - return field by name
+ * Hook - return field data and methods combined
  * Form name is needed when hook is used outside of the form context
  * or refers to another form.
- * @type (name: string, formName?: string) => ReturnType<typeof useField>
+ * @type (name: string, formName?: string) => {
+ *   value: any,
+ *   active: boolean,
+ *   dirty: boolean,
+ *   error: string | null,
+ *   errors: string[] | null,
+ *   reset: () => void,
+ *   validate: () => void,
+ *   setActive: (value: boolean) => void,
+ *   setValue: (value: any) => void,
+ *   change: (value: any) => void,
+ *   setConfig: (cfg: IFieldConfig) => void
+ * }
  */
-const field = useField('field-one');
+const field = useField('user.name');
+// Returns: { value, active, dirty, error, errors, reset, validate, setActive, setValue, change, setConfig }
 
 /**
  * Hook - return field value by name
@@ -473,6 +490,27 @@ const fieldActive = useFieldStore({
   name: 'user.name',
   formName: 'login',
   defaultValue: '',
+});
+
+/**
+ * Hook - return field methods only
+ * Form name is needed when hook is used outside of form context
+ * or refers to another form.
+ * @type (name: string, formName?: string) => ReturnType<typeof useFieldMethods>
+ */
+const fieldMethods = useFieldMethods('user.name');
+// Returns: { reset, validate, setActive, setValue, change, setConfig }
+
+/**
+ * Hook - watch store for changes
+ * Executes callback whenever store value updates
+ * @type (
+ *   store: Store,
+ *   onUpdate: (value: any) => void,
+ * ) => void
+ */
+useStoreWatch(form.$values, (values) => {
+  console.log('Values changed:', values);
 });
 
 /**

@@ -235,7 +235,7 @@ const FieldConfigToggle = () => {
 
 ## Related
 
-- [`useFieldData`](/docs/api/useFieldData) - Get field state only (no methods)
-- [`useFieldStore`](/docs/api/useFieldStore) - Get single field store value
-- [`useForm`](/docs/api/useForm) - Get entire form data and methods
-- [Field Component](/docs/api/field)
+- [`useFieldData`](./utilities.md#form-registry) - Get field state only (no methods)
+- [`useFieldStore`](./utilities.md#form-registry) - Get single field store value
+- [`useForm`](./useForm.md) - Get entire form data and methods
+- [Field Component](./field-component.md)

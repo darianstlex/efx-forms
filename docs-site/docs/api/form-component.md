@@ -248,6 +248,6 @@ form.validate();
 ## Related
 
 - [Field Component](./field-component.md)
-- [FormDataProvider](./form-data-provider.md)
-- [Validators](../api/validators.md)
-- [Hooks](../api/hooks.md)
+- [Utilities](./utilities.md#form-registry)
+- [Validators](./utilities.md#validators)
+- [Hooks](./hooks.md)

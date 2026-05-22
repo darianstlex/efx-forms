@@ -337,4 +337,4 @@ function DataProviderForm() {
 ## Next Steps
 
 - Explore more patterns in the [efx-forms-cra](https://github.com/darianstlex/efx-forms-cra) repository
-- Check the [API Reference](/docs/api/form) for complete component documentation
+- Check the [API Reference](../api/components.md) for complete component documentation

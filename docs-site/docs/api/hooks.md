@@ -8,28 +8,28 @@ EFX-Forms provides a comprehensive set of React hooks for accessing form state, 
 
 | Hook | Description | Import |
 |------|-------------|--------|
-| [`useForm`](/docs/api/useForm) | Get form data and methods combined | `efx-forms/useForm` |
-| [`useFormData`](/docs/api/useFormData) | Get form state stores (values, errors, etc.) | `efx-forms/useFormData` |
-| [`useFormInstance`](/docs/api/useFormInstance) | Get raw form instance with all stores and events | `efx-forms` |
-| [`useFormValues`](/docs/api/useFormValues) | Get form values only | `efx-forms/useFormValues` |
-| [`useFormMethods`](/docs/api/useFormMethods) | Get form methods only (change, reset, submit, etc.) | `efx-forms/useFormMethods` |
-| [`useFormStore`](/docs/api/useFormStore) | Get single form store by name | `efx-forms/useFormStore` |
-| [`useFormStores`](/docs/api/useFormStores) | Get multiple form stores by name | `efx-forms/useFormStores` |
+| [`useForm`](./useForm.md) | Get form data and methods combined | `efx-forms/useForm` |
+| [`useFormData`](./useFormData.md) | Get form state stores (values, errors, etc.) | `efx-forms/useFormData` |
+| [`useFormInstance`](./utilities.md#form-registry) | Get raw form instance with all stores and events | `efx-forms` |
+| [`useFormValues`](./utilities.md#form-registry) | Get form values only | `efx-forms/useFormValues` |
+| [`useFormMethods`](./utilities.md#form-registry) | Get form methods only (change, reset, submit, etc.) | `efx-forms/useFormMethods` |
+| [`useFormStore`](./utilities.md#form-registry) | Get single form store by name | `efx-forms/useFormStore` |
+| [`useFormStores`](./utilities.md#form-registry) | Get multiple form stores by name | `efx-forms/useFormStores` |
 
 ### Field Hooks
 
 | Hook | Description | Import |
 |------|-------------|--------|
-| [`useField`](/docs/api/useField) | Get field data and methods combined | `efx-forms/useField` |
-| [`useFieldData`](/docs/api/useFieldData) | Get field state (value, active, error, etc.) | `efx-forms/useFieldData` |
-| [`useFieldStore`](/docs/api/useFieldStore) | Get single field store value | `efx-forms/useFieldStore` |
+| [`useField`](./useField.md) | Get field data and methods combined | `efx-forms/useField` |
+| [`useFieldData`](./utilities.md#form-registry) | Get field state (value, active, error, etc.) | `efx-forms/useFieldData` |
+| [`useFieldStore`](./utilities.md#form-registry) | Get single field store value | `efx-forms/useFieldStore` |
 
 ### Utility Hooks
 
 | Hook | Description | Import |
 |------|-------------|--------|
-| [`useStoreProp`](/docs/api/useStoreProp) | Get property from any effector store | `efx-forms/useStoreProp` |
-| [`useStorePropFn`](/docs/api/useStorePropFn) | Get computed value from store using getter function | `efx-forms/useStorePropFn` |
+| [`useStoreProp`](./utilities.md#utility-functions) | Get property from any effector store | `efx-forms/useStoreProp` |
+| [`useStorePropFn`](./utilities.md#utility-functions) | Get computed value from store using getter function | `efx-forms/useStorePropFn` |
 
 ## Usage Pattern
 
@@ -63,6 +63,6 @@ const Page = () => (
 
 ## Related
 
-- [Form Component](/docs/api/form)
-- [Field Component](/docs/api/field)
-- [FormDataProvider](/docs/api/form-data-provider)
+- [Form Component](./form-component.md)
+- [Field Component](./field-component.md)
+- [Utilities](./utilities.md)

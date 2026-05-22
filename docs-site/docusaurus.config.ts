@@ -3,7 +3,7 @@ import type { Config } from '@docusaurus/types';
 const config: Config = {
   title: 'efx-forms',
   tagline: 'Effector-based React form library',
-  favicon: 'img/favicon.ico',
+  favicon: 'img/favicon.svg',
 
   url: 'https://darianstlex.github.io',
   baseUrl: '/efx-forms/',

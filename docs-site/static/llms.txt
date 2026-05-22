@@ -1,0 +1,213 @@
+# EFX-Forms Documentation for AI Assistants
+
+This file provides guidance for AI assistants on how to use the EFX-Forms documentation.
+
+## Documentation Structure
+
+```
+docs-site/docs/
+├── intro.md                    # Introduction and overview
+├── installation.md             # Installation and setup
+├── quickstart.md               # Quick start guide
+├── examples/
+│   ├── basic-form.md          # Basic form examples
+│   ├── validation.md          # Validation examples
+│   └── advanced.md            # Advanced patterns (conditional rendering, dynamic fields)
+├── api/
+│   ├── components.md          # Components overview
+│   ├── form-component.md      # Form component
+│   ├── field-component.md     # Field component
+│   ├── form-data-provider.md  # FormDataProvider component
+│   ├── field-data-provider.md # FieldDataProvider component
+│   ├── if-form-values.md      # IfFormValues conditional rendering
+│   ├── if-field-value.md      # IfFieldValue conditional rendering
+│   ├── hooks.md               # Hooks overview
+│   ├── useForm.md             # useForm hook
+│   ├── useField.md            # useField hook
+│   ├── useFormData.md         # useFormData hook
+│   ├── useFormInstance.md     # useFormInstance hook
+│   ├── useFormValues.md       # useFormValues hook
+│   ├── useFormMethods.md      # useFormMethods hook
+│   ├── useFormStore.md        # useFormStore hook
+│   ├── useFormStores.md       # useFormStores hook
+│   ├── useFieldData.md        # useFieldData hook
+│   ├── useFieldStore.md       # useFieldStore hook
+│   ├── useFieldMethods.md     # useFieldMethods hook
+│   ├── useStoreProp.md        # useStoreProp hook
+│   ├── useStorePropFn.md      # useStorePropFn hook
+│   ├── useStoreWatch.md       # useStoreWatch hook
+│   └── utilities.md           # Validators and utility functions
+└── contributing.md             # Contributing guide
+```
+
+## Key Concepts
+
+### Form State Management
+- EFX-Forms uses **Effector** for reactive state management
+- Form values are stored **flat** (e.g., `{'user.name': 'John'}`)
+- Use `shapeFy()` to convert flat to nested: `{user: {name: 'John'}}`
+- Use `truthyFy()` to filter out empty values
+
+### Core Components
+- `<Form name="form-name">` - Form context provider
+- `<Field name="fieldName" Field={Component}>` - Field wrapper with validation
+- `<FormDataProvider>` - Subscribe to form values (render props)
+- `<FieldDataProvider name="fieldName">` - Subscribe to field values (render props)
+- `<IfFormValues check={...}>` - Conditional rendering based on form values
+- `<IfFieldValue field="fieldName" check={...}>` - Conditional rendering based on field value
+
+### Core Hooks
+- `useForm()` - Get form data and methods combined
+- `useFormData()` - Get form state stores (values, errors, etc.)
+- `useFormInstance()` - Get raw form instance with all stores
+- `useFormValues()` - Get form values only
+- `useFormMethods()` - Get form methods only (change, reset, submit)
+- `useFormStore('$values')` - Get single form store
+- `useFormStores(['$values', '$errors'])` - Get multiple form stores
+- `useField('fieldName')` - Get field data and methods combined
+- `useFieldData('fieldName')` - Get field state (value, error, dirty, etc.)
+- `useFieldStore({store: '$values', name: 'fieldName'})` - Get single field store
+- `useFieldMethods('fieldName')` - Get field methods only
+- `useStoreProp(store, 'propName')` - Get property from any store
+- `useStorePropFn(store, getterFn)` - Get computed value from store
+- `useStoreWatch(store, callback)` - Watch store for changes
+
+### Import Paths
+```ts
+// Core components
+import { Form, Field } from 'efx-forms';
+import { FormDataProvider } from 'efx-forms/FormDataProvider';
+import { FieldDataProvider } from 'efx-forms/FieldDataProvider';
+import { IfFormValues } from 'efx-forms/IfFormValues';
+import { IfFieldValue } from 'efx-forms/IfFieldValue';
+
+// Hooks
+import { useForm } from 'efx-forms/useForm';
+import { useField } from 'efx-forms/useField';
+import { useFormData } from 'efx-forms/useFormData';
+import { useFieldData } from 'efx-forms/useFieldData';
+// ... all hooks have dedicated sub-path imports
+
+// Validators
+import { required, email, min, max } from 'efx-forms/validators';
+
+// Utilities
+import { shapeFy, truthyFy, flattenObjectKeys } from 'efx-forms/utils';
+```
+
+## Common Patterns
+
+### Basic Form
+```tsx
+import { Form, Field } from 'efx-forms';
+import { required, email } from 'efx-forms/validators';
+
+const Input = ({ label, error, value, onChange, onBlur, ...props }) => (
+  <div>
+    <label>{label}</label>
+    <input value={value || ''} onChange={onChange} onBlur={onBlur} {...props} />
+    {error && <span className="error">{error}</span>}
+  </div>
+);
+
+const MyForm = () => (
+  <Form name="my-form" onSubmit={(values) => console.log(values)}>
+    <Field name="email" Field={Input} label="Email" validators={[required(), email()]} />
+    <button type="submit">Submit</button>
+  </Form>
+);
+```
+
+### Conditional Rendering
+```tsx
+import { Form, Field, IfFormValues, IfFieldValue } from 'efx-forms';
+
+// Show/hide based on form values
+<IfFormValues check={({ age }) => age >= 18}>
+  <Field name="license" Field={Input} label="Driver's License" />
+</IfFormValues>
+
+// Show/hide based on field value
+<IfFieldValue field="status" check={(value) => value === 'active'}>
+  <div>Active content</div>
+</IfFieldValue>
+```
+
+### Array Fields
+```tsx
+import { Form, Field } from 'efx-forms';
+
+// Indexed fields
+{[0, 1, 2].map((idx) => (
+  <Field key={idx} name={`address[${idx}]`} Field={Input} label={`Address ${idx + 1}`} />
+))}
+
+// Values: { 'address[0]': 'Line 1', 'address[1]': 'Line 2' }
+// Use shapeFy(values) to get: { address: ['Line 1', 'Line 2'] }
+```
+
+### Form State Subscription
+```tsx
+import { Form, FormDataProvider } from 'efx-forms';
+
+<Form name="my-form">
+  <FormDataProvider>
+    {({ values, errors, dirty, valid }) => (
+      <div>
+        <pre>{JSON.stringify(values)}</pre>
+        <p>Dirty: {String(dirty)}</p>
+        <p>Valid: {String(valid)}</p>
+      </div>
+    )}
+  </FormDataProvider>
+</Form>
+```
+
+## Validation
+
+### Built-in Validators
+- `required({ msg?: string })` - Field is required
+- `email({ msg?: string })` - Valid email format
+- `min(value: number)` - Minimum value
+- `max(value: number)` - Maximum value
+- `lessThan(value: number)` - Less than value
+- `moreThan(value: number)` - More than value
+- `length(value: number)` - Exact length
+- `matches(regex: RegExp)` - Match pattern
+- `positive()` - Positive number
+- `negative()` - Negative number
+- `number()` - Must be a number
+
+### Custom Validator
+```ts
+const customValidator = (value: any, values: Record<string, any>) => {
+  if (!isValid(value)) {
+    return 'Custom error message';
+  }
+  return false; // false means no error
+};
+```
+
+## API Reference Priority
+
+When answering questions about EFX-Forms, prioritize these docs:
+
+1. **For component usage**: `api/form-component.md`, `api/field-component.md`
+2. **For hooks**: `api/useForm.md`, `api/useField.md`, `api/useFormData.md`
+3. **For conditional rendering**: `api/if-form-values.md`, `api/if-field-value.md`
+4. **For examples**: `examples/basic-form.md`, `examples/validation.md`, `examples/advanced.md`
+5. **For utilities**: `api/utilities.md` (validators, shapeFy, truthyFy)
+
+## Version Information
+
+- **Current Version**: 2.x (check package.json for exact version)
+- **Breaking Changes**: v2 has breaking changes from v1
+- **Peer Dependencies**: react, effector, effector-react, lodash
+- **Build**: Dual CJS/ESM (mjs build included)
+
+## Additional Resources
+
+- **Effector Documentation**: https://effector.dev
+- **Effector React**: https://effector.dev/api/effector-react
+- **Documentation Site**: https://darianstlex.github.io/efx-forms
+- **Main Repository**: https://github.com/darianstlex/efx-forms

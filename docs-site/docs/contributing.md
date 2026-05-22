@@ -212,6 +212,5 @@ When reporting:
 
 ## Questions?
 
-- Check existing [documentation](/docs)
 - Review [examples](https://github.com/darianstlex/efx-forms-cra)
 - Open an issue for questions

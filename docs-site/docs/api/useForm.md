@@ -168,7 +168,7 @@ const ConfigToggle = () => {
 
 ## Related
 
-- [`useFormData`](/docs/api/useFormData) - Get form state only (no methods)
-- [`useFormMethods`](/docs/api/useFormMethods) - Get methods only (no state)
-- [`useFormInstance`](/docs/api/useFormInstance) - Get raw form instance
-- [`useFormValues`](/docs/api/useFormValues) - Get values only
+- [`useFormData`](./useFormData.md) - Get form state only (no methods)
+- [`useFormMethods`](./utilities.md#form-registry) - Get methods only (no state)
+- [`useFormInstance`](./utilities.md#form-registry) - Get raw form instance
+- [`useFormValues`](./utilities.md#form-registry) - Get values only

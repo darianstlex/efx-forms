@@ -359,6 +359,5 @@ function RegistrationForm() {
 ## Related
 
 - [Form Component](./form-component.md)
-- [FormDataProvider](./form-data-provider.md)
-- [FieldDataProvider](./field-data-provider.md)
-- [Validators](../api/validators.md)
+- [Utilities](./utilities.md#form-registry)
+- [Validators](./utilities.md#validators)

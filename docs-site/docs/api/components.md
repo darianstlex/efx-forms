@@ -12,10 +12,10 @@ EFX-Forms provides a set of React components for building forms with Effector st
 |-----------|-------------|-------------|
 | [`Form`](./form-component.md) | `efx-forms` | Main form wrapper and context provider |
 | [`Field`](./field-component.md) | `efx-forms` | Field wrapper with validation and state sync |
-| [`FormDataProvider`](./form-data-provider.md) | `efx-forms/FormDataProvider` | Subscribe to form values and errors |
-| [`FieldDataProvider`](./field-data-provider.md) | `efx-forms/FieldDataProvider` | Subscribe to individual field values |
-| [`IfFormValues`](./if-form-values.md) | `efx-forms/IfFormValues` | Conditional rendering based on form values |
-| [`IfFieldValue`](./if-field-value.md) | `efx-forms/IfFieldValue` | Conditional rendering based on field value |
+| [`FormDataProvider`](./utilities.md#form-registry) | `efx-forms/FormDataProvider` | Subscribe to form values and errors |
+| [`FieldDataProvider`](./utilities.md#form-registry) | `efx-forms/FieldDataProvider` | Subscribe to individual field values |
+| [`IfFormValues`](./utilities.md#form-registry) | `efx-forms/IfFormValues` | Conditional rendering based on form values |
+| [`IfFieldValue`](./utilities.md#form-registry) | `efx-forms/IfFieldValue` | Conditional rendering based on field value |
 
 ## Basic Usage Pattern
 
@@ -79,4 +79,4 @@ function MyForm() {
 
 - [Form Component - Detailed API](./form-component.md)
 - [Field Component - Detailed API](./field-component.md)
-- [Getting Started Guide](../getting-started.md)
+- [Getting Started Guide](../intro.md)

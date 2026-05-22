@@ -144,6 +144,6 @@ import { shapeFy } from 'efx-forms/utils';
 
 ## Next Steps
 
-- Learn about [Form and Field props](./api/form-field.md) in the API reference
-- Explore [conditional rendering](./guides/conditional-rendering.md) with `IfFormValues`
-- Check out [custom validators](./guides/validation.md) guide
+- Learn about [Form and Field props](./api/form-component.md) and [Field props](./api/field-component.md) in the API reference
+- Explore [conditional rendering](./api/utilities.md#form-registry) with `IfFormValues`
+- Check out [custom validators](./api/utilities.md#validators) guide
