@@ -3,6 +3,7 @@ import clsx from 'clsx';
 import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
+// @ts-expect-error - Docusaurus theme component
 import ThemedImage from '@theme/ThemedImage';
 
 import styles from './index.module.css';
@@ -16,8 +17,8 @@ function HeroSection() {
             <ThemedImage
               alt="efx-forms Logo"
               sources={{
-                light: '/img/logo.svg',
-                dark: '/img/logo.svg',
+                light: '/efx-forms/img/logo.svg',
+                dark: '/efx-forms/img/logo.svg',
               }}
               className={styles.heroLogoImage}
             />
@@ -118,9 +119,10 @@ function FeaturesSection() {
   );
 }
 
-export default function Home(): JSX.Element {
+export default function Home() {
   return (
     <Layout
+      // @ts-expect-error - Docusaurus Layout accepts title/description
       title="efx-forms - Effector-based React form library"
       description="Build powerful, reactive forms with Effector's state management. TypeScript-first, validation-ready."
     >

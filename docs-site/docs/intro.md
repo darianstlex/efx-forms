@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Getting Started
+# Introduction
 
 EFX-Forms is an Effector-based React form library that provides powerful state management for your forms with built-in validation, conditional rendering, and reactive data flow.
 
@@ -22,7 +22,7 @@ EFX-Forms leverages Effector's reactive stores and effects to manage form state.
 
 - [Installation](./installation.md) - Set up EFX-Forms in your project
 - [Quickstart](./quickstart.md) - Build your first form in minutes
-- [API Reference](./api/form.md) - Complete component and hook documentation
+- [API Reference](./api/components.md) - Complete component and hook documentation
 
 ## Peer Dependencies
 
