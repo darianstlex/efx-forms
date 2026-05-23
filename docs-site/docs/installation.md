@@ -41,14 +41,7 @@ Once installed, you can import EFX-Forms components in your React components:
 import { Form, Field } from 'efx-forms';
 ```
 
-## Build Variants
-
-EFX-Forms ships with both CommonJS and ES Modules builds:
-
-- **CommonJS**: Default import from `'efx-forms'`
-- **ESM**: Available in the `lib/mjs/` directory for modern bundlers
-
-No additional configuration is needed - your bundler will automatically pick the appropriate build.
+ESM build with `.js` extensions is automatically generated for compatibility with modern bundlers.
 
 ## Next Steps
 

@@ -2,8 +2,8 @@
 
 shopt -s extglob
 
-mkdir -p lib/mjs
-cp -r lib/!(mjs) lib/mjs
+#mkdir -p lib/mjs
+#cp -r lib/!(mjs) lib/mjs
 
 cp package.json lib
 cp README.md lib
@@ -12,8 +12,8 @@ cp LICENSE lib
 npx json -f lib/package.json -I -e "delete this.devDependencies"
 npx json -f lib/package.json -I -e "delete this.scripts"
 
-cat >lib/mjs/package.json <<!EOF
-{
-    "type": "module"
-}
-!EOF
+#cat >lib/mjs/package.json <<!EOF
+#{
+#    "type": "module"
+#}
+#!EOF

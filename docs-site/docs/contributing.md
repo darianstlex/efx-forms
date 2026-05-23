@@ -23,7 +23,7 @@ npm install
 
 ### Build
 
-Build the library (CJS + ESM):
+Build the library:
 
 ```bash
 npm run build
@@ -31,8 +31,9 @@ npm run build
 
 This command:
 1. Cleans the `lib/` directory
-2. Compiles TypeScript
-3. Runs `npmize` to create the ESM build in `lib/mjs/`
+2. Compiles TypeScript to ESM
+3. Adds `.js` extensions to relative imports for ESM compatibility
+4. Copies package metadata to `lib/`
 
 ## Running Tests
 

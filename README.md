@@ -13,8 +13,6 @@ $ npm install efx-forms
 Peer dependencies - library depends on:
 > react effector effector-react lodash
 
-#### mjs build included
-
 ## Main Components
 
 ### Form / Field
