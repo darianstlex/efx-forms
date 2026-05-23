@@ -212,5 +212,6 @@ When reporting:
 
 ## Questions?
 
-- Review [examples](https://github.com/darianstlex/efx-forms-cra)
+- Review the [Examples](/docs/examples) documentation
+- Check out the [Quick Links](/docs/examples#quick-links) for common patterns
 - Open an issue for questions

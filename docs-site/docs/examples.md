@@ -14,14 +14,11 @@ Practical examples showing common form patterns with efx-forms.
 
 ## Full Working Examples
 
-For complete working examples, see the [efx-forms-cra](https://github.com/darianstlex/efx-forms-cra) repository.
+For complete working examples, see the example pages in this documentation:
 
-```bash
-git clone https://github.com/darianstlex/efx-forms-cra
-cd efx-forms-cra
-npm install
-npm start
-```
+- [Basic Form](/docs/examples/basic-form) - Simple Form + Field setup
+- [Validation](/docs/examples/validation) - Form validation patterns
+- [Advanced Patterns](/docs/examples/advanced) - Conditional fields, dynamic forms
 
 ## Common Patterns
 
