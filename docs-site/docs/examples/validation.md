@@ -221,6 +221,83 @@ function ServerValidationForm() {
 }
 ```
 
+## Form-Level Errors
+
+Display general errors that don't belong to a specific field (e.g., account locked, general validation failure):
+
+```jsx
+import { Form, Field, FormDataProvider } from 'efx-forms';
+import { required } from 'efx-forms/validators';
+
+async function submitForm(values) {
+  const response = await fetch('/api/login', {
+    method: 'POST',
+    body: JSON.stringify(values),
+  });
+  
+  if (!response.ok) {
+    const errors = await response.json();
+    // Use __form__ key for form-level errors
+    throw {
+      __form__: 'Account locked. Please contact support.',
+      email: 'Invalid email or password',
+    };
+  }
+  
+  return { success: true };
+}
+
+function FormLevelErrorForm() {
+  return (
+    <Form 
+      name="login-form"
+      validators={{
+        email: [required(), email()],
+        password: [required()],
+      }}
+      onSubmit={submitForm}
+    >
+      {/* Form-level error display */}
+      <FormDataProvider>
+        {({ error }) => {
+          const formError = error.__form__;
+          return formError ? (
+            <div className="form-error" style={{ color: 'red', marginBottom: 16 }}>
+              {formError}
+            </div>
+          ) : null;
+        }}
+      </FormDataProvider>
+      
+      <Field name="email" Field={Input} label="Email" type="email" />
+      <Field name="password" Field={Input} label="Password" type="password" />
+      <button type="submit">Login</button>
+    </Form>
+  );
+}
+```
+
+**Key Points:**
+
+- Use the reserved `__form__` key in the error object returned from `onSubmit`
+- Access via `error.__form__` from `useFormData` or `FormDataProvider`
+- Form-level errors coexist with field-specific errors
+- Clear form-level errors by returning successfully from `onSubmit`
+
+```jsx
+// Example: Multiple error types together
+throw {
+  __form__: 'Submission failed. Please review the errors below.',
+  email: 'Email already registered',
+  password: 'Password too weak',
+};
+
+// Access in component
+const { error } = useFormData();
+const formError = error.__form__; // "Submission failed..."
+const emailError = error.email;   // "Email already registered"
+```
+
 ## Cross-Field Validation
 
 Validate based on other field values:
