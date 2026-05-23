@@ -285,17 +285,14 @@ function FormLevelErrorForm() {
 - Clear form-level errors by returning successfully from `onSubmit`
 
 ```jsx
-// Example: Multiple error types together
-throw {
-  __form__: 'Submission failed. Please review the errors below.',
-  email: 'Email already registered',
-  password: 'Password too weak',
-};
-
-// Access in component
+// Access in component (inside Form context - formName auto-detected)
 const { error } = useFormData();
 const formError = error.__form__; // "Submission failed..."
 const emailError = error.email;   // "Email already registered"
+
+// Access outside Form context - must provide formName
+const { error } = useFormData('login-form');
+const formError = error.__form__;
 ```
 
 ## Cross-Field Validation

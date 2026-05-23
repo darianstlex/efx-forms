@@ -207,14 +207,15 @@ function DynamicFieldsForm() {
 
 ## Using Form Hooks Outside Form Context
 
-Access form data and methods programmatically:
+Access form data and methods programmatically (must provide form name when outside Form):
 
 ```jsx
 import { Form, Field, useFormValues, useFormMethods } from 'efx-forms';
 
 function FormWithExternalControl() {
-  const values = useFormValues();
-  const { reset, setValues } = useFormMethods();
+  // Must provide formName when used outside Form context
+  const values = useFormValues('external-control-form');
+  const { reset, setValues } = useFormMethods('external-control-form');
   
   return (
     <div>
@@ -224,7 +225,7 @@ function FormWithExternalControl() {
         <button type="submit">Submit</button>
       </Form>
       
-      {/* External controls */}
+      {/* External controls - outside Form context */}
       <div className="controls">
         <button onClick={reset}>Reset Form</button>
         <button onClick={() => setValues({ name: 'John', email: 'john@example.com' })}>
