@@ -1,4 +1,6 @@
 .idea
+.omo
+.opencode
 node_modules
 lib
 /playwright/test-results/

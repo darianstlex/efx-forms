@@ -26,13 +26,13 @@ export const IfFormValues = ({
     formInst.setValues,
   ]);
   const show = check(values, activeValues);
-  const updateDeb = useRef(debounce(setValues, updateDebounce)).current;
+  const updateDeb = useRef(debounce(setValues, updateDebounce));
 
   useEffect(() => {
-    show && !isEmpty(setTo) && updateDeb(setTo as Record<string, any>);
-    !show && !isEmpty(resetTo) && updateDeb(resetTo as Record<string, any>);
+    show && !isEmpty(setTo) && updateDeb.current(setTo as Record<string, any>);
+    !show && !isEmpty(resetTo) && updateDeb.current(resetTo as Record<string, any>);
     return () => {
-      updateDeb.cancel();
+      updateDeb.current.cancel();
     };
   }, [resetTo, setTo, show, updateDeb]);
 

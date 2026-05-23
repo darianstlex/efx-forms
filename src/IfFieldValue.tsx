@@ -20,4 +20,4 @@ export const IfFieldValue = ({
   return (show ? output() : null) as ReactElement;
 };
 
-IfFieldValue.displayName = 'IfFieldsValue';
+IfFieldValue.displayName = 'IfFieldValue';

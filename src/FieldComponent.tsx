@@ -99,7 +99,9 @@ export const Field = ({
       : form.config.disableFieldsReinit;
 
   useEffect(() => {
-    !reinitDisabled && initialValue !== undefined && resetUntouched([name]);
+    if (!reinitDisabled && initialValue !== undefined) {
+      Promise.resolve().then(() => resetUntouched([name]));
+    }
   }, [reinitDisabled, name, initialValue, resetUntouched]);
 
   return <InternalField {...{ name, formName, Field, ...rest }} />;
