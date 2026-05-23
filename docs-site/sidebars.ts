@@ -50,7 +50,16 @@ const sidebars: SidebarsConfig = {
         'api/utilities',
       ],
     },
-    'examples',
+    {
+      type: 'category',
+      label: 'Examples',
+      link: { type: 'doc', id: 'examples' },
+      items: [
+        'examples/basic-form',
+        'examples/validation',
+        'examples/advanced',
+      ],
+    },
     'contributing',
   ],
 };
