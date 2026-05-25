@@ -7,7 +7,7 @@ import { sample } from 'effector';
 import type { SendFormDataProps } from './components/Hooks';
 import { SendFormData, UseFormStore } from './components/Hooks';
 
-const form = getForm({ name: 'formSampleUpdate' });
+const form = getForm('formSampleUpdate');
 
 sample({
   clock: form.onChange,

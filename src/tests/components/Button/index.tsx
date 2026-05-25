@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ReactNode } from 'react';
 
+// @ts-expect-error css
 import './index.css';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {

@@ -2,7 +2,6 @@ import React from 'react';
 
 import type { IFieldConfig, IFormConfig, TFormStoreKey } from '../../../types';
 import { useFormStore } from '../../../useFormStore';
-import { useFormInstance } from '../../../useFormInstance';
 import { useFormData } from '../../../useFormData';
 import { Button } from '../Button';
 
@@ -50,13 +49,14 @@ export interface SendFormDataProps {
 }
 
 export const SendFormData = ({ name, onSend }: SendFormDataProps) => {
-  const form = useFormInstance(name);
+  const formConfig = useFormStore('$formConfig', name);
+  const fieldsConfig = useFormStore('$fieldsConfig', name);
   const data = useFormData(name);
 
   const onClick = () => {
     onSend({
-      config: form.config,
-      configs: form.configs,
+      config: formConfig,
+      configs: fieldsConfig,
       form: data,
     });
   };

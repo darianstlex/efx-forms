@@ -13,7 +13,6 @@ import type {
   IRError,
   IRErrors,
   IRValues,
-  IFormData,
   IRBoolean,
   ISubmitArgs,
   IFormConfig,
@@ -31,26 +30,37 @@ import type {
 
 import { FIELD_CONFIG, FORM_CONFIG } from './constants';
 
-const getFieldConfigProp = (data: IFormData, name: string, prop: TCommonConfigKeys) => {
-  return get(data, ['configs', name, prop], get(data, ['config', prop]));
+const E_OBJ = Object.freeze({});
+
+const getConfigProp = (
+  fieldConfig: IFieldConfig,
+  formConfig: IFormConfig,
+  prop: TCommonConfigKeys,
+) => {
+  return get(fieldConfig, [prop], get(formConfig, [prop]));
 };
 
-const getFieldInitVal = (data: IFormData, name: string) => {
-  return get(data, ['configs', name, 'initialValue'], get(data, ['config', 'initialValues', name]));
+const getConfigValidators = (
+  fieldConfig: IFieldConfig,
+  formConfig: IFormConfig,
+  name: string,
+): ReturnType<TFieldValidator>[] => {
+  return get(fieldConfig, ['validators'], get(formConfig, ['validators', name])) || [];
 };
 
-const getFieldValidators = (data: IFormData, name: string) => {
-  return get(data, ['configs', name, 'validators'], get(data, ['config', 'validators', name]));
+const getConfigInitialValue = (
+  fieldConfig: IFieldConfig,
+  formConfig: IFormConfig,
+  name: string,
+) => {
+  return get(fieldConfig, ['initialValue'], get(formConfig, ['initialValues', name]));
 };
 
-export const createFormHandler = (formConfig: IFormConfig): IForm => {
-  const data: IFormData = {
-    config: Object.assign({}, FORM_CONFIG, formConfig),
-    configs: {} as IFormData['configs'],
-  };
+export const createFormHandler = (createFormConfig: Pick<IFormConfig, 'name' | 'serialize'>): IForm => {
+  const dm = domain.domain(createFormConfig.name);
 
-  const dm = domain.domain(formConfig.name);
-
+  const setFormConfig = dm.event<IFormConfig>('set-form-config');
+  const setFieldConfig = dm.event<IFieldConfig>('set-field-config');
   const setActive = dm.event<IBooleanPayload>('set-active');
   const setError = dm.event<IErrorsPayload>('set-error');
   const setErrors = dm.event<IRErrors>('set-errors');
@@ -64,14 +74,31 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
   const erase = dm.event<void>('erase');
   const validate = dm.event<IValidationParams>('validate');
 
+  const $formConfig = dm.store<IFormConfig>(Object.assign({}, FORM_CONFIG, createFormConfig), {
+    name: '$formConfig',
+    serialize: createFormConfig.serialize ? undefined : 'ignore',
+    sid: `efx-forms-${createFormConfig.name}-$formConfig`,
+  })
+    .on(setFormConfig, (state, config) => Object.assign({}, state, config))
+    .on(erase, () => Object.assign({}, FORM_CONFIG));
+
+  const $fieldsConfig = dm.store<Record<string, IFieldConfig>>(E_OBJ, {
+    name: '$fieldsConfig',
+    serialize: createFormConfig.serialize ? undefined : 'ignore',
+    sid: `efx-forms-${createFormConfig.name}-$fieldsConfig`,
+  })
+    .on(setFieldConfig, (state, config) =>
+      Object.assign({}, state, { [config.name]: config }))
+    .on(erase, () => ({}));
+
   /**
    * Fields status store - keeps fields active / mounted status
    */
   const $active = dm
-    .store<IRBoolean>({}, {
+    .store<IRBoolean>(E_OBJ, {
       name: '$active',
-      serialize: formConfig.serialize ? undefined : 'ignore',
-      sid: `efx-forms-${formConfig.name}-$active`,
+      serialize: createFormConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${createFormConfig.name}-$active`,
     })
     .on(setActive, (state, { name, value }) =>
       state[name] !== value ? Object.assign({}, state, { [name]: value }) : state,
@@ -82,27 +109,45 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Values store - fields values
    */
   const $values = dm
-    .store<IRValues>({}, {
+    .store<IRValues>(E_OBJ, {
       name: '$values',
-      serialize: formConfig.serialize ? undefined : 'ignore',
-      sid: `efx-forms-${formConfig.name}-$values`,
+      serialize: createFormConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${createFormConfig.name}-$values`,
     })
     .on(setValues, (state, values) => Object.assign({}, state, values))
-    .on(onChange, (state, { name, value }) => {
-      const parse = data.configs[name]?.parse || FIELD_CONFIG.parse!;
+    .reset(erase);
+
+  sample({
+    clock: onChange,
+    source: { fieldsConfig: $fieldsConfig, state: $values },
+    fn: ({ fieldsConfig, state }, { name, value }) => {
+      const parse = fieldsConfig[name]?.parse || FIELD_CONFIG.parse!;
       const parsedValue = parse(value);
       return state[name] !== parsedValue ? Object.assign({}, state, { [name]: parsedValue }) : state;
-    })
-    .on(reset, (state) => reduce(
-      state,
-      (acc, _, name) => Object.assign(acc, { [name]: getFieldInitVal(data, name) }),
-      {} as IRValues,
-    ))
-    .on(resetField, (state, field) => {
-      const value = getFieldInitVal(data, field);
+    },
+    target: $values,
+  });
+
+  sample({
+    clock: resetField,
+    source: { fieldsConfig: $fieldsConfig, formConfig: $formConfig, state: $values },
+    fn: ({ fieldsConfig, formConfig, state }, field) => {
+      const value = getConfigInitialValue(fieldsConfig[field], formConfig, field);
       return value !== state[field] ? Object.assign({}, state, { [field]: value }) : state;
-    })
-    .reset(erase);
+    },
+    target: $values,
+  });
+
+  sample({
+    clock: reset,
+    source: { fieldsConfig: $fieldsConfig, formConfig: $formConfig, state: $values },
+    fn: ({ fieldsConfig, formConfig, state }) => reduce(
+      state,
+      (acc, _, name) => Object.assign(acc, { [name]: getConfigInitialValue(fieldsConfig[name], formConfig, name) }),
+      {} as IRValues,
+    ),
+    target: $values,
+  });
 
   /**
    * Active only fields
@@ -126,10 +171,10 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Validations store - keeps all fields validation errors
    */
   const $errors = dm
-    .store<IRErrors>({}, {
+    .store<IRErrors>(E_OBJ, {
       name: '$errors',
-      serialize: formConfig.serialize ? undefined : 'ignore',
-      sid: `efx-forms-${formConfig.name}-$errors`,
+      serialize: createFormConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${createFormConfig.name}-$errors`,
     })
     .on(setError, (state, { name, errors }) =>
       Object.assign({}, state, { [name]: errors }),
@@ -192,7 +237,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
       }
       return Promise.reject({ errors });
     },
-    name: `@fx-forms/${formConfig.name}/submit`,
+    name: `@fx-forms/${createFormConfig.name}/submit`,
   });
 
   /**
@@ -204,28 +249,28 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     ISubmitResponseSuccess,
     ISubmitResponseError
   > = attach({
-    source: { values: $values, errors: $errors, valid: $valid },
-    mapParams: (params = {}, { values, errors, valid }) => ({
+    source: { formConfig: $formConfig, values: $values, errors: $errors, valid: $valid },
+    mapParams: (params = {}, { values, errors, valid, formConfig }) => ({
       cb: params?.cb,
       values,
       errors,
       valid,
       skipClientValidation: Object.hasOwn(params, 'skipClientValidation')
         ? params.skipClientValidation
-        : data.config.skipClientValidation,
+        : formConfig.skipClientValidation,
     }),
     effect: onSubmit,
-    name: `@fx-forms/${formConfig.name}/attach-submit`,
+    name: `@fx-forms/${createFormConfig.name}/attach-submit`,
   });
 
   /**
    * Touches store - keeps all fields touch state
    */
   const $touches = dm
-    .store<IRBoolean>({}, {
+    .store<IRBoolean>(E_OBJ, {
       name: '$touches',
-      serialize: formConfig.serialize ? undefined : 'ignore',
-      sid: `efx-forms-${formConfig.name}-$touches`,
+      serialize: createFormConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${createFormConfig.name}-$touches`,
     })
     .on(onChange, (state, { name }) =>
       state[name] ? state : Object.assign({}, state, { [name]: true }),
@@ -253,14 +298,10 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Dirties store - keeps all fields dirty state
    */
   const $dirties = dm
-    .store<IRBoolean>({}, {
+    .store<IRBoolean>(E_OBJ, {
       name: '$dirties',
-      serialize: formConfig.serialize ? undefined : 'ignore',
-      sid: `efx-forms-${formConfig.name}-$dirties`,
-    })
-    .on(onChange, (state, { name, value }) => {
-      const dirty = value !== getFieldInitVal(data, name);
-      return state[name] === dirty ? state : Object.assign({}, state, { [name]: dirty });
+      serialize: createFormConfig.serialize ? undefined : 'ignore',
+      sid: `efx-forms-${createFormConfig.name}-$dirties`,
     })
     .reset(erase, reset, submit.done);
 
@@ -275,16 +316,27 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     return !isEmpty(activeDirties) ? hasTruthy(activeDirties) : false;
   }));
 
+  sample({
+    clock: onChange,
+    source: { fieldsConfig: $fieldsConfig, formConfig: $formConfig, state: $dirties },
+    fn: ({ fieldsConfig, formConfig, state }, { value, name }) => {
+      const dirty = value !== getConfigInitialValue(fieldsConfig[name], formConfig, name);
+      return state[name] === dirty ? state : Object.assign({}, state, { [name]: dirty });
+    },
+    target: $dirties,
+  });
+
   /**
    * Reset form untouched fields
    */
   sample({
     clock: resetUntouched,
-    source: { values: $values, touches: $touches },
-    fn: ({ values, touches }, fields) => {
+    source: { fieldsConfig: $fieldsConfig, formConfig: $formConfig, values: $values, touches: $touches },
+    fn: ({ fieldsConfig, formConfig, values, touches }, fields) => {
       const target = reduce(fields, (acc, field) => {
-        const changed = values[field] !== getFieldInitVal(data, field);
-        !touches[field] && changed && (acc[field] = getFieldInitVal(data, field));
+        const initialValue = getConfigInitialValue(fieldsConfig[field], formConfig, field);
+        const changed = values[field] !== initialValue;
+        !touches[field] && changed && (acc[field] = initialValue);
         return acc;
       }, {} as IRValues);
 
@@ -300,22 +352,22 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     clock: [
       sample({
         clock: validate,
-        filter: (params) => !params?.name
+        source: $formConfig,
+        filter: (formConfig, params) => !params?.name
           && !params?.ignoreSkipClientValidation
-          && !data.config.skipClientValidation,
+          && !formConfig.skipClientValidation,
       }),
       sample({
         clock: submit,
         filter: ({ skipClientValidation }) => !skipClientValidation,
       }),
     ],
-    source: { values: $values, active: $activeOnly },
-    fn: ({ values, active }) => {
+    source: { active: $activeOnly, fieldsConfig: $fieldsConfig, formConfig: $formConfig, values: $values },
+    fn: ({ active, formConfig, fieldsConfig, values }) => {
       return reduce(
         active,
         (acc, _, field) => {
-          const validators: ReturnType<TFieldValidator>[] =
-            getFieldValidators(data, field) || [];
+          const validators = getConfigValidators(fieldsConfig[field], formConfig, field);
           const errors = validators
             ?.map?.((vd) => vd(values[field], values))
             ?.filter(Boolean) as string[];
@@ -332,11 +384,10 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: validate,
-    source: { values: $values },
+    source: { fieldsConfig: $fieldsConfig, formConfig: $formConfig, values: $values },
     filter: (_, source) => !!source?.name,
-    fn: ({ values }, source) => {
-      const validators: ReturnType<TFieldValidator>[] =
-        getFieldValidators(data, source?.name as string) || [];
+    fn: ({ fieldsConfig, formConfig, values }, source) => {
+      const validators = getConfigValidators(fieldsConfig[source?.name as string], formConfig, source?.name as string);
       const errors = validators
         ?.map?.((vd) => vd(values[source?.name as string], values))
         ?.filter?.(Boolean) as string[];
@@ -353,9 +404,9 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: onBlur,
-    source: { touches: $touches },
-    filter: ({ touches }, { name }) =>
-      touches[name] && !!getFieldConfigProp(data, name, 'validateOnBlur'),
+    source: { fieldsConfig: $fieldsConfig, formConfig: $formConfig, touches: $touches },
+    filter: ({ fieldsConfig, formConfig, touches }, { name }) =>
+      touches[name] && !!getConfigProp(fieldsConfig[name], formConfig, 'validateOnBlur'),
     fn: (_, { name }) => ({ name }),
     target: validate,
   });
@@ -365,8 +416,10 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: onChange,
-    filter: ({ name }) => !!getFieldConfigProp(data, name, 'validateOnChange'),
-    fn: ({ name }) => ({ name }),
+    source: { fieldsConfig: $fieldsConfig, formConfig: $formConfig },
+    filter: ({ fieldsConfig, formConfig }, { name }) =>
+      !!getConfigProp(fieldsConfig[name], formConfig, 'validateOnChange'),
+    fn: (_, { name }) => ({ name }),
     target: validate,
   });
 
@@ -375,8 +428,10 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: onChange,
-    fn: ({ name }) => ({ name, errors: null }),
-    filter: ({ name }) => !getFieldConfigProp(data, name, 'validateOnChange'),
+    source: { fieldsConfig: $fieldsConfig, formConfig: $formConfig },
+    filter: ({ fieldsConfig, formConfig }, { name }) =>
+      !getConfigProp(fieldsConfig[name], formConfig, 'validateOnChange'),
+    fn: (_, { name }) => ({ name, errors: null }),
     target: setError,
   });
 
@@ -399,20 +454,9 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     target: replaceErrors,
   });
 
-  /**
-   * Erase form configs
-   */
-  sample({
-    clock: erase,
-    target: dm.effect(() => {
-      data.config = Object.assign({}, FORM_CONFIG);
-      data.configs = {};
-    }),
-  });
-
   return {
     domain: dm,
-    name: formConfig.name,
+    name: createFormConfig.name,
     $active,
     $activeOnly,
     $activeValues,
@@ -425,6 +469,8 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     $touches,
     $valid,
     $values,
+    $formConfig,
+    $fieldsConfig,
     erase,
     onBlur,
     onChange,
@@ -437,17 +483,13 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     replaceErrors,
     submit,
     validate,
+    setConfig: setFormConfig,
+    setFieldConfig,
     get config() {
-      return data.config;
-    },
-    setConfig: (cfg: IFormConfig) => {
-      data.config = Object.assign({}, FORM_CONFIG, cfg);
+      return $formConfig.getState();
     },
     get configs() {
-      return data.configs;
-    },
-    setFieldConfig: (cfg: IFieldConfig) => {
-      data.configs[cfg.name] = Object.assign({}, cfg);
+      return $fieldsConfig.getState();
     },
   };
 };

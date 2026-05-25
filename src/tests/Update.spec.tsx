@@ -152,13 +152,13 @@ test('Form Update', async ({ mount }) => {
       'user.name': 'Third User',
       'user.password': 'pass3',
     },
-    keepOnUnmount: false,
+    keepOnUnmount: true,
     name: 'formUpdate',
     onSubmit: undefined,
     serialize: false,
-    skipClientValidation: false,
-    validateOnBlur: true,
-    validateOnChange: false,
+    skipClientValidation: true,
+    validateOnBlur: false,
+    validateOnChange: true,
     validators: {},
   });
 

@@ -141,6 +141,10 @@ export interface IForm {
   $dirty: Store<boolean>;
   /** $$STORE - Form dirties - all fields dirty state - flat */
   $dirties: Store<IRBoolean>;
+  /** $$STORE - Form config - reactive form config */
+  $formConfig: Store<IFormConfig>;
+  /** $$STORE - Fields config - reactive fields config */
+  $fieldsConfig: Store<Record<string, IFieldConfig>>;
   /** EVENT - Form reset - resets form to initial values */
   reset: EventCallable<void>;
   /** EVENT - Field reset - resets field to initial value */
@@ -171,11 +175,11 @@ export interface IForm {
   /** PROP - Form config */
   config: IFormConfig;
   /** METHOD - Set form config */
-  setConfig: (cfg: IFormConfig) => void;
+  setConfig: EventCallable<IFormConfig>;
   /** PROP - Form config */
   configs: Record<string, IFieldConfig>;
   /** METHOD - Set field config */
-  setFieldConfig: (cfg: IFieldConfig) => void;
+  setFieldConfig: EventCallable<IFieldConfig>;
 }
 
 export interface IFormData {

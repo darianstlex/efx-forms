@@ -1,17 +1,12 @@
-import { useCallback, useState } from 'react';
 import type { Store, UnitValue } from 'effector';
-
-import { useStoreWatch } from './useStoreWatch';
+import { useStoreMap } from 'effector-react';
+import get from 'lodash/get';
 
 export const useStoreProp = <S extends Store<any>>(store: S, prop: string, defaultValue?: any) => {
-  const [value, setValue] = useState(defaultValue);
-
-  const updateValue = useCallback((values?: Record<string, any>) => {
-    const newValue = values?.[prop] !== undefined ? values[prop] : defaultValue;
-    newValue !== value && setValue(newValue);
-  }, [defaultValue, prop, value]);
-
-  useStoreWatch(store, updateValue);
-
-  return value as UnitValue<S>[string];
+  return useStoreMap({
+    store,
+    keys: [prop],
+    fn: (state, [propName]) => get(state, propName),
+    defaultValue,
+  }) as UnitValue<S>[string];
 };

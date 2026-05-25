@@ -10,12 +10,13 @@ import type { IValue } from './types';
  */
 export const useField = (name: string, formName?: string) => {
   const form = useFormInstance(formName);
-  const [resetField, validate, setActive, setValue, onChange] = useUnit([
+  const [resetField, validate, setActive, setValue, onChange, setFieldConfig] = useUnit([
     form.resetField,
     form.validate,
     form.setActive,
     form.setValues,
     form.onChange,
+    form.setFieldConfig,
   ]);
   return {
     value: useStoreProp(form.$values, name),
@@ -28,6 +29,6 @@ export const useField = (name: string, formName?: string) => {
     setActive: useCallback((value: boolean) => setActive({ name, value }), [name, setActive]),
     setValue: useCallback((value: IValue) => setValue({ name, value }), [name, setValue]),
     change: useCallback((value: IValue) => onChange({ name, value }), [name, onChange]),
-    setConfig: form.setFieldConfig,
+    setConfig: setFieldConfig,
   };
 };

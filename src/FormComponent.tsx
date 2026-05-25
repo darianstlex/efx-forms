@@ -1,13 +1,13 @@
+import React, { useLayoutEffect } from 'react';
 import type { SubmitEvent } from 'react';
-import React, { useMemo, useEffect } from 'react';
 import { useUnit } from 'effector-react';
 import pickBy from 'lodash/pickBy';
 import isEmpty from 'lodash/isEmpty';
 
 import { FORM_CONFIG } from './constants';
-import { getForm } from './forms';
-import type { IForm, IRFormProps } from './types';
 import { FormProvider } from './context';
+import type { IRFormProps } from './types';
+import { useFormInstance } from './useFormInstance';
 
 /**
  * Efx Form component
@@ -26,33 +26,19 @@ export const Form = ({
   serialize,
   ...props
 }: IRFormProps) => {
-  const form: IForm = useMemo(() => {
-    const config = pickBy(
-      {
-        keepOnUnmount,
-        skipClientValidation,
-        initialValues,
-        validateOnBlur,
-        validateOnChange,
-        validators,
-        disableFieldsReinit,
-        serialize,
-      },
-      (val) => val !== undefined,
-    );
-    return getForm({ name, ...config });
-  }, [name]);
+  const form = useFormInstance(name);
 
-  const [formSubmit, formReset, resetUntouched] = useUnit([
+  const [formSubmit, formReset, resetUntouched, setConfig] = useUnit([
     form.submit,
     form.reset,
     form.resetUntouched,
+    form.setConfig,
   ]);
 
   /**
    * Set config on config props changes
    */
-  useEffect(() => {
+  useLayoutEffect(() => {
     const config = pickBy(
       {
         serialize,
@@ -66,7 +52,7 @@ export const Form = ({
       },
       (val) => val !== undefined,
     );
-    form.setConfig({ name, ...config });
+    setConfig({ name, ...config });
   }, [
     skipClientValidation,
     disableFieldsReinit,
@@ -83,13 +69,13 @@ export const Form = ({
   /**
    * Reset form on unmount if enabled
    */
-  useEffect(() => {
+  useLayoutEffect(() => {
     return () => {
       !keepOnUnmount && formReset();
     };
   }, [formReset, keepOnUnmount]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!disableFieldsReinit && !isEmpty(initialValues)) {
       resetUntouched(Object.keys(initialValues));
     }

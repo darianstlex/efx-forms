@@ -9,12 +9,13 @@ import type { IValue } from './types';
  */
 export const useFieldMethods = (name: string, formName?: string) => {
   const form = useFormInstance(formName);
-  const [resetField, validate, setActive, setValue, onChange] = useUnit([
+  const [resetField, validate, setActive, setValue, onChange, setConfig] = useUnit([
     form.resetField,
     form.validate,
     form.setActive,
     form.setValues,
     form.onChange,
+    form.setFieldConfig,
   ]);
   return {
     reset: useCallback(() => resetField(name), [name, resetField]),
@@ -22,6 +23,6 @@ export const useFieldMethods = (name: string, formName?: string) => {
     setActive: useCallback((value: boolean) => setActive({ name, value }), [name, setActive]),
     setValue: useCallback((value: IValue) => setValue({ name, value }), [name, setValue]),
     change: useCallback((value: IValue) => onChange({ name, value }), [name, onChange]),
-    setConfig: form.setFieldConfig,
+    setConfig,
   };
 };

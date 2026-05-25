@@ -1,6 +1,7 @@
 import React from 'react';
 import type { InputHTMLAttributes } from 'react';
 
+// @ts-expect-error css
 import './index.css';
 import { Field } from '../../../FieldComponent';
 import type { IFieldProps, IRFieldProps } from '../../../types';

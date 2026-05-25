@@ -1,12 +1,19 @@
-import React, { useCallback, useEffect, useMemo, memo } from 'react';
+import React, { useCallback, useLayoutEffect, useMemo, memo } from 'react';
 import type { ComponentType } from 'react';
 import { useUnit } from 'effector-react';
 import pickBy from 'lodash/pickBy';
 
 import { FIELD_CONFIG } from './constants';
-import type { IRFieldProps, IValue } from './types';
+import type { IFieldProps, IForm, IRFieldProps, IValue } from './types';
 import { useFormInstance } from './useFormInstance';
 import { useStoreProp } from './useStoreProp';
+
+const useValue = (form: IForm, name: string) => {
+  const fieldValue = useStoreProp(form.$values, name);
+  const format = useStoreProp(form.$fieldsConfig, `${name}.format`, FIELD_CONFIG.format) as IFieldProps['format'];
+
+  return useMemo(() => format(fieldValue), [fieldValue, name]);
+};
 
 const InternalFieldInst = ({ Field, name, formName, ...rest }: {
   name: string;
@@ -16,7 +23,6 @@ const InternalFieldInst = ({ Field, name, formName, ...rest }: {
   const form = useFormInstance(formName);
   const [onFieldBlur, onFieldChange] = useUnit([form.onBlur, form.onChange]);
 
-  const fieldValue = useStoreProp(form.$values, name);
   const error = useStoreProp(form.$error, name, null);
   const errors = useStoreProp(form.$errors, name, null);
 
@@ -28,10 +34,7 @@ const InternalFieldInst = ({ Field, name, formName, ...rest }: {
     onFieldBlur({ name, value });
   }, [name, onFieldBlur]);
 
-  const value = useMemo(() => {
-    const format = form.configs?.[name]?.format || FIELD_CONFIG.format!;
-    return format(fieldValue);
-  }, [fieldValue, form.configs, name]);
+  const value = useValue(form, name);
 
   return (<Field {...{ error, errors, name, value, onChange, onBlur, ...rest }} />);
 };
@@ -57,9 +60,15 @@ export const Field = ({
 }: IRFieldProps) => {
   const form = useFormInstance(formName);
 
-  const [setActive, resetUntouched] = useUnit([form.setActive, form.resetUntouched]);
+  const formDisableFieldsReinit = useStoreProp(form.$formConfig, 'disableFieldsReinit');
 
-  useEffect(() => {
+  const [setActive, resetUntouched, setFieldConfig] = useUnit([
+    form.setActive,
+    form.resetUntouched,
+    form.setFieldConfig,
+  ]);
+
+  useLayoutEffect(() => {
     const config = pickBy(
       {
         parse,
@@ -72,7 +81,7 @@ export const Field = ({
       },
       (val) => val !== undefined,
     );
-    !passive && form.setFieldConfig({ name, ...config });
+    !passive && setFieldConfig({ name, ...config });
   }, [
     disableFieldReinit,
     validateOnChange,
@@ -86,7 +95,7 @@ export const Field = ({
     form,
   ]);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     !passive && setActive({ name, value: true });
     return () => {
       !passive && setActive({ name, value: false });
@@ -96,9 +105,9 @@ export const Field = ({
   const reinitDisabled =
     !passive && disableFieldReinit !== undefined
       ? disableFieldReinit
-      : form.config.disableFieldsReinit;
+      : formDisableFieldsReinit;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!reinitDisabled && initialValue !== undefined) {
       Promise.resolve().then(() => resetUntouched([name]));
     }

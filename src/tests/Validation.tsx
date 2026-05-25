@@ -14,11 +14,11 @@ interface Props extends Partial<IRFormProps> {
 }
 
 export const FormValidation = ({ setFormData, onSubmit }: Props) => {
-  const { reset } = useFormMethods('formOutside');
+  const { reset } = useFormMethods('formOutside1');
   return (
     <>
       <Form
-        name="formOutside"
+        name="formOutside1"
         validators={{
           'user.name': [required()],
           'user.password': [required()],
@@ -43,11 +43,11 @@ export const FormValidation = ({ setFormData, onSubmit }: Props) => {
           Reset
         </Button>
         <span style={{ display: 'inline-block', width: 20 }}/>
-        <SendFormData onSend={setFormData} />
+        <SendFormData onSend={setFormData} name="formOutside1" />
       </Form>
       <div style={{ width: 400, margin: '0 auto' }}>
         <TextField
-          formName="formOutside"
+          formName="formOutside1"
           data-test="user.password-outside"
           name="user.password"
           label="Password"
@@ -58,11 +58,11 @@ export const FormValidation = ({ setFormData, onSubmit }: Props) => {
 };
 
 export const FieldOverrideValidation = ({ setFormData, onSubmit }: Props) => {
-  const { reset } = useFormMethods('formOutside');
+  const { reset } = useFormMethods('formOutside2');
   return (
     <>
       <Form
-        name="formOutside"
+        name="formOutside2"
         validators={{
           'user.name': [required()],
           'user.password': [required()],
@@ -89,12 +89,12 @@ export const FieldOverrideValidation = ({ setFormData, onSubmit }: Props) => {
           Reset
         </Button>
         <span style={{ display: 'inline-block', width: 20 }}/>
-        <SendFormData onSend={setFormData} />
+        <SendFormData onSend={setFormData} name="formOutside2" />
       </Form>
       <div style={{ width: 400, margin: '0 auto' }}>
         <TextField
           passive
-          formName="formOutside"
+          formName="formOutside2"
           data-test="user.password-outside"
           name="user.password"
           label="Password"
@@ -107,7 +107,7 @@ export const FieldOverrideValidation = ({ setFormData, onSubmit }: Props) => {
 const SimpleFormOne = ({ onSubmit, msg }: any) => {
   return (
     <Form
-      name="simpleForm"
+      name="simpleForm1"
       validators={{
         'user.name': [required({ msg })],
       }}

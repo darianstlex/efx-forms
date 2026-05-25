@@ -14,6 +14,7 @@ type TFieldStore = Extract<
   | '$error'
   | '$touches'
   | '$dirties'
+  | '$fieldsConfig'
 >;
 
 interface UseFieldStoreProps {

@@ -1,3 +1,6 @@
+import React from 'react';
+
+// @ts-expect-error css
 import './index.css';
 
 import { beforeMount } from '@playwright/experimental-ct-react/hooks';
