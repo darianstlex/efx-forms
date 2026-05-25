@@ -85,7 +85,7 @@ const OptionalValue = ({ fieldName }: { fieldName: string }) => {
 import { Store } from 'effector';
 import { useStoreProp } from 'efx-forms/useStoreProp';
 
-const CustomStoreValue = ({ store, key }: { store: Store<Record<string, any>>; key: string }) => {
+const CustomStoreValue = ({ store, key }: { store: Store<IRValues>; key: string }) => {
   const value = useStoreProp(store, key, null);
   
   return <div>{key}: {String(value)}</div>;

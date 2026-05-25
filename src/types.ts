@@ -1,12 +1,22 @@
 import type { Domain, Effect, EventCallable, Store } from 'effector';
 import type { ComponentType, ReactElement, ReactNode } from 'react';
 
+export type IValue = any;
+export type IRErrors = Record<string, string[] | null>;
+export type IRError = Record<string, string | null>;
+export type IRValues = Record<string, IValue>;
+export type IRBoolean = Record<string, boolean>;
+export type IRTrue = Record<string, true>;
+export type IValuePayload = { name: string; value: IValue };
+export type IBooleanPayload = { name: string; value: boolean };
+export type IErrorsPayload = { name: string; errors: string[] | null };
+
 export type TFieldValidator = (data?: {
-  value?: any;
+  value?: IValue;
   regexp?: RegExp;
   label?: string;
   msg?: string;
-}) => (value: any, values?: Record<string, any>) => string | false;
+}) => (value: IValue, values?: IRValues) => string | false;
 
 export type TFiltered<T, TK> = Pick<
   T,
@@ -23,29 +33,30 @@ export type TFormStoreValue = TExtractStoreTypes<TFormStore>;
 
 export interface ISubmitArgs {
   cb?: (
-    values: Record<string, any>,
-  ) => Promise<Record<string, string | null> | void> | void;
+    values: IRValues,
+  ) => Promise<IRErrors | void> | void;
   skipClientValidation?: boolean;
 }
 
 export interface IFormOnSubmitArgs extends ISubmitArgs {
-  values: Record<string, any>;
-  errors: Record<string, string | null>;
+  values: IRValues;
+  errors: IRErrors;
   valid: boolean;
 }
 
 export interface ISubmitResponseSuccess {
-  values?: Record<string, any>;
+  values?: IRValues;
 }
 
 export interface ISubmitResponseError {
-  errors?: Record<string, string | null>;
-  remoteErrors?: Record<string, string | null>;
+  errors?: IRErrors;
+  remoteErrors?: IRErrors;
 }
 
 export type IValidationParams =
   | {
       name?: string;
+      ignoreSkipClientValidation?: boolean;
     }
   | undefined;
 
@@ -53,11 +64,11 @@ export interface IFieldConfig {
   /** PROPERTY - name */
   name: string;
   /** PROPERTY - initial value */
-  initialValue?: any;
+  initialValue?: IValue;
   /** METHOD - parse value before store */
-  parse?: (value: any) => any;
+  parse?: (value: IValue) => IValue;
   /** METHOD - format value before display */
-  format?: (value: any) => any;
+  format?: (value: IValue) => IValue;
   /** PROPERTY - skip field register / config update */
   passive?: boolean;
   /** PROPERTY - field validators object */
@@ -77,7 +88,7 @@ export interface IFormConfig {
   /** PROPERTY - name */
   name: string;
   /** PROPERTY - initial values - flat */
-  initialValues?: Record<string, any>;
+  initialValues?: IRValues;
   /** PROPERTY - validateOnBlur - will trigger validation on blur */
   validateOnBlur?: boolean;
   /** PROPERTY - validateOnChange - will trigger validation on change */
@@ -107,17 +118,17 @@ export interface IForm {
   /** PROPERTY - Form name */
   name: string;
   /** $$STORE - Form active fields - all fields statuses - flat */
-  $active: Store<Record<string, boolean>>;
+  $active: Store<IRBoolean>;
   /** $$STORE - Form active only fields - all fields statuses - flat */
-  $activeOnly: Store<Record<string, true>>;
+  $activeOnly: Store<IRTrue>;
   /** $$STORE - Form active values - all active / visible fields values - flat */
-  $activeValues: Store<Record<string, any>>;
+  $activeValues: Store<IRValues>;
   /** $$STORE - Form values - all fields values - flat */
-  $values: Store<Record<string, any>>;
+  $values: Store<IRValues>;
   /** $$STORE - Form errors - all field errors */
-  $errors: Store<Record<string, string[] | null>>;
+  $errors: Store<IRErrors>;
   /** $$STORE - Form errors - fields last error - flat */
-  $error: Store<Record<string, string | null>>;
+  $error: Store<IRError>;
   /** $$STORE - Form valid - true if form is valid */
   $valid: Store<boolean>;
   /** $$STORE - Form submitting - true if busy */
@@ -125,11 +136,11 @@ export interface IForm {
   /** $$STORE - Form touched - true if touched */
   $touched: Store<boolean>;
   /** $$STORE - Form touches - all fields touches - flat */
-  $touches: Store<Record<string, boolean>>;
+  $touches: Store<IRBoolean>;
   /** $$STORE - Form dirty - true if diff from initial value */
   $dirty: Store<boolean>;
   /** $$STORE - Form dirties - all fields dirty state - flat */
-  $dirties: Store<Record<string, boolean>>;
+  $dirties: Store<IRBoolean>;
   /** EVENT - Form reset - resets form to initial values */
   reset: EventCallable<void>;
   /** EVENT - Field reset - resets field to initial value */
@@ -144,13 +155,17 @@ export interface IForm {
    */
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
   /** EVENT - Set form config */
-  setActive: EventCallable<{ name: string; value: any }>;
+  setActive: EventCallable<IValuePayload>;
   /** EVENT - Form update fields values */
-  setValues: EventCallable<Record<string, any>>;
+  setValues: EventCallable<IRValues>;
+  /** EVENT - Form merge errors */
+  setErrors: EventCallable<IRErrors>
+  /** EVENT - Form replace errors */
+  replaceErrors: EventCallable<IRErrors>
   /** EVENT - Form onChange event */
-  onChange: EventCallable<{ name: string; value: any }>;
+  onChange: EventCallable<IValuePayload>;
   /** EVENT - Form onBlur event */
-  onBlur: EventCallable<{ name: string; value: any }>;
+  onBlur: EventCallable<IValuePayload>;
   /** EVENT - Form validate trigger */
   validate: EventCallable<IValidationParams>;
   /** PROP - Form config */
@@ -193,11 +208,11 @@ export interface IFieldProps {
   /** PROPERTY - field name */
   name: string;
   /** PROPERTY - field value */
-  value: any;
+  value: IValue;
   /** METHOD - send field value on change */
-  onChange: (value: any) => void;
+  onChange: (value: IValue) => void;
   /** METHOD - send field value on blur */
-  onBlur: (value: any) => void;
+  onBlur: (value: IValue) => void;
   [any: string]: any;
 }
 
@@ -205,7 +220,7 @@ export interface IRFieldProps {
   /** PROPERTY - name */
   name: IFieldConfig['name'];
   /** PROPERTY - initial value */
-  initialValue?: any;
+  initialValue?: IValue;
   /** METHOD - parse value before store */
   parse?: IFieldConfig['parse'];
   /** METHOD - format value before display */
@@ -233,17 +248,17 @@ export interface IRIfFormValuesProps {
   form?: string;
   /** METHOD - check - accepts form values and return boolean, if true render children */
   check: (
-    values: Record<string, any>,
-    activeValues: Record<string, any>,
+    values: IRValues,
+    activeValues: IRValues,
   ) => boolean;
   /** PROPERTY - setTo set fields on show */
-  setTo?: Record<string, any>;
+  setTo?: IRValues;
   /** PROPERTY - setTo set fields on hide */
-  resetTo?: Record<string, any>;
+  resetTo?: IRValues;
   /** PROPERTY - form update debounce - 0 */
   updateDebounce?: number;
   /** METHOD - render - accepts form values and return react element */
-  render?: (values: Record<string, any>) => ReactElement;
+  render?: (values: IRValues) => ReactElement;
 }
 
 export interface IRIfFieldValueProps {
@@ -253,9 +268,9 @@ export interface IRIfFieldValueProps {
   /** PROPERTY - form name to check against */
   formName?: string;
   /** METHOD - check - accepts form values and return boolean, if true render children */
-  check: (value: any) => boolean;
+  check: (value: IValue) => boolean;
   /** METHOD - render - accepts values array and return react element */
-  render?: (value: any) => ReactElement;
+  render?: (value: IValue) => ReactElement;
 }
 
 export interface IRFormDataProviderProps {

@@ -21,11 +21,11 @@ interface FieldProps {
   Field: ComponentType<any>;
   
   // Optional
-  initialValue?: any;
-  parse?: (value: any) => any;
-  format?: (value: any) => any;
+  initialValue?: IValue;
+  parse?: (value: IValue) => IValue;
+  format?: (value: IValue) => IValue;
   passive?: boolean;
-  validators?: Array<(value: any, values: Record<string, any>) => string | false>;
+  validators?: TFieldValidator[];
   validateOnBlur?: boolean;
   validateOnChange?: boolean;
   disableFieldReinit?: boolean;
@@ -35,9 +35,9 @@ interface FieldProps {
   label?: string;
   error?: string;
   errors?: string[];
-  value?: any;
-  onChange?: (value: any) => void;
-  onBlur?: (value: any) => void;
+  value?: IValue;
+  onChange?: (value: IValue) => void;
+  onBlur?: (value: IValue) => void;
   [key: string]: any;
 }
 ```

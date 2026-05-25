@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+import type { SubmitEvent } from 'react';
 import React, { useMemo, useEffect } from 'react';
 import { useUnit } from 'effector-react';
 import pickBy from 'lodash/pickBy';
@@ -95,7 +95,7 @@ export const Form = ({
     }
   }, [initialValues, disableFieldsReinit, resetUntouched]);
 
-  const submit = (event: FormEvent) => {
+  const submit = (event: SubmitEvent) => {
     event.preventDefault();
     return formSubmit({ cb: onSubmit, skipClientValidation });
   };

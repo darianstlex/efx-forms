@@ -24,16 +24,16 @@ Where `FormState` contains:
 
 ```ts
 {
-  values: Record<string, any>;
-  errors: Record<string, string[]>;
-  active: Record<string, boolean>;
-  dirties: Record<string, boolean>;
+  values: IRValues;
+  errors: IRErrors;
+  active: IRBoolean;
+  dirties: IRBoolean;
   dirty: boolean;
   touched: boolean;
-  touches: Record<string, boolean>;
+  touches: IRBoolean;
   valid: boolean;
   submitting: boolean;
-  activeValues: Record<string, any>;
+  activeValues: IRValues;
 }
 ```
 

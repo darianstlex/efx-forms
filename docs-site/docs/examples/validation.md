@@ -175,7 +175,7 @@ function ValidationBehaviorForm() {
 
 ## Server-Side Error Handling
 
-Handle errors returned from submit:
+Handle errors returned from submit. **Note**: Server errors **replace** all client validation errors (uses `replaceErrors`):
 
 ```jsx
 import { Form, Field } from 'efx-forms';
@@ -190,15 +190,16 @@ async function submitForm(values) {
     
     if (!response.ok) {
       const errors = await response.json();
-      // Return errors to display in form
-      // Format: { 'fieldName': 'error message' }
+      // Server errors REPLACE all client validation errors
+      // Uses replaceErrors - client errors are cleared first
       throw errors;
+      // Format: { 'fieldName': 'error message' }
     }
     
     return { success: true };
   } catch (error) {
     if (error['email']) {
-      // Form will display these errors
+      // Form will display these errors (client errors cleared)
       throw error;
     }
     throw error;
@@ -220,6 +221,8 @@ function ServerValidationForm() {
   );
 }
 ```
+
+**Example**: If user has client validation error on `email` (e.g., "Invalid email") and server returns `{ email: 'Already exists' }`, the client error is **cleared** and only the server error is shown.
 
 ## Form-Level Errors
 

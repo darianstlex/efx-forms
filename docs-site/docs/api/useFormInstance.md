@@ -19,21 +19,26 @@ Where `IForm` contains:
 ```ts
 {
   // Stores
-  $values: Store<Record<string, any>>;
-  $errors: Store<Record<string, string[]>>;
-  $active: Store<Record<string, boolean>>;
-  $dirties: Store<Record<string, boolean>>;
-  $touches: Store<Record<string, boolean>>;
+  $values: Store<IRValues>;
+  $errors: Store<IRErrors>;
+  $active: Store<IRBoolean>;
+  $dirties: Store<IRBoolean>;
+  $touches: Store<IRBoolean>;
   $submitting: Store<boolean>;
   $valid: Store<boolean>;
   $touched: Store<boolean>;
   $dirty: Store<boolean>;
   
   // Events
-  change: EventCallable<{ name: string; value: any }>;
+  change: EventCallable<IValuePayload>;
   reset: EventCallable<void>;
   erase: EventCallable<void>;
-  setActive: EventCallable<{ name: string; value: boolean }>;
+  resetField: EventCallable<string>;
+  resetUntouched: EventCallable<string[]>;
+  setActive: EventCallable<IBooleanPayload>;
+  setValues: EventCallable<IRValues>;
+  setErrors: EventCallable<IRErrors>;
+  replaceErrors: EventCallable<IRErrors>;
   validate: EventCallable<IValidationParams>;
   
   // Effects

@@ -12,15 +12,20 @@ import { useFormMethods } from 'efx-forms/useFormMethods';
 
 ```ts
 function useFormMethods(formName?: string): {
-  change: EventCallable<{ name: string; value: any }>;
+  // Methods (effector events)
+  change: EventCallable<IValuePayload>;
   erase: EventCallable<void>;
   reset: EventCallable<void>;
   resetField: EventCallable<string>;
-  resetUntouched: EventCallable<void>;
-  setActive: EventCallable<{ name: string; value: boolean }>;
-  setValues: EventCallable<Record<string, any>>;
+  resetUntouched: EventCallable<string[]>;
+  setActive: EventCallable<IBooleanPayload>;
+  setValues: EventCallable<IRValues>;
+  setErrors: EventCallable<IRErrors>;
+  replaceErrors: EventCallable<IRErrors>;
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
   validate: EventCallable<IValidationParams>;
+  
+  // Config methods (synchronous)
   setConfig: (cfg: IFormConfig) => void;
   setFieldConfig: (cfg: IFieldConfig) => void;
 }
@@ -35,7 +40,7 @@ function useFormMethods(formName?: string): {
 ## Return Type
 
 Object containing form methods:
-- **Events**: `change`, `erase`, `reset`, `resetField`, `resetUntouched`, `setActive`, `setValues`, `validate`
+- **Events**: `change`, `erase`, `reset`, `resetField`, `resetUntouched`, `setActive`, `setValues`, `setErrors`, `replaceErrors`, `validate`
 - **Effect**: `submit`
 - **Config methods**: `setConfig`, `setFieldConfig` (synchronous)
 

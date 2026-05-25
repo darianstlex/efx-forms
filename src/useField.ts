@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import { useFormInstance } from './useFormInstance';
 import { useStoreProp } from './useStoreProp';
+import type { IValue } from './types';
 
 /**
  * Return field data/controls belongs to the current or provided form
@@ -25,8 +26,8 @@ export const useField = (name: string, formName?: string) => {
     reset: useCallback(() => resetField(name), [name, resetField]),
     validate: useCallback(() => validate({ name }), [name, validate]),
     setActive: useCallback((value: boolean) => setActive({ name, value }), [name, setActive]),
-    setValue: useCallback((value: any) => setValue({ name, value }), [name, setValue]),
-    change: useCallback((value: any) => onChange({ name, value }), [name, onChange]),
+    setValue: useCallback((value: IValue) => setValue({ name, value }), [name, setValue]),
+    change: useCallback((value: IValue) => onChange({ name, value }), [name, onChange]),
     setConfig: form.setFieldConfig,
   };
 };

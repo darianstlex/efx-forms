@@ -5,7 +5,23 @@ Conditional rendering based on form values. Shows or hides content when a condit
 ## Import
 
 ```ts
-import { IfFormValues } from 'efx-forms/IfFormValues';
+function IfFormValues({
+  children,
+  check,
+  form,
+  setTo,
+  resetTo,
+  render,
+  updateDebounce = 0,
+}: {
+  children: ReactNode;
+  check: (values: IRValues, activeValues: IRValues) => boolean;
+  form?: string;
+  setTo?: IRValues;
+  resetTo?: IRValues;
+  render?: (values: IRValues) => ReactNode;
+  updateDebounce?: number;
+}): ReactElement | null
 ```
 
 ## Signature
@@ -37,8 +53,8 @@ function IfFormValues({
 | `children` | `ReactNode` | Yes | Content to render when condition is true |
 | `check` | `(values, activeValues) => boolean` | Yes | Condition function that receives form values |
 | `form` | `string` | No | Form name. Auto-detected from context if not provided |
-| `setTo` | `Record<string, any>` | No | Values to set when condition becomes true |
-| `resetTo` | `Record<string, any>` | No | Values to set when condition becomes false |
+| `setTo` | `IRValues` | No | Values to set when condition becomes true |
+| `resetTo` | `IRValues` | No | Values to set when condition becomes false |
 | `render` | `(values) => ReactNode` | No | Alternative to children - render prop with values |
 | `updateDebounce` | `number` | No | Debounce delay in ms for setTo/resetTo (default: 0) |
 

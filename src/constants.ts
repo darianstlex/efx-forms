@@ -1,4 +1,4 @@
-import type { IFieldConfig, IFormConfig } from './types';
+import type { IFieldConfig, IFormConfig, IValue } from './types';
 import { domain } from './utils';
 
 export const FORM_CONFIG: IFormConfig = {
@@ -16,8 +16,8 @@ export const FORM_CONFIG: IFormConfig = {
 
 export const FIELD_CONFIG: IFieldConfig = {
   name: 'default',
-  parse: (value) => value,
-  format: (value) => value,
+  parse: (value: IValue): IValue => value,
+  format: (value: IValue): IValue => value,
   validators: undefined,
   initialValue: undefined,
   validateOnBlur: true,

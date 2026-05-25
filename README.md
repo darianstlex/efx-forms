@@ -102,15 +102,15 @@ interface Form {
    * form values.
    * If skipClientValidation is set - no validation will be applied.
    * If submit return promise:
-   * - reject - object with errors per field - errors will be passed
-   *   to the form
+   * - reject - object with errors per field - errors will **replace** all existing errors
+   *   (uses replaceErrors, not setErrors - client validation errors are cleared)
    *   { 'user.name': 'Name is already taken', ... }
    * - resolve - success submit
-   * @param values - FormValues - flat
+   * @param values - IRValues - flat
    * @example
    * { 'user.name': 'John', 'user.age': '20' }
    */
-  onSubmit?: (values: Record<string, any>) => void | Promise<Record<string, any>>;
+  onSubmit?: (values: IRValues) => void | Promise<IRErrors>;
   // If set, submit will skip client form validation
   // Default: false
   skipClientValidation?: boolean;
@@ -155,9 +155,7 @@ interface Field {
   // Passive field does not update its active state and config
   passive?: boolean;
   // Validators array - applied on validation
-  validators?: [
-    (value: any, values: Record<string, any>) => string | false,
-  ];
+  validators?: TFieldValidator[];
   // Set validation behaviour onBlur, overrides form value
   // Default: true
   validateOnBlur?: boolean;
@@ -184,17 +182,17 @@ interface IfFormValues {
   form?: string;
   // Condition check - accepts form values and return boolean,
   // if true render children
-  check: (values: Record<string, any>, activeValues: Record<string, any>) => boolean;
+  check: (values: IRValues, activeValues: IRValues) => boolean;
   // Set fields values on show - { fieldName: 'value' }
-  setTo?: Record<string, any>;
+  setTo?: IRValues;
   // Set fields values on hide - { fieldName: 'value' }
-  resetTo?: Record<string, any>;
+  resetTo?: IRValues;
   // Debounce for fields update
   // Default: 0
   updateDebounce?: number;
   // Render prop - accepts form values and return react element
   // if defined will be used instead of children
-  render?: (values: Record<string, any>) => ReactElement;
+  render?: (values: IRValues) => ReactElement;
 }
 ```
 
@@ -307,13 +305,13 @@ interface FormInstance {
   /** $$STORE - Form active only fields - flat */
   $activeOnly: Store<Record<string, true>>;
   /** $$STORE - Form active values - all active / visible fields values - flat */
-  $activeValues: Store<Record<string, any>>;
+  $activeValues: Store<IRValues>;
   /** $$STORE - Form values - all fields values - flat */
-  $values: Store<Record<string, any>>;
+  $values: Store<IRValues>;
   /** $$STORE - Form errors - all field errors */
-  $errors: Store<Record<string, string[]>>;
+  $errors: Store<IRErrors>;
   /** $$STORE - Form errors - fields last error - flat */
-  $error: Store<Record<string, string | null>>;
+  $error: Store<IRError>;
   /** $$STORE - Form valid - true if form is valid */
   $valid: Store<boolean>;
   /** $$STORE - Form submitting - true if busy */
@@ -349,7 +347,11 @@ interface FormInstance {
   /** METHOD - Set field config */
   setFieldConfig: (cfg: IFieldConfig) => void;
   /** EVENT - Form update field values */
-  setValues: EventCallable<Record<string, any>>;
+  setValues: EventCallable<IRValues>;
+  /** EVENT - Form merge errors - merges provided errors into existing $errors store */
+  setErrors: EventCallable<IRErrors>;
+  /** EVENT - Form replace errors - replaces all $errors with provided errors (useful for server validation) */
+  replaceErrors: EventCallable<IRErrors>;
   /**
    * EFFECT - Form submit - callback will be called with form values if form is valid
    * or if callback returns promise reject with errors, will highlight them in the form
@@ -358,6 +360,32 @@ interface FormInstance {
   /** EVENT - Form validate trigger */
   validate: EventCallable<IValidationParams>;
 }
+
+/**
+ * setErrors vs replaceErrors:
+ * - setErrors: Merges errors into existing $errors (preserves unrelated field errors)
+ * - replaceErrors: Completely replaces $errors with new errors (clears all existing errors)
+ * 
+ * **Important**: Submit validation uses `replaceErrors` - server errors from `onSubmit` reject
+ * will **replace** all client validation errors, not merge with them.
+ * 
+ * Example:
+ *   // Current errors: { name: ['Required'] }
+ *   setErrors({ email: ['Invalid'] })
+ *   // Result: { name: ['Required'], email: ['Invalid'] }
+ *   
+ *   replaceErrors({ email: ['Invalid'] })
+ *   // Result: { email: ['Invalid'] }
+ *   
+ *   // Submit reject (uses replaceErrors):
+ *   onSubmit: async (values) => {
+ *     throw { email: 'Already exists' }; // Clears name error, only shows email
+ *   }
+ * 
+ * Use cases:
+ * - setErrors: Add field errors without clearing others (e.g., adding server errors to existing client errors)
+ * - replaceErrors: Server validation response (clear all client errors, show only server errors) - **used by submit**
+ */
 ```
 
 # Methods / Hooks

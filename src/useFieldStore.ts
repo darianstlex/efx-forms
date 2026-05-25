@@ -1,7 +1,7 @@
 import type { UnitValue } from 'effector';
 
+import type { IForm, IValue, TFormStoreKey } from './types';
 import { useFormInstance } from './useFormInstance';
-import type { IForm, TFormStoreKey } from './types';
 import { useStoreProp } from './useStoreProp';
 
 type TFieldStore = Extract<
@@ -20,7 +20,7 @@ interface UseFieldStoreProps {
   store: TFieldStore;
   name: string;
   formName?: string;
-  defaultValue?: any;
+  defaultValue?: IValue;
 }
 
 export const useFieldStore = <T extends UseFieldStoreProps>({

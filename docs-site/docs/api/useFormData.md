@@ -13,17 +13,17 @@ import { useFormData } from 'efx-forms/useFormData';
 ```ts
 function useFormData(formName?: string): {
   // Form state stores
-  active: Store<Record<string, boolean>>;
-  activeOnly: Store<Record<string, true>>;
-  activeValues: Store<Record<string, any>>;
-  dirties: Store<Record<string, boolean>>;
+  active: Store<IRBoolean>;
+  activeOnly: Store<IRTrue>;
+  activeValues: Store<IRValues>;
+  dirties: Store<IRBoolean>;
   dirty: Store<boolean>;
-  error: Store<Record<string, string | null>>;
-  errors: Store<Record<string, string[]>>;
+  error: Store<IRError>;
+  errors: Store<IRErrors>;
   submitting: Store<boolean>;
   touched: Store<boolean>;
-  touches: Store<Record<string, boolean>>;
-  values: Store<Record<string, any>>;
+  touches: Store<IRBoolean>;
+  values: Store<IRValues>;
   valid: Store<boolean>;
 }
 ```

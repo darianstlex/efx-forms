@@ -454,7 +454,7 @@ Transforms a nested object into a flat object with one level of keys.
 
 **Signature:**
 ```ts
-flattenObjectKeys(obj: Record<string, any>): Record<string, any>
+flattenObjectKeys(obj: Record<string, any>): IRValues
 ```
 
 **Parameters:**

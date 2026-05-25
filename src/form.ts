@@ -9,10 +9,18 @@ import { domain, hasTruthy } from './utils';
 
 import type {
   IForm,
+  IRTrue,
+  IRError,
+  IRErrors,
+  IRValues,
   IFormData,
+  IRBoolean,
   ISubmitArgs,
   IFormConfig,
   IFieldConfig,
+  IValuePayload,
+  IErrorsPayload,
+  IBooleanPayload,
   TFieldValidator,
   IValidationParams,
   IFormOnSubmitArgs,
@@ -43,12 +51,13 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
 
   const dm = domain.domain(formConfig.name);
 
-  const setActive = dm.event<{ name: string; value: boolean }>('set-active');
-  const setError = dm.event<{ name: string; errors: string[] | null }>('set-error');
-  const setErrors = dm.event<Record<string, string[] | null>>('set-errors');
-  const setValues = dm.event<Record<string, any>>('set-values');
-  const onChange = dm.event<{ name: string; value: any }>('on-change');
-  const onBlur = dm.event<{ name: string; value: any }>('on-blur');
+  const setActive = dm.event<IBooleanPayload>('set-active');
+  const setError = dm.event<IErrorsPayload>('set-error');
+  const setErrors = dm.event<IRErrors>('set-errors');
+  const replaceErrors = dm.event<IRErrors>('replace-errors');
+  const setValues = dm.event<IRValues>('set-values');
+  const onChange = dm.event<IValuePayload>('on-change');
+  const onBlur = dm.event<IValuePayload>('on-blur');
   const reset = dm.event<void>('reset');
   const resetField = dm.event<string>('reset-field');
   const resetUntouched = dm.event<string[]>('reset-untouched');
@@ -59,7 +68,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Fields status store - keeps fields active / mounted status
    */
   const $active = dm
-    .store<Record<string, boolean>>({}, {
+    .store<IRBoolean>({}, {
       name: '$active',
       serialize: formConfig.serialize ? undefined : 'ignore',
       sid: `efx-forms-${formConfig.name}-$active`,
@@ -73,7 +82,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Values store - fields values
    */
   const $values = dm
-    .store<Record<string, any>>({}, {
+    .store<IRValues>({}, {
       name: '$values',
       serialize: formConfig.serialize ? undefined : 'ignore',
       sid: `efx-forms-${formConfig.name}-$values`,
@@ -87,7 +96,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     .on(reset, (state) => reduce(
       state,
       (acc, _, name) => Object.assign(acc, { [name]: getFieldInitVal(data, name) }),
-      {} as Record<string, any>,
+      {} as IRValues,
     ))
     .on(resetField, (state, field) => {
       const value = getFieldInitVal(data, field);
@@ -99,7 +108,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Active only fields
    */
   const $activeOnly = $active.map((active) => pickBy(active, Boolean)) as Store<
-    Record<string, true>
+    IRTrue
   >;
 
   /**
@@ -109,7 +118,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     reduce(
       active,
       (acc, _, field) => Object.assign(acc, { [field]: values[field] }),
-      {} as Record<string, any>,
+      {} as IRValues,
     ),
   );
 
@@ -117,7 +126,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Validations store - keeps all fields validation errors
    */
   const $errors = dm
-    .store<Record<string, string[] | null>>({}, {
+    .store<IRErrors>({}, {
       name: '$errors',
       serialize: formConfig.serialize ? undefined : 'ignore',
       sid: `efx-forms-${formConfig.name}-$errors`,
@@ -127,6 +136,9 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     )
     .on(setErrors, (state, errors) =>
       Object.assign({}, state, errors),
+    )
+    .on(replaceErrors, (_, errors) =>
+      Object.assign({}, errors),
     )
     .on([
       setActive,
@@ -143,7 +155,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     reduce(
       errors,
       (acc, _, field) => Object.assign(acc, { [field]: errors?.[field]?.[0] || null }),
-      {} as Record<string, string | null>,
+      {} as IRError,
     ),
   );
 
@@ -154,7 +166,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     const activeErrors = reduce(errors, (acc, error, name) => {
       error && active[name] && (acc[name] = error);
       return acc;
-    }, {} as Record<string, string | null>);
+    }, {} as IRError);
     return !isEmpty(activeErrors) ? !hasTruthy(activeErrors) : true;
   }));
 
@@ -175,7 +187,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
           await cb?.(values);
           return Promise.resolve({ values });
         } catch (remoteErrors) {
-          return Promise.reject({ remoteErrors });
+          return Promise.reject({ remoteErrors } as { remoteErrors: IRErrors });
         }
       }
       return Promise.reject({ errors });
@@ -192,7 +204,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     ISubmitResponseSuccess,
     ISubmitResponseError
   > = attach({
-    source: { values: $values, errors: $error, valid: $valid },
+    source: { values: $values, errors: $errors, valid: $valid },
     mapParams: (params = {}, { values, errors, valid }) => ({
       cb: params?.cb,
       values,
@@ -210,7 +222,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Touches store - keeps all fields touch state
    */
   const $touches = dm
-    .store<Record<string, boolean>>({}, {
+    .store<IRBoolean>({}, {
       name: '$touches',
       serialize: formConfig.serialize ? undefined : 'ignore',
       sid: `efx-forms-${formConfig.name}-$touches`,
@@ -233,7 +245,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     const activeTouches = reduce(touches, (acc, touch, name) => {
       touch && active[name] && (acc[name] = touch);
       return acc;
-    }, {} as Record<string, boolean>);
+    }, {} as IRBoolean);
     return !isEmpty(activeTouches) ? hasTruthy(activeTouches) : false;
   }));
 
@@ -241,7 +253,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    * Dirties store - keeps all fields dirty state
    */
   const $dirties = dm
-    .store<Record<string, boolean>>({}, {
+    .store<IRBoolean>({}, {
       name: '$dirties',
       serialize: formConfig.serialize ? undefined : 'ignore',
       sid: `efx-forms-${formConfig.name}-$dirties`,
@@ -259,7 +271,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     const activeDirties = reduce(dirties, (acc, dirty, name) => {
       dirty && active[name] && (acc[name] = dirty);
       return acc;
-    }, {} as Record<string, boolean>);
+    }, {} as IRBoolean);
     return !isEmpty(activeDirties) ? hasTruthy(activeDirties) : false;
   }));
 
@@ -274,7 +286,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
         const changed = values[field] !== getFieldInitVal(data, field);
         !touches[field] && changed && (acc[field] = getFieldInitVal(data, field));
         return acc;
-      }, {} as Record<string, any>);
+      }, {} as IRValues);
 
       return !isEmpty(target) ? Object.assign({}, values, target) : values;
     },
@@ -286,15 +298,18 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: [
-      validate,
+      sample({
+        clock: validate,
+        filter: (params) => !params?.name
+          && !params?.ignoreSkipClientValidation
+          && !data.config.skipClientValidation,
+      }),
       sample({
         clock: submit,
         filter: ({ skipClientValidation }) => !skipClientValidation,
-        fn: () => ({}) as IValidationParams,
       }),
     ],
     source: { values: $values, active: $activeOnly },
-    filter: (_, source) => !source?.name,
     fn: ({ values, active }) => {
       return reduce(
         active,
@@ -306,7 +321,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
             ?.filter(Boolean) as string[];
           return Object.assign(acc, { [field]: errors?.length ? errors : null });
         },
-        {} as Record<string, string[] | null>,
+        {} as IRErrors,
       );
     },
     target: setErrors,
@@ -338,7 +353,7 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: onBlur,
-    source: { touches: $touches, active: $active },
+    source: { touches: $touches },
     filter: ({ touches }, { name }) =>
       touches[name] && !!getFieldConfigProp(data, name, 'validateOnBlur'),
     fn: (_, { name }) => ({ name }),
@@ -376,12 +391,12 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
         remoteErrors,
         (acc, _, key) => Object.assign(
           acc,
-          { [key]: remoteErrors?.[key] ? [remoteErrors?.[key] as string] : null },
+          { [key]: remoteErrors?.[key] ? [remoteErrors?.[key]] : null },
         ),
-        {} as Record<string, string[] | null>,
+        {} as IRErrors,
       );
     },
-    target: setErrors,
+    target: replaceErrors,
   });
 
   /**
@@ -389,10 +404,10 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
    */
   sample({
     clock: erase,
-    fn: () => {
+    target: dm.effect(() => {
       data.config = Object.assign({}, FORM_CONFIG);
       data.configs = {};
-    },
+    }),
   });
 
   return {
@@ -418,6 +433,8 @@ export const createFormHandler = (formConfig: IFormConfig): IForm => {
     resetUntouched,
     setActive,
     setValues,
+    setErrors,
+    replaceErrors,
     submit,
     validate,
     get config() {

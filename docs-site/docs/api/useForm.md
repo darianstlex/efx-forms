@@ -13,24 +13,28 @@ import { useForm } from 'efx-forms/useForm';
 ```ts
 function useForm(formName?: string): {
   // State (plain objects)
-  active: Record<string, boolean>;
-  activeValues: Record<string, any>;
-  dirties: Record<string, boolean>;
+  active: IRBoolean;
+  activeValues: IRValues;
+  dirties: IRBoolean;
   dirty: boolean;
-  error: Record<string, string | null>;
-  errors: Record<string, string[]>;
+  error: IRError;
+  errors: IRErrors;
   submitting: boolean;
   touched: boolean;
-  touches: Record<string, boolean>;
+  touches: IRBoolean;
   valid: boolean;
-  values: Record<string, any>;
+  values: IRValues;
   
   // Methods (effector events)
-  change: EventCallable<{ name: string; value: any }>;
+  change: EventCallable<IValuePayload>;
   erase: EventCallable<void>;
   reset: EventCallable<void>;
-  setActive: EventCallable<{ name: string; value: boolean }>;
-  setValues: EventCallable<Record<string, any>>;
+  resetField: EventCallable<string>;
+  resetUntouched: EventCallable<string[]>;
+  setActive: EventCallable<IBooleanPayload>;
+  setValues: EventCallable<IRValues>;
+  setErrors: EventCallable<IRErrors>;
+  replaceErrors: EventCallable<IRErrors>;
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
   validate: EventCallable<IValidationParams>;
   

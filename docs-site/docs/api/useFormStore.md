@@ -38,7 +38,9 @@ Available store names:
 ## Return Type
 
 The value type depends on the store:
-- `'$values'`, `'$errors'`, `'$active'`, etc. → `Record<string, any>`
+- `'$values'` → `IRValues`
+- `'$errors'` → `IRErrors`
+- `'$active'`, `'$dirties'`, `'$touches'` → `IRBoolean`
 - `'$valid'`, `'$touched'`, `'$dirty'`, `'$submitting'` → `boolean`
 
 ## Usage Example

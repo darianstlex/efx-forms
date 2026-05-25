@@ -13,7 +13,7 @@ test('Active Fields', async ({ mount }) => {
   } as OnSendParams;
 
   const component = await mount(
-    <Active validateOnChange setFormData={(formData) => Object.assign(data, formData)} />
+    <Active validateOnChange setFormData={(formData) => Object.assign(data, formData)} />,
   );
   const userEmail = component.locator(sel.userEmail);
   const userHasEmail = component.locator(sel.userHasEmail);

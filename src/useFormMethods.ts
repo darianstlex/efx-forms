@@ -16,6 +16,8 @@ export const useFormMethods = (name?: string) => {
       resetUntouched: form.resetUntouched,
       setActive: form.setActive,
       setValues: form.setValues,
+      setErrors: form.setErrors,
+      replaceErrors: form.replaceErrors,
       submit: form.submit,
       validate: form.validate,
     }),

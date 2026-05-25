@@ -11,7 +11,7 @@ import { useFormValues } from 'efx-forms/useFormValues';
 ## Signature
 
 ```ts
-function useFormValues(formName?: string): Record<string, any>
+function useFormValues(formName?: string): IRValues
 ```
 
 ## Parameters
@@ -22,7 +22,7 @@ function useFormValues(formName?: string): Record<string, any>
 
 ## Return Type
 
-Plain object containing current form values: `Record<string, any>`
+Plain object containing current form values: `IRValues`
 
 ## Usage Example
 

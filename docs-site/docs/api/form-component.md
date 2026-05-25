@@ -20,15 +20,15 @@ interface FormProps {
   name: string;
   
   // Optional
-  onSubmit?: (values: Record<string, any>) => void | Promise<Record<string, any>>;
+  onSubmit?: (values: IRValues) => void | Promise<IRErrors>;
   skipClientValidation?: boolean;
-  initialValues?: Record<string, any>;
+  initialValues?: IRValues;
   keepOnUnmount?: boolean;
   serialize?: boolean;
   validateOnBlur?: boolean;
   validateOnChange?: boolean;
   disableFieldsReinit?: boolean;
-  validators?: Record<string, Array<(value: any, values: Record<string, any>) => string | false>>;
+  validators?: Record<string, TFieldValidator[]>;
   
   // HTML form attributes
   children?: React.ReactNode;
@@ -43,7 +43,7 @@ interface FormProps {
 | `name` | `string` | - | ✅ Yes | Form name. Used to get form instance outside of context |
 | `onSubmit` | `(values) => void \| Promise` | - | No | Submit handler. Called with flat form values on validation success |
 | `skipClientValidation` | `boolean` | `false` | No | Skip client-side validation on submit |
-| `initialValues` | `Record<string, any>` | - | No | Initial form values. Field `initialValue` takes priority |
+| `initialValues` | `IRValues` | - | No | Initial form values. Field `initialValue` takes priority |
 | `keepOnUnmount` | `boolean` | `false` | No | Keep form data when component unmounts |
 | `serialize` | `boolean` | `false` | No | Serialize stores. Initialized only once on form creation |
 | `validateOnBlur` | `boolean` | `true` | No | Validate fields on blur |
@@ -124,12 +124,14 @@ const nested = shapeFy(values);
       
       if (!response.ok) {
         const errors = await response.json();
-        // Reject with errors per field
+        // Server errors REPLACE all client validation errors
+        // Uses replaceErrors, not setErrors
         throw errors;
         // { 'email': 'Email already exists' }
       }
     } catch (errors) {
       // Errors will be displayed on corresponding fields
+      // Client validation errors are cleared first
       throw errors;
     }
   }}

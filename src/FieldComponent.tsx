@@ -4,8 +4,8 @@ import { useUnit } from 'effector-react';
 import pickBy from 'lodash/pickBy';
 
 import { FIELD_CONFIG } from './constants';
+import type { IRFieldProps, IValue } from './types';
 import { useFormInstance } from './useFormInstance';
-import type { IRFieldProps } from './types';
 import { useStoreProp } from './useStoreProp';
 
 const InternalFieldInst = ({ Field, name, formName, ...rest }: {
@@ -20,11 +20,11 @@ const InternalFieldInst = ({ Field, name, formName, ...rest }: {
   const error = useStoreProp(form.$error, name, null);
   const errors = useStoreProp(form.$errors, name, null);
 
-  const onChange = useCallback((value: any) => {
+  const onChange = useCallback((value: IValue) => {
     onFieldChange({ name, value });
   }, [name, onFieldChange]);
 
-  const onBlur = useCallback((value: any) => {
+  const onBlur = useCallback((value: IValue) => {
     onFieldBlur({ name, value });
   }, [name, onFieldBlur]);
 
