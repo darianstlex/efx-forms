@@ -28,8 +28,7 @@ EFX-Forms provides a comprehensive set of React hooks for accessing form state, 
 
 | Hook | Description | Import |
 |------|-------------|--------|
-| [`useStoreProp`](./utilities.md#utility-functions) | Get property from any effector store | `efx-forms/useStoreProp` |
-| [`useStorePropFn`](./utilities.md#utility-functions) | Get computed value from store using getter function | `efx-forms/useStorePropFn` |
+| [`useStoreProp`](./useStoreProp.md) | Get property from any effector store | `efx-forms/useStoreProp` |
 
 ## Usage Pattern
 

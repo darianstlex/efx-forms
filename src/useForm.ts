@@ -23,6 +23,8 @@ export const useForm = (name?: string) => {
       change: form.onChange,
       erase: form.erase,
       reset: form.reset,
+      resetField: form.resetField,
+      resetUntouched: form.resetUntouched,
       setActive: form.setActive,
       setValues: form.setValues,
       setErrors: form.setErrors,

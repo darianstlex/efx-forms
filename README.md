@@ -402,8 +402,6 @@ import { useFieldData } from 'efx-forms/useFieldData';
 import { useFieldStore } from 'efx-forms/useFieldStore';
 import { useFieldMethods } from 'efx-forms/useFieldMethods';
 import { useStoreProp } from 'efx-forms/useStoreProp';
-import { useStorePropFn } from 'efx-forms/useStorePropFn';
-import { useStoreWatch } from 'efx-forms/useStoreWatch';
 
 /**
  * Return form by name
@@ -528,18 +526,6 @@ const fieldMethods = useFieldMethods('user.name');
 // Returns: { reset, validate, setActive, setValue, change, setConfig }
 
 /**
- * Hook - watch store for changes
- * Executes callback whenever store value updates
- * @type (
- *   store: Store,
- *   onUpdate: (value: any) => void,
- * ) => void
- */
-useStoreWatch(form.$values, (values) => {
-  console.log('Values changed:', values);
-});
-
-/**
  * Hook - return store value
  * @type (
  *   store: Store,
@@ -548,16 +534,6 @@ useStoreWatch(form.$values, (values) => {
  * ) => ReturnType<typeof useStoreProp>
  */
 const storePropValue = useStoreProp(form.$values, 'user.name', '');
-
-/**
- * Hook - return store value
- * @type (
- *   store: Store,
- *   getter: (value: any) => any,
- *   defaultValue?: any,
- * ) => ReturnType<typeof useStoreProp>
- */
-const storePropFnValue = useStorePropFn(form.$values, (val) => val.name, '');
 ```
 
 # Utils

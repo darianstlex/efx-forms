@@ -29,6 +29,8 @@ function useForm(formName?: string): {
   change: EventCallable<IValuePayload>;
   erase: EventCallable<void>;
   reset: EventCallable<void>;
+  resetField: EventCallable<string>;
+  resetUntouched: EventCallable<string[]>;
   setActive: EventCallable<IBooleanPayload>;
   setValues: EventCallable<IRValues>;
   setErrors: EventCallable<IRErrors>;
