@@ -16,7 +16,7 @@ test('Sample Update', async ({ mount }) => {
    * STEP_1: Render form
    */
   const component = await mount(
-    <SampleUpdate setFormData={(formData) => Object.assign(data, formData)} />
+    <SampleUpdate setFormData={(formData) => Object.assign(data, formData)} />,
   );
   const one = component.locator(sel.one);
   const two = component.locator(sel.two);

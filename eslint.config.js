@@ -36,6 +36,7 @@ export default tsLint.config(
       'no-unused-vars': 'off',
       'comma-dangle': ['error', 'always-multiline'],
       'comma-spacing': [2, { before: false, after: true }],
+      quotes: ['error', 'single'],
       // typescript
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-var-requires': 'off',
