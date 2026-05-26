@@ -44,9 +44,9 @@ Where `IForm` contains:
   // Effects
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
   
-  // Config
-  setConfig: (cfg: IFormConfig) => void;
-  setFieldConfig: (cfg: IFieldConfig) => void;
+  // Config (effector events)
+  setConfig: EventCallable<IFormConfig>;
+  setFieldConfig: EventCallable<IFieldConfig>;
 }
 ```
 

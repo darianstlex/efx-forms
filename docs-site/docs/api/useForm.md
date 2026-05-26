@@ -38,9 +38,9 @@ function useForm(formName?: string): {
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
   validate: EventCallable<IValidationParams>;
   
-  // Config methods (synchronous)
-  setConfig: (cfg: IFormConfig) => void;
-  setFieldConfig: (cfg: IFieldConfig) => void;
+  // Config methods (effector events)
+  setConfig: EventCallable<IFormConfig>;
+  setFieldConfig: EventCallable<IFieldConfig>;
 }
 ```
 

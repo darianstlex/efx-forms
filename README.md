@@ -342,10 +342,10 @@ interface FormInstance {
   resetUntouched: EventCallable<string[]>;
   /** EVENT - Set form config */
   setActive: EventCallable<{ name: string; value: boolean; }>;
-  /** METHOD - Set form config */
-  setConfig: (cfg: IFormConfig) => void;
-  /** METHOD - Set field config */
-  setFieldConfig: (cfg: IFieldConfig) => void;
+  /** EVENT - Set form config */
+  setConfig: EventCallable<IFormConfig>;
+  /** EVENT - Set field config */
+  setFieldConfig: EventCallable<IFieldConfig>;
   /** EVENT - Form update field values */
   setValues: EventCallable<IRValues>;
   /** EVENT - Form merge errors - merges provided errors into existing $errors store */

@@ -25,9 +25,9 @@ function useFormMethods(formName?: string): {
   submit: Effect<ISubmitArgs, ISubmitResponseSuccess, ISubmitResponseError>;
   validate: EventCallable<IValidationParams>;
   
-  // Config methods (synchronous)
-  setConfig: (cfg: IFormConfig) => void;
-  setFieldConfig: (cfg: IFieldConfig) => void;
+  // Config methods (effector events)
+  setConfig: EventCallable<IFormConfig>;
+  setFieldConfig: EventCallable<IFieldConfig>;
 }
 ```
 
@@ -42,7 +42,7 @@ function useFormMethods(formName?: string): {
 Object containing form methods:
 - **Events**: `change`, `erase`, `reset`, `resetField`, `resetUntouched`, `setActive`, `setValues`, `setErrors`, `replaceErrors`, `validate`
 - **Effect**: `submit`
-- **Config methods**: `setConfig`, `setFieldConfig` (synchronous)
+- **Config methods**: `setConfig`, `setFieldConfig` (effector events)
 
 ## Usage Example
 
