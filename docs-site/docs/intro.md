@@ -16,7 +16,7 @@ EFX-Forms leverages Effector's reactive stores and effects to manage form state.
 - **Built-in Validators**: Common validators like `required`, `email`, and more
 - **Conditional Rendering**: Components like `IfFormValues` and `IfFieldValue` for dynamic forms
 - **Flat Values with Shape Support**: Store values flat (`address[0]`) but shape them for use (`address: []`)
-- **Dual CJS/ESM Build**: Works with any modern React setup
+- **ESM Build**: Works with any modern React setup (Vite, Webpack 5, Rollup)
 
 ## Quick Links
 
