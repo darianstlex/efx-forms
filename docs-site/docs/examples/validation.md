@@ -26,7 +26,7 @@ function Input({ id, label, value, error, ...props }) {
 
 function ValidatedForm() {
   return (
-    <Form 
+    <Form
       name="validated-form"
       validators={{
         email: [required(), email()],
@@ -51,7 +51,7 @@ import { required, email } from 'efx-forms/validators';
 
 function CustomMessagesForm() {
   return (
-    <Form 
+    <Form
       name="custom-messages-form"
       validators={{
         email: [
@@ -82,7 +82,7 @@ import { required } from 'efx-forms/validators';
 
 function FieldOverrideForm() {
   return (
-    <Form 
+    <Form
       name="override-form"
       validators={{
         username: [required({ msg: 'Username is required' })],
@@ -91,16 +91,16 @@ function FieldOverrideForm() {
     >
       {/* Uses form-level validator */}
       <Field name="username" Field={Input} label="Username" />
-      
+
       {/* Overrides with custom message */}
-      <Field 
-        name="password" 
-        Field={Input} 
-        label="Password" 
+      <Field
+        name="password"
+        Field={Input}
+        label="Password"
         type="password"
         validators={[required({ msg: 'Password must have at least 8 characters' })]}
       />
-      
+
       <button type="submit">Submit</button>
     </Form>
   );
@@ -131,7 +131,7 @@ const minLength = (min) => (value) => {
 
 function CustomValidatorForm() {
   return (
-    <Form 
+    <Form
       name="custom-validator-form"
       validators={{
         password: [minLength(8)],
@@ -157,7 +157,7 @@ import { required } from 'efx-forms/validators';
 
 function ValidationBehaviorForm() {
   return (
-    <Form 
+    <Form
       name="behavior-form"
       validateOnBlur={true}    // Validate on blur (default)
       validateOnChange={false} // Validate on change (default: false)
@@ -187,7 +187,7 @@ async function submitForm(values) {
       method: 'POST',
       body: JSON.stringify(values),
     });
-    
+
     if (!response.ok) {
       const errors = await response.json();
       // Server errors REPLACE all client validation errors
@@ -195,7 +195,7 @@ async function submitForm(values) {
       throw errors;
       // Format: { 'fieldName': 'error message' }
     }
-    
+
     return { success: true };
   } catch (error) {
     if (error['email']) {
@@ -208,7 +208,7 @@ async function submitForm(values) {
 
 function ServerValidationForm() {
   return (
-    <Form 
+    <Form
       name="server-validation-form"
       validators={{
         email: [required(), email()],
@@ -237,7 +237,7 @@ async function submitForm(values) {
     method: 'POST',
     body: JSON.stringify(values),
   });
-  
+
   if (!response.ok) {
     const errors = await response.json();
     // Use __form__ key for form-level errors
@@ -246,13 +246,13 @@ async function submitForm(values) {
       email: 'Invalid email or password',
     };
   }
-  
+
   return { success: true };
 }
 
 function FormLevelErrorForm() {
   return (
-    <Form 
+    <Form
       name="login-form"
       validators={{
         email: [required(), email()],
@@ -271,7 +271,7 @@ function FormLevelErrorForm() {
           ) : null;
         }}
       </FormDataProvider>
-      
+
       <Field name="email" Field={Input} label="Email" type="email" />
       <Field name="password" Field={Input} label="Password" type="password" />
       <button type="submit">Login</button>
@@ -282,7 +282,7 @@ function FormLevelErrorForm() {
 
 **Key Points:**
 
-- Use the reserved `__form__` key in the error object returned from `onSubmit`
+- Use a key `__form__` or similar in the error object returned from `onSubmit`
 - Access via `error.__form__` from `useFormData` or `FormDataProvider`
 - Form-level errors coexist with field-specific errors
 - Clear form-level errors by returning successfully from `onSubmit`
@@ -315,7 +315,7 @@ const dateRange = (value, values) => {
 
 function CrossFieldForm() {
   return (
-    <Form 
+    <Form
       name="date-range-form"
       validators={{
         startDate: [dateRange],
