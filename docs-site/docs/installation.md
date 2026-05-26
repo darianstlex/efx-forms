@@ -41,7 +41,7 @@ Once installed, you can import EFX-Forms components in your React components:
 import { Form, Field } from 'efx-forms';
 ```
 
-ESM build with `.js` extensions is automatically generated for compatibility with modern bundlers.
+The build outputs ESM syntax which works with modern bundlers (Vite, Webpack 5, Rollup).
 
 ## Next Steps
 

@@ -6,7 +6,7 @@
 
 ## OVERVIEW
 
-Effector-based React form library. TypeScript, flat src/ structure, Playwright CT testing. Dual CJS/ESM build.
+Effector-based React form library. TypeScript, flat src/ structure, Playwright CT testing. Single ESM build with .js extensions.
 
 ## STRUCTURE
 
@@ -90,8 +90,9 @@ efx-forms/
 - No `exports` field in package.json - works via direct file paths
 
 **Build output:**
-- `lib/` - CJS (default)
-- `lib/mjs/` - ESM (created by npmize with `{"type": "module"}`)
+- `lib/` - ESM syntax (TypeScript `module: "esnext"`)
+- No `.js` extensions on relative imports - modern bundlers auto-resolve
+- No `"type": "module"` flag needed (works with Vite, Webpack 5, Rollup)
 
 **Test patterns:**
 - Playwright CT (not Jest/Vitest)
@@ -101,8 +102,8 @@ efx-forms/
 ## COMMANDS
 
 ```bash
-# Build (CJS + ESM)
-npm run build        # rm -rf lib/* && tsc && ./npmize
+# Build (ESM)
+npm run build        # rm -rf lib/* && tsc && ./npmize (copies to lib/, removes devDeps)
 
 # Publish
 npm run publish-lib  # Publish to npm
@@ -124,7 +125,7 @@ npm run lint         # ESLint
 - `noImplicitAny: false` - allows implicit any
 - Tests excluded from TypeScript build
 - Beta releases: `npm run publish-beta`
-- Dual CJS/ESM requires npmize post-build step
+- No `.js` extensions on imports - bundlers auto-resolve (Vite, Webpack 5, Rollup)
 
 **Peer Dependencies:**
 - effector: >=23.0.0 <24.0.0
