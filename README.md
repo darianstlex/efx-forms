@@ -4,8 +4,6 @@
 
 📚 **Documentation**: https://darianstlex.github.io/efx-forms/
 
-There are some breaking changes starting from v2
-
 ## Installation
 ```bash
 $ npm install efx-forms
@@ -365,23 +363,23 @@ interface FormInstance {
  * setErrors vs replaceErrors:
  * - setErrors: Merges errors into existing $errors (preserves unrelated field errors)
  * - replaceErrors: Completely replaces $errors with new errors (clears all existing errors)
- * 
+ *
  * **Important**: Submit validation uses `replaceErrors` - server errors from `onSubmit` reject
  * will **replace** all client validation errors, not merge with them.
- * 
+ *
  * Example:
  *   // Current errors: { name: ['Required'] }
  *   setErrors({ email: ['Invalid'] })
  *   // Result: { name: ['Required'], email: ['Invalid'] }
- *   
+ *
  *   replaceErrors({ email: ['Invalid'] })
  *   // Result: { email: ['Invalid'] }
- *   
+ *
  *   // Submit reject (uses replaceErrors):
  *   onSubmit: async (values) => {
  *     throw { email: 'Already exists' }; // Clears name error, only shows email
  *   }
- * 
+ *
  * Use cases:
  * - setErrors: Add field errors without clearing others (e.g., adding server errors to existing client errors)
  * - replaceErrors: Server validation response (clear all client errors, show only server errors) - **used by submit**
